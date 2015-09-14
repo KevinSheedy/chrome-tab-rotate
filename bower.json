@@ -1,0 +1,19 @@
+{
+  "name": "chrome-tab-rotate",
+  "version": "0.0.0",
+  "homepage": "https://github.com/KevinSheedy/chrome-tab-rotate",
+  "authors": [
+    "Kevin Sheedy <kevinsheedy@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4"
+  }
+}
