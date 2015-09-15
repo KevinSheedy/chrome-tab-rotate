@@ -5,138 +5,107 @@ document.addEventListener('DOMContentLoaded', function() {
 
 chrome.runtime.onMessage.addListener( function(request) {
 	console.log("Got message:" + request.playPauseStatus);
+
+	if(request.playPauseStatus == "PLAYING")
+		play();
+	else
+		pause();
 });
 
+var model;
+var gConfig;
 
+function play() {
+
+	loadSettingsFromDisc();
+}
+
+function pause() {
+	g.enableRotate = false;
+}
+
+function loadSettingsFromDisc() {
+	g = getDefaultGlobals();
+	chrome.storage.sync.get(null, function(val) {
+		if(!val.settings) {
+			loadDefaultSettings();
+			return;
+		}
+		else {
+			model = val;
+
+			applySettings();
+		}
+	});
+}
+
+function loadDefaultSettings() {
+
+	model = {
+		settingsSource: "DIRECT",
+		settingsUrl: "http://<your_url>",
+		settings: ""
+	}
+
+	jQuery.get("config.sample.js", function(res) {
+		model.settings = res;
+
+		applySettings();
+	});
+}
+
+function applySettings() {
+	gConfig = JSON.parse(model.settings);
+
+	getTabsToClose();
+}
 
 console.log("background.js");
 
 var gSettingsUrl;
 var gConfig;
-var gSettingsTab;
-var gTabs = [];
-var gNumTabsInserted;
-var gNextIndex = 0;
-var gMaxRotations = 5;
-var gRotationCounter = 0;
-var gEnableRotate = false;
 
+var g = getDefaultGlobals();
 
-var queryInactiveTabs = {
-	"currentWindow": true,
-	"active": false
+function getDefaultGlobals() {
+
+	return {
+		tabs: [],
+		enableRotate: true,
+		rotationCounter: 0,
+		maxRotations: 5,
+		nextIndex: 0
+	}
 }
 
+
+
+
 function start() {
-	gEnableRotate = true;
-	gNextIndex = 0;
+	g.nextIndex = 0;
 	getTabsToClose();
 }
 
-function stop() {
-	gEnableRotate = false;
-}
-
-chrome.storage.local.get("playPauseStatus", function(storage) {
-	console.log("playPauseStatus:");
-	console.log(storage);
-});
-
-function save() {
-
-	gSettingsUrl = jQuery("#settingsUrl").val();
-	chrome.storage.sync.set({"settingsUrl": gSettingsUrl});
-
-	gConfig = JSON.parse(jQuery("#settingsTextArea").val());
-	chrome.storage.sync.set({"settings": gConfig});
 
 
-}
 
-function readUrlFromStorage() {
-
-	chrome.storage.sync.get("settingsUrl", function(storage) {
-		if(storage.settingsUrl) {
-			gSettingsUrl = storage.settingsUrl;
-		}
-		else {
-			gSettingsUrl = "config.sample.js";
-			chrome.storage.sync.set({"settingsUrl": gSettingsUrl});
-		}
-		jQuery("#settingsUrl").val(gSettingsUrl);
-	});
-}
-
-function readSettingsFromStorage() {
-
-	chrome.storage.sync.get("settings", function(storage) {
-		if(storage.settings) {
-			jQuery("#settingsTextArea").val(storage.settings);
-			gConfig = JSON.parse(storage.settings);
-		}
-		else {
-			jQuery.get("config.sample.js", null, function(response) {
-				jQuery("#settingsTextArea").val(response);
-				gConfig = JSON.parse(response);
-				chrome.storage.sync.set({"settings": response});
-			});
-		}
-		jQuery("#settingsUrl").val(gSettingsUrl);
-	});
-
-}
-
-function initEventHandlers() {
-
-	jQuery("#start").click(start);
-	jQuery("#stop").click(stop);
-	jQuery("#save").click(save);
-	jQuery("#fetchSettings").click(fetchSettings);
-
-	//chrome.storage.sync.clear();
-	readUrlFromStorage();
-	readSettingsFromStorage();
-}
-
-function fetchSettings() {
-	$.ajax({
-		dataType: "text",
-		url: gSettingsUrl,
-		success: fetchSuccess,
-		error: fetchError
-	});
-}
-
-function fetchSuccess(response) {
-	//jQuery("#settingsTextArea").val(JSON.stringify(response, null, 4));
-	jQuery("#settingsTextArea").val(response);
-
-}
-
-function fetchError() {
-	console.log("fetch error");
-}
-
-function loadSettings() {
-	jQuery.getJSON("config.sample.js", function(data) {
-		console.log(data);
-
-		chrome.storage.sync.set(data, function() {
-			chrome.storage.sync.get(null, function(val) {
-				console.log("storage returned:");
-				console.log(val);
-			})
-		})
-	});
-}
 
 function getTabsToClose() {
+
+	var queryInactiveTabs = {
+		"currentWindow": true
+	}
 
 	var tabIds = [];
 
 	chrome.tabs.query(queryInactiveTabs, function(tabs) {
 		for (var i = 0; i < tabs.length; i++) {
-			tabIds.push(tabs[i].id);
+
+			var tab = tabs[i];
+
+			if(!tab.url.startsWith("chrome")) {
+				tabIds.push(tabs[i].id);
+			}
 		};
 
 		closeTabs(tabIds);
@@ -147,86 +116,62 @@ function getTabsToClose() {
 function closeTabs(tabIds) {
 
 	chrome.tabs.remove(tabIds, function() {
-		getCurrentTab();
-	})
-}
 
-function loadConfig() {
-	jQuery.getJSON("config.js", function(config) {
-		console.log("config.js");
-		console.log(config);
-		gConfig = config;
-
-		getCurrentTab();
-	});
-}
-
-function getCurrentTab() {
-	chrome.tabs.getCurrent(function(tab) {
-		gSettingsTab = tab;
-
-		gNumTabsInserted = 0;
 		insertNextTab();
 	})
 }
 
+
 function insertNextTab() {
 
-	console.log("gNumTabsInserted:" + gNumTabsInserted);
+	console.log("g.tabs.length:" + g.tabs.length);
 
-	if(gNumTabsInserted >= gConfig.tabs.length) {
-		activateSettingsPage();
+	if(g.tabs.length >= gConfig.tabs.length) {
+		rotateTab();
 		return;
 	}
 
-	var url = gConfig.tabs[gNumTabsInserted].url;
+	var url = gConfig.tabs[g.tabs.length].url;
 	chrome.tabs.create({
-			"index": gNumTabsInserted,
+			"index": g.tabs.length,
 			"url": url
 		}, function(tab) {
 			console.log("Inserted tabId:" + tab.id);
-			gTabs.push(tab);
-			gNumTabsInserted++;
+			g.tabs.push(tab);
 			insertNextTab();
 		}
 	);
-}
-
-function activateSettingsPage() {
-	chrome.tabs.update(gSettingsTab.id, {"active": true}, function() {
-		rotateTab();
-	})
 }
 
 function rotateTab() {
 
 	console.log("rotateTab()");
 
-	if(!gEnableRotate)
+	if(!g.enableRotate)
 		return;
 
-	if(gRotationCounter++ >= gMaxRotations) {
+	if(g.rotationCounter++ >= g.maxRotations) {
 		//return;
 	}
 
-	var currentTab = gTabs[gNextIndex];
-	console.log("Current tab to show:" + gNextIndex);
+	var currentTab = g.tabs[g.nextIndex];
+	console.log("Current tab to show:" + g.nextIndex);
 
-	var sleepDuration = gConfig.tabs[gNextIndex].duration;
+	var sleepDuration = gConfig.tabs[g.nextIndex].duration;
 
 	// Show the current tab
 	console.log("Show tabId:" + currentTab.id);
 	chrome.tabs.update(currentTab.id, {"active": true}, function() {});
 
 	// Determine the next tab index
-	if(++gNextIndex >= gTabs.length) {
-		gNextIndex = 0;
+	if(++g.nextIndex >= g.tabs.length) {
+		g.nextIndex = 0;
 	}
-	console.log("Determined next tab to be:" + gNextIndex);
+	console.log("Determined next tab to be:" + g.nextIndex);
 
 	// Preload the future tab in advance
-	console.log("Preload tab:" + gNextIndex);
-	chrome.tabs.reload(gTabs[gNextIndex].id);
+	console.log("Preload tab:" + g.nextIndex);
+	chrome.tabs.reload(g.tabs[g.nextIndex].id);
 	
 	console.log("sleep for:" + sleepDuration);
 	setTimeout(rotateTab, sleepDuration * 1000);
@@ -284,4 +229,3 @@ function wakeUp() {
 
 
 
-jQuery(initEventHandlers);
