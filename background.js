@@ -40,6 +40,40 @@ function loadSettingsFromDisc() {
 	});
 }
 
+function reloadSettingsFromUrl() {
+	
+	jQuery.ajax({
+		url: model.settingsUrl,
+		dataType: "text",
+		success: function(res) {
+
+			if(validateSettings(res)) {
+				model.settings = res;
+				chrome.storage.sync.set(model, play);
+				return;
+			} else {
+				console.log("invalid settings file. Continuing with old settings");
+				play();
+			}
+		},
+		error: function() {
+			play();
+		},
+		complete: function() {
+
+		}
+	});
+}
+
+function validateSettings(settings) {
+	try {
+			JSON.parse(settings);
+	} catch (e) {
+			return false;
+	}
+	return true;
+}
+
 function loadDefaultSettings() {
 
 	model = {
@@ -171,6 +205,8 @@ function rotateTab() {
 		g.nextIndex = 0;
 		if(isReloadRequired()) {
 			console.log("reload required");
+			reloadSettingsFromUrl();
+			return;
 		} else {
 			console.log("reload not required");
 		}

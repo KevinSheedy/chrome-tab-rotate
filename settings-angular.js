@@ -50,6 +50,7 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 
 	$scope.save = function() {
 		chrome.storage.sync.set({
+			settingsUrl: $scope.settingsUrl,
 			settingsSource: $scope.settingsSource,
 			settings: $scope.settings
 		});
