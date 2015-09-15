@@ -1,5 +1,6 @@
 console.log("background.js");
 
+var gSettingsUrl;
 var gConfig;
 var gSettingsTab;
 var gTabs = [];
@@ -8,6 +9,7 @@ var gNextIndex = 0;
 var gMaxRotations = 5;
 var gRotationCounter = 0;
 var gEnableRotate = false;
+
 
 var queryInactiveTabs = {
 	"currentWindow": true,
@@ -23,10 +25,48 @@ function stop() {
 	gEnableRotate = false;
 }
 
+function save() {
+
+	gSettingsUrl = jQuery("#settingsUrl").val();
+	chrome.storage.sync.set({"settingsUrl": gSettingsUrl});
+
+}
+
+function readUrlFromStorage() {
+
+	chrome.storage.sync.get("settingsUrl", function(data) {
+		if(data.settingsUrl) {
+			gSettingsUrl = data.settingsUrl;
+		}
+		else {
+			gSettingsUrl = "config.sample.js";
+			chrome.storage.sync.set({"settingsUrl": gSettingsUrl});
+		}
+		jQuery("#settingsUrl").val(gSettingsUrl);
+	});
+
+}
+
 function initEventHandlers() {
 
 	jQuery("#start").click(start);
 	jQuery("#stop").click(stop);
+	jQuery("#save").click(save);
+
+	readUrlFromStorage();
+}
+
+function loadSettings() {
+	jQuery.getJSON("config.sample.js", function(data) {
+		console.log(data);
+
+		chrome.storage.sync.set(data, function() {
+			chrome.storage.sync.get(null, function(val) {
+				console.log("storage returned:");
+				console.log(val);
+			})
+		})
+	});
 }
 
 function getTabsToClose() {

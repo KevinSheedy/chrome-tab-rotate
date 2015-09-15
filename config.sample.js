@@ -1,4 +1,6 @@
 {
+	"enableSettingsAutoReload": false,
+	"settingsReloadIntervalMinutes": 60,
 	"tabs" : [
 		{
 			  "url" : "https://github.com/KevinSheedy/chrome-tab-rotate.git"
