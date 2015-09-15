@@ -10,7 +10,7 @@
     "default_popup": "play-pause.html",
     "default_title": "Start Tab Rotate"
   },
-  "options_page": "background.html",
+  "options_page": "settings.html",
   
   "permissions": [
     "activeTab",
