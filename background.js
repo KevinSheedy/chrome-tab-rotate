@@ -18,12 +18,18 @@ var queryInactiveTabs = {
 
 function start() {
 	gEnableRotate = true;
+	gNextIndex = 0;
 	getTabsToClose();
 }
 
 function stop() {
 	gEnableRotate = false;
 }
+
+chrome.storage.local.get("playPauseStatus", function(storage) {
+	console.log("playPauseStatus:");
+	console.log(storage);
+});
 
 function save() {
 
