@@ -76,7 +76,8 @@ function getDefaultGlobals() {
 		rotationCounter: 0,
 		maxRotations: 5,
 		nextIndex: 0,
-		timerId: null
+		timerId: null,
+		loadTime: (new Date()).getTime()
 	}
 }
 
@@ -168,6 +169,12 @@ function rotateTab() {
 	// Determine the next tab index
 	if(++g.nextIndex >= g.tabs.length) {
 		g.nextIndex = 0;
+		if(isReloadRequired()) {
+			console.log("reload required");
+		} else {
+			console.log("reload not required");
+		}
+
 	}
 	console.log("Determined next tab to be:" + g.nextIndex);
 
@@ -179,6 +186,19 @@ function rotateTab() {
 	g.timerId = setTimeout(rotateTab, sleepDuration * 1000);
 	
 	//console.log("what next???");
+}
+
+function isReloadRequired() {
+	var currentTimeMillis = (new Date()).getTime();
+	var millisSinceLastReload = currentTimeMillis - g.loadTime;
+
+	var reloadIntervalMillis = gConfig.reloadIntervalMinutes * 60 * 1000;
+
+	if(millisSinceLastReload > reloadIntervalMillis && gConfig.enableAutoReload) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 function init(config) {
