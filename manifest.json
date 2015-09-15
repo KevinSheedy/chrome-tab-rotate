@@ -11,6 +11,10 @@
     "default_title": "Start Tab Rotate"
   },
   "options_page": "settings.html",
+
+  "background": {
+    "scripts": ["background.js"]
+  },
   
   "permissions": [
     "activeTab",

@@ -30,6 +30,7 @@ function play() {
 
 	chrome.browserAction.setIcon({path: "img/Pause-38.png"});
 	chrome.storage.local.set({"playPauseStatus": "PLAYING"});
+	chrome.runtime.sendMessage({playPauseStatus: "PLAYING"});
 	renderStatus("Tab Rotate Running");
 }
 
@@ -37,5 +38,6 @@ function pause() {
 
 	chrome.browserAction.setIcon({path: "img/Play-38.png"});
 	chrome.storage.local.set({"playPauseStatus": "PAUSED"});
+	chrome.runtime.sendMessage({playPauseStatus: "PAUSED"});
 	renderStatus("Tab Rotate Stopped");
 }
