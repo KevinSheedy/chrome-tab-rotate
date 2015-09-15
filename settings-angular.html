@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en" ng-app="settingsApp">
+<head>
+	<meta charset="utf-8">
+	<title>My HTML File</title>
+	<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+	<link rel="stylesheet" href="settings.css">
+	<script src="bower_components/jquery/dist/jquery.min.js"></script>
+	<script src="bower_components/angularjs/angular.js"></script>
+	<script src="settings-angular.js"></script>
+</head>
+<body>
+
+	<form name="myForm" ng-controller="SettingsCtrl">
+
+		<div class="form-group">
+			<p>Load settings from:</p>
+			<label>
+				<input type="radio" ng-model="settingsSource" value="DIRECT">
+				Direct Input
+			</label><br/>
+
+			<label>
+				<input type="radio" ng-model="settingsSource" value="URL">
+				Url
+			</label>
+		</div>
+
+		<button ng-click="save()">Save</button>
+		<button ng-click="reloadSettingsFromDisc()">Cancel</button>
+		<button ng-click="resetDefaults()">Reset Defaults</button>
+		<button ng-click="clearStorage()">Clear Storage</button>
+
+		<div>json validation: {{isSettingsValid()}}</div>
+
+		<textarea id="settingsTextArea" ng-model="settings" ng-show="settingsSource == 'DIRECT'"></textarea>
+
+
+		<div id="urlContainer" class="form-group" ng-show="settingsSource == 'URL'">
+			<input type="text" class="form-control" ng-model="settingsUrl" id="settingsUrl"></input>
+			<button id="fetchSettings" ng-click="fetchSettings()">Test Connection</button>
+			<span>{{httpStatusText}}</span>
+			<pre>{{settings}}</pre>
+		</div>
+
+	 </form>
+
+</body>
+</html>
