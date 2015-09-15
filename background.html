@@ -3,10 +3,33 @@
 
 <head>
 	<script src="bower_components/jquery/dist/jquery.min.js"></script>
+	<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+	<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+	
 	<script src="background.js"></script>
+	<link rel="stylesheet" href="settings.css">
 </head>
 
 <body>
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-2"><label for="settingsUrl">Settings url:</label></div>
+			<div class="col-md-8"><input type="text" id="settingsUrl" value="http://"></input></div>
+			<div class="col-md-2"><button id="fetchSettings">Fetch json</button></div>
+		</div>
+	</div>
+
+	<button id="start">start</button>
+	<button id="stop">stop</button>
+
+	
+	
+	
+
+	<textarea id="settingsTextArea"></textarea>
 	<button id="save">save</button>
 </body>
 

@@ -7,14 +7,26 @@ var gNumTabsInserted;
 var gNextIndex = 0;
 var gMaxRotations = 5;
 var gRotationCounter = 0;
+var gEnableRotate = false;
 
 var queryInactiveTabs = {
 	"currentWindow": true,
 	"active": false
 }
 
-function main() {
+function start() {
+	gEnableRotate = true;
 	getTabsToClose();
+}
+
+function stop() {
+	gEnableRotate = false;
+}
+
+function initEventHandlers() {
+
+	jQuery("#start").click(start);
+	jQuery("#stop").click(stop);
 }
 
 function getTabsToClose() {
@@ -88,6 +100,9 @@ function activateSettingsPage() {
 function rotateTab() {
 
 	console.log("rotateTab()");
+
+	if(!gEnableRotate)
+		return;
 
 	if(gRotationCounter++ >= gMaxRotations) {
 		//return;
@@ -168,4 +183,4 @@ function wakeUp() {
 
 
 
-main();
+jQuery(initEventHandlers);

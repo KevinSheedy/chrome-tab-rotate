@@ -1,0 +1,12 @@
+#settingsTextArea {
+	width: 800px;
+	height: 600px;
+}
+
+#settingsUrl {
+	width: 100%;
+}
+
+label {
+	float: right;
+}
