@@ -21,6 +21,7 @@ function play() {
 }
 
 function pause() {
+	clearTimeout(g.timerId);
 	g.enableRotate = false;
 }
 
@@ -74,7 +75,8 @@ function getDefaultGlobals() {
 		enableRotate: true,
 		rotationCounter: 0,
 		maxRotations: 5,
-		nextIndex: 0
+		nextIndex: 0,
+		timerId: null
 	}
 }
 
@@ -174,7 +176,7 @@ function rotateTab() {
 	chrome.tabs.reload(g.tabs[g.nextIndex].id);
 	
 	console.log("sleep for:" + sleepDuration);
-	setTimeout(rotateTab, sleepDuration * 1000);
+	g.timerId = setTimeout(rotateTab, sleepDuration * 1000);
 	
 	//console.log("what next???");
 }
