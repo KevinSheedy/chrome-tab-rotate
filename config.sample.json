@@ -1,6 +1,7 @@
 {
 	"enableAutoReload": false,
 	"reloadIntervalMinutes": 60,
+	"fullscreen": true,
 	"websites" : [
 		{
 			"url" : "https://github.com/KevinSheedy/chrome-tab-rotate.git",

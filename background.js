@@ -175,6 +175,15 @@ function getTabsToClose() {
 
 function closeTabs(tabIds) {
 
+	console.log("Fullscreen: " + g.config.fullscreen);
+
+	if(g.config.fullscreen) {
+		chrome.windows.getCurrent({}, function(window) {
+			chrome.windows.update(window.id, {state: "fullscreen"});
+		})
+	}
+
+
 	chrome.tabs.remove(tabIds, function() {
 
 		insertNextTab();
@@ -190,6 +199,8 @@ function insertNextTab() {
 	}
 
 	var url = g.config.websites[g.tabs.length].url;
+	
+
 	chrome.tabs.create({
 			"index": g.tabs.length,
 			"url": url
