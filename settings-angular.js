@@ -2,74 +2,89 @@ var settingsApp = angular.module('settingsApp', []);
 
 settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 
-	var DEFAULT_SOURCE = "DIRECT";
-	var DEFAULT_URL = "http://<your_url>";
-	var DEFAULT_SETTINGS;
-	jQuery.get("config.sample.js", function(res) {
-		DEFAULT_SETTINGS = res;
 
-		$scope.reloadSettingsFromDisc();
-	})
 
-	$scope.settingsSource = DEFAULT_SOURCE;
+	var getDefaults = (function() {
 
-	$scope.fetchSettings = function() {
+		var DEFAULT_CONFIG = {
+			source: "DIRECT",
+			url: "http://<your_url>",
+			configFile: ""
+		}
 
-		$scope.httpStatusText = "pending..."
-		jQuery.ajax({
-			url: $scope.settingsUrl,
-			dataType: "text",
-			success: function(res) {
-				$scope.settings = res;
-				$scope.$apply();
-			},
-			error: function(res) {
-				$scope.$apply();
-			},
-			complete: function(jqXHR, textStatus) {
-				$scope.httpStatusText = textStatus;
-				$scope.$apply();
+		jQuery.get("config.sample.js", function(res) {
+			DEFAULT_CONFIG.configFile = res;
 
-			}
-		});
-	}
-
-	$scope.isSettingsValid = function() {
-		try {
-        JSON.parse($scope.settings);
-    } catch (e) {
-        return false;
-    }
-    return true;
-	}
-
-	$scope.resetDefaults = function() {
-		$scope.settingsSource = DEFAULT_SOURCE;
-		$scope.settings = DEFAULT_SETTINGS;
-	}
-
-	$scope.save = function() {
-		chrome.storage.sync.set({
-			settingsUrl: $scope.settingsUrl,
-			settingsSource: $scope.settingsSource,
-			settings: $scope.settings
-		});
-	}
-
-	$scope.reloadSettingsFromDisc = function() {
-
-		chrome.storage.sync.get(null, function(val) {
-			$scope.settingsSource = val.settingsSource || DEFAULT_SOURCE;
-			$scope.settings = val.settings || DEFAULT_SETTINGS;
-			$scope.settingsUrl = val.settingsUrl || DEFAULT_URL;
-			$scope.$apply();
+			initScope();
 		})
 
-	}
+		return function() {
+			return jQuery.extend({}, DEFAULT_CONFIG);
+		}
+	})();
 
-	$scope.clearStorage = function() {
-		chrome.storage.sync.clear();
-	}
+	function initScope() {
 
+
+		$scope.fetchSettings = function() {
+
+			$scope.httpStatusText = "pending..."
+			jQuery.ajax({
+				url: $scope.settings.url,
+				dataType: "text",
+				success: function(res) {
+					$scope.settings.configFile = res;
+					$scope.$apply();
+				},
+				error: function(res) {
+					$scope.$apply();
+				},
+				complete: function(jqXHR, textStatus) {
+					$scope.httpStatusText = textStatus;
+					$scope.$apply();
+
+				}
+			});
+		}
+
+		$scope.validateConfigFile = function() {
+			try {
+				JSON.parse($scope.settings.configFile);
+			} catch (e) {
+				return false;
+			}
+			return true;
+		}
+
+		$scope.resetDefaults = function() {
+			$scope.settings = getDefaults();
+		}
+
+		$scope.save = function() {
+			chrome.storage.sync.set($scope.settings, function() {
+				$scope.saveStatus = "Saved";
+				$scope.$apply();
+			});
+		}
+
+		$scope.reloadSettingsFromDisc = function() {
+
+			chrome.storage.sync.get(null, function(val) {
+
+				$scope.settings = jQuery.isEmptyObject(val) ? getDefaults() : val;
+				$scope.$apply();
+			})
+
+		}
+
+		$scope.clearStorage = function() {
+			chrome.storage.sync.clear();
+		}
+
+		$scope.settings = getDefaults();
+		$scope.reloadSettingsFromDisc();
+
+		$scope.$watch('settings', function() { $scope.saveStatus = "modified" }, true);
+	}
 
 });

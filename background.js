@@ -1,19 +1,21 @@
+console.log("started daemon: background.js");
 document.addEventListener('DOMContentLoaded', function() {
-	console.log("foo.js");
+	console.log("DOM Loaded");
+	console.log("Listening for commands...");
+
+	chrome.runtime.onMessage.addListener( function(request) {
+		console.log("Received Command: " + request.playPauseStatus);
+
+		if(request.playPauseStatus == "PLAY")
+			play();
+		else
+			pause();
+	});
 });
 
 
-chrome.runtime.onMessage.addListener( function(request) {
-	console.log("Got message:" + request.playPauseStatus);
 
-	if(request.playPauseStatus == "PLAYING")
-		play();
-	else
-		pause();
-});
 
-var model;
-var gConfig;
 
 function play() {
 
@@ -26,14 +28,19 @@ function pause() {
 }
 
 function loadSettingsFromDisc() {
-	g = getDefaultGlobals();
-	chrome.storage.sync.get(null, function(val) {
-		if(!val.settings) {
+
+	// Should we do this here??
+	g = resetGlobals();
+
+	chrome.storage.sync.get(null, function(settings) {
+
+
+		if(jQuery.isEmptyObject(settings)) {
 			loadDefaultSettings();
 			return;
 		}
 		else {
-			model = val;
+			g.config = parseSettings(settings);
 
 			applySettings();
 		}
@@ -43,13 +50,14 @@ function loadSettingsFromDisc() {
 function reloadSettingsFromUrl() {
 	
 	jQuery.ajax({
-		url: model.settingsUrl,
+		url: g.config.url,
 		dataType: "text",
 		success: function(res) {
 
-			if(validateSettings(res)) {
-				model.settings = res;
-				chrome.storage.sync.set(model, play);
+			g.settings.configFile = res;
+			if(validateSettings(g.settings)) {
+				g.config = parseSettings(g.settings);
+				chrome.storage.sync.set(g.settings, play);
 				return;
 			} else {
 				console.log("invalid settings file. Continuing with old settings");
@@ -67,42 +75,56 @@ function reloadSettingsFromUrl() {
 
 function validateSettings(settings) {
 	try {
-			JSON.parse(settings);
+		JSON.parse(settings);
 	} catch (e) {
-			return false;
+		return false;
 	}
 	return true;
 }
 
 function loadDefaultSettings() {
 
-	model = {
-		settingsSource: "DIRECT",
-		settingsUrl: "http://<your_url>",
-		settings: ""
+	var settings = getDefaultSettings();
+
+	g.config = parseSettings(settings);
+
+	applySettings();
+}
+
+var getDefaultSettings = (function() {
+
+	var DEFAULT_CONFIG = {
+		source: "DIRECT",
+		url: "http://<your_url>",
+		configFile: ""
 	}
 
 	jQuery.get("config.sample.js", function(res) {
-		model.settings = res;
+		DEFAULT_CONFIG.configFile = res;
+	})
 
-		applySettings();
-	});
-}
+	return function() {
+		return jQuery.extend({}, DEFAULT_CONFIG);
+	}
+})();
 
 function applySettings() {
-	gConfig = JSON.parse(model.settings);
 
 	getTabsToClose();
 }
 
-console.log("background.js");
+function parseSettings(settings) {
 
-var gSettingsUrl;
-var gConfig;
+	var config = JSON.parse(settings.configFile);
 
-var g = getDefaultGlobals();
+	config.url = settings.url;
+	return config;
+}
 
-function getDefaultGlobals() {
+
+var g = resetGlobals();
+
+function resetGlobals() {
 
 	return {
 		tabs: [],
@@ -111,7 +133,8 @@ function getDefaultGlobals() {
 		maxRotations: 5,
 		nextIndex: 0,
 		timerId: null,
-		loadTime: (new Date()).getTime()
+		loadTime: (new Date()).getTime(),
+		config: {}
 	}
 }
 
@@ -161,19 +184,17 @@ function closeTabs(tabIds) {
 
 function insertNextTab() {
 
-	console.log("g.tabs.length:" + g.tabs.length);
-
-	if(g.tabs.length >= gConfig.tabs.length) {
+	if(g.tabs.length >= g.config.websites.length) {
 		rotateTab();
 		return;
 	}
 
-	var url = gConfig.tabs[g.tabs.length].url;
+	var url = g.config.websites[g.tabs.length].url;
 	chrome.tabs.create({
 			"index": g.tabs.length,
 			"url": url
 		}, function(tab) {
-			console.log("Inserted tabId:" + tab.id);
+			console.log("Inserted tabId: " + tab.id);
 			g.tabs.push(tab);
 			insertNextTab();
 		}
@@ -192,12 +213,11 @@ function rotateTab() {
 	}
 
 	var currentTab = g.tabs[g.nextIndex];
-	console.log("Current tab to show:" + g.nextIndex);
 
-	var sleepDuration = gConfig.tabs[g.nextIndex].duration;
+	var sleepDuration = g.config.websites[g.nextIndex].duration;
 
 	// Show the current tab
-	console.log("Show tabId:" + currentTab.id);
+	console.log("Show tab:" + g.nextIndex);
 	chrome.tabs.update(currentTab.id, {"active": true}, function() {});
 
 	// Determine the next tab index
@@ -212,7 +232,6 @@ function rotateTab() {
 		}
 
 	}
-	console.log("Determined next tab to be:" + g.nextIndex);
 
 	// Preload the future tab in advance
 	console.log("Preload tab:" + g.nextIndex);
@@ -228,9 +247,9 @@ function isReloadRequired() {
 	var currentTimeMillis = (new Date()).getTime();
 	var millisSinceLastReload = currentTimeMillis - g.loadTime;
 
-	var reloadIntervalMillis = gConfig.reloadIntervalMinutes * 60 * 1000;
+	var reloadIntervalMillis = g.config.reloadIntervalMinutes * 60 * 1000;
 
-	if(millisSinceLastReload > reloadIntervalMillis && gConfig.enableAutoReload) {
+	if(millisSinceLastReload > reloadIntervalMillis && g.config.enableAutoReload) {
 		return true;
 	} else {
 		return false;
@@ -277,7 +296,7 @@ var nextIndex = 0;
 
 function wakeUp() {
 
-	initTabs(gConfig.tabs);
+	initTabs(g.config.websites);
 
 	chrome.tabs.query({"currentWindow": true}, function(tabs){
 		var tab = tabs[nextIndex];

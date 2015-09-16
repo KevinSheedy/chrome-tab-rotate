@@ -16,31 +16,32 @@
 		<div class="form-group">
 			<p>Load settings from:</p>
 			<label>
-				<input type="radio" ng-model="settingsSource" value="DIRECT">
+				<input type="radio" ng-model="settings.source" value="DIRECT">
 				Direct Input
 			</label><br/>
 
 			<label>
-				<input type="radio" ng-model="settingsSource" value="URL">
+				<input type="radio" ng-model="settings.source" value="URL">
 				Url
 			</label>
 		</div>
 
 		<button ng-click="save()">Save</button>
+		<span>{{saveStatus}}</span>
 		<button ng-click="reloadSettingsFromDisc()">Cancel</button>
 		<button ng-click="resetDefaults()">Reset Defaults</button>
 		<button ng-click="clearStorage()">Clear Storage</button>
 
-		<div>json validation: {{isSettingsValid()}}</div>
+		<div>json validation: {{validateConfigFile()}}</div>
 
-		<textarea id="settingsTextArea" ng-model="settings" ng-show="settingsSource == 'DIRECT'"></textarea>
+		<textarea id="settingsTextArea" ng-model="settings.configFile" ng-show="settings.source == 'DIRECT'"></textarea>
 
 
-		<div id="urlContainer" class="form-group" ng-show="settingsSource == 'URL'">
-			<input type="text" class="form-control" ng-model="settingsUrl" id="settingsUrl"></input>
+		<div id="urlContainer" class="form-group" ng-show="settings.source == 'URL'">
+			<input type="text" class="form-control" ng-model="settings.url" id="settingsUrl"></input>
 			<button id="fetchSettings" ng-click="fetchSettings()">Test Connection</button>
 			<span>{{httpStatusText}}</span>
-			<pre>{{settings}}</pre>
+			<pre>{{settings.configFile}}</pre>
 		</div>
 
 	 </form>
