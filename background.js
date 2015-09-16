@@ -99,7 +99,7 @@ var getDefaultSettings = (function() {
 		configFile: ""
 	}
 
-	jQuery.get("config.sample.js", function(res) {
+	jQuery.get("config.sample.json", function(res) {
 		DEFAULT_CONFIG.configFile = res;
 	})
 
