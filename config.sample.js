@@ -7,11 +7,11 @@
 			"duration" : 10
 		},
 		{
-			"url" : "https://ie.linkedin.com/in/kevinsheedy",
+			"url" : "https://chrome.google.com/webstore/detail/tab-rotate/pjgjpabbgnnoohijnillgbckikfkbjed",
 			"duration" : 10
 		},
 		{
-			"url" : "https://chrome.google.com/webstore/category/extensions?id=cpadaeehpkmldcklckacjbpicninanbe",
+			"url" : "https://ie.linkedin.com/in/kevinsheedy",
 			"duration" : 10
 		}
 	]
