@@ -6,3 +6,31 @@
 #settingsUrl {
 	width: 100%;
 }
+
+#input-source-container {
+	margin-left: 30px;
+}
+
+#resets-container {
+	text-align: right;
+}
+
+#json-validation-message {
+	text-align: right;
+}
+
+#main-container {
+	width: 900px;
+}
+
+form {
+	margin-left: 20px;
+}
+
+.help-block {
+	font-weight: bold;
+}
+
+#url-container, #json-response-container {
+	margin-left: 60px;
+}

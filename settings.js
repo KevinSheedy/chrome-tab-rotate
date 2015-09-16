@@ -34,9 +34,11 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 				dataType: "text",
 				success: function(res) {
 					$scope.settings.configFile = res;
+					$scope.urlValid = true;
 					$scope.$apply();
 				},
 				error: function(res) {
+					$scope.urlValid = false;
 					$scope.$apply();
 				},
 				complete: function(jqXHR, textStatus) {
@@ -62,7 +64,7 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 
 		$scope.save = function() {
 			chrome.storage.sync.set($scope.settings, function() {
-				$scope.saveStatus = "Saved";
+				$scope.formStatus = "SAVED";
 				$scope.$apply();
 			});
 		}
@@ -72,6 +74,7 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 			chrome.storage.sync.get(null, function(val) {
 
 				$scope.settings = jQuery.isEmptyObject(val) ? getDefaults() : val;
+				$scope.formStatus == "CLEAN";
 				$scope.$apply();
 			})
 
@@ -84,7 +87,20 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 		$scope.settings = getDefaults();
 		$scope.reloadSettingsFromDisc();
 
-		$scope.$watch('settings', function() { $scope.saveStatus = "modified" }, true);
+		$scope.$watch('settings', function() {
+			$scope.formStatus = "MODIFIED";
+		}, true);
+
+		$scope.formStatus = "CLEAN";
+
+		$scope.formMessage = function() {
+			if($scope.formStatus == "MODIFIED")
+				return "modified";
+			else if($scope.formStatus == "SAVED")
+				return "Saved";
+			else
+				return "";
+		}
 	}
 
 });

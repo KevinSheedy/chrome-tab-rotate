@@ -2,7 +2,7 @@
 <html lang="en" ng-app="settingsApp">
 <head>
 	<meta charset="utf-8">
-	<title>Tab Rotate Settings</title>
+	<title>Tab Rotate Options</title>
 	<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="settings.css">
 	<script src="bower_components/jquery/dist/jquery.min.js"></script>
@@ -11,40 +11,67 @@
 </head>
 <body>
 
-	<form name="myForm" ng-controller="SettingsCtrl">
+	<div id="main-container" class="container">
 
-		<div class="form-group">
-			<p>Load settings from:</p>
-			<label>
-				<input type="radio" ng-model="settings.source" value="DIRECT">
-				Direct Input
-			</label><br/>
-
-			<label>
-				<input type="radio" ng-model="settings.source" value="URL">
-				Url
-			</label>
-		</div>
-
-		<button ng-click="save()">Save</button>
-		<span>{{saveStatus}}</span>
-		<button ng-click="reloadSettingsFromDisc()">Cancel</button>
-		<button ng-click="resetDefaults()">Reset Defaults</button>
-		<button ng-click="clearStorage()">Clear Storage</button>
-
-		<div>json validation: {{validateConfigFile()}}</div>
-
-		<textarea id="settingsTextArea" ng-model="settings.configFile" ng-show="settings.source == 'DIRECT'"></textarea>
+		<h1>Tab Rotate Options</h1>
 
 
-		<div id="urlContainer" class="form-group" ng-show="settings.source == 'URL'">
-			<input type="text" class="form-control" ng-model="settings.url" id="settingsUrl"></input>
-			<button id="fetchSettings" ng-click="fetchSettings()">Test Connection</button>
-			<span>{{httpStatusText}}</span>
-			<pre>{{settings.configFile}}</pre>
-		</div>
+		<form name="myForm" ng-controller="SettingsCtrl">
 
-	 </form>
+			<div id="resets-container">
+				<button ng-click="resetDefaults()">Reset Defaults</button>
+				<button ng-click="clearStorage()">Clear Storage</button>
+			</div>
+
+			<h3>Load Config from:</h3>
+			<div class="form-group" id="input-source-container">
+				<label>
+					<input type="radio" ng-model="settings.source" value="DIRECT">
+					Text Box
+				</label><br/>
+
+				<label>
+					<input type="radio" ng-model="settings.source" value="URL">
+					Url
+				</label>
+			</div>
+
+			
+			
+
+			<div class="form-group" ng-show="settings.source == 'DIRECT'" ng-class="validateConfigFile() ? 'has-success' : 'has-error'">
+				<textarea id="settingsTextArea" ng-model="settings.configFile"></textarea>
+				<div id="json-validation-message" class="help-block">JSON: {{validateConfigFile() ? "Valid" : "Invalid"}}</div>
+			</div>
+
+
+			<div id="url-container" class="form-group" ng-show="settings.source == 'URL'" ng-class="urlValid ? 'has-success' : 'has-error'">
+				<input type="text" class="form-control" ng-model="settings.url" id="settingsUrl"></input>
+				<button id="fetchSettings" ng-click="fetchSettings()">Test Url</button>
+				<span class="help-block">{{httpStatusText}}</span>
+			</div>
+
+			<div id="json-response-container" class="form-group" ng-show="settings.source == 'URL'" ng-class="validateConfigFile() ? 'has-success' : 'has-error'">
+				<pre>{{settings.configFile}}</pre>
+				<div id="json-validation-message" class="help-block">JSON: {{validateConfigFile() ? "Valid" : "Invalid"}}</div>
+			</div>
+
+			
+
+			<div class="row" ng-class="formStatus == 'SAVED' ? 'has-success' : 'has-error'">
+				
+				<div class="col-md-4">
+					<div class="form-group">
+						<button ng-click="reloadSettingsFromDisc()">Cancel</button>
+						<button ng-click="save()">Save</button>
+						<span class="help-block">{{formMessage()}}</span>
+					</div>
+				</div>
+			</div>
+
+		 </form>
+
+	 </div>
 
 </body>
 </html>
