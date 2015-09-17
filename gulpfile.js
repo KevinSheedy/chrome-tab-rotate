@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var del = require('del');
 var mainBowerFiles = require('main-bower-files');
 
 
@@ -8,21 +9,26 @@ gulp.task('source', function() {
 });
 
 gulp.task('img', function() {
-	return gulp.src('img/*').pipe(gulp.dest('dest/img'));
+	return gulp.src('**/img/**').pipe(gulp.dest('dest'));
 });
 
 gulp.task('bower', function() {
   return gulp.src([
-  		'*.html',
-  		'*.js',
-  		'*.json',
-  		'*.css'])
-  	.pipe(gulp.dest('dest'));
+  		  '**/jquery.min.js'
+  		, '**/angular.min.js'
+  		, '**/bootstrap.min.css'
+
+  	])
+  .pipe(gulp.dest('dest'));
 });
 
-gulp.task('bower', function() {
+gulp.task('bower_foo', function() {
     return gulp.src(mainBowerFiles(/* options */), { base: 'bower_components' })
         .pipe(gulp.dest('dest/bower_components'))
 });
 
-gulp.task('default', ['source', 'img']);
+gulp.task('clean', function() {
+	return del(['dest']);
+});
+
+gulp.task('default', ['clean', 'source', 'img', 'bower']);

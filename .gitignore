@@ -2,4 +2,6 @@ bower_components
 node_modules
 config.json
 dist
+dest
+zip
 tab-rotate*.zip
