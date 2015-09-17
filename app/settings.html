@@ -16,7 +16,7 @@
 		<h1>Tab Rotate Options</h1>
 
 
-		<form name="myForm" ng-controller="SettingsCtrl">
+		<form name="form" ng-controller="SettingsCtrl">
 
 			<div id="resets-container">
 				<button ng-click="resetDefaults()">Reset Defaults</button>
@@ -58,13 +58,14 @@
 
 			
 
-			<div class="row" ng-class="formStatus == 'SAVED' ? 'has-success' : 'has-error'">
+			<div class="row" ng-class="form.$pristine ? 'has-success' : 'has-error'">
 				
 				<div class="col-md-4">
 					<div class="form-group">
 						<button ng-click="reloadSettingsFromDisc()">Cancel</button>
 						<button ng-click="save()">Save</button>
-						<span class="help-block">{{formMessage()}}</span>
+						<span class="help-block" ng-show="form.$dirty">Modified</span>
+						<span class="help-block" ng-show="formSaved && !form.$dirty">Saved</span>
 					</div>
 				</div>
 			</div>

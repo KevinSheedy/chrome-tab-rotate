@@ -60,11 +60,13 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 
 		$scope.resetDefaults = function() {
 			$scope.settings = getDefaults();
+			$scope.form.$setDirty();
 		}
 
 		$scope.save = function() {
 			chrome.storage.sync.set($scope.settings, function() {
-				$scope.formStatus = "SAVED";
+				$scope.formSaved = true;
+				$scope.form.$setPristine();
 				$scope.$apply();
 			});
 		}
@@ -74,7 +76,7 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 			chrome.storage.sync.get(null, function(val) {
 
 				$scope.settings = jQuery.isEmptyObject(val) ? getDefaults() : val;
-				$scope.formStatus == "CLEAN";
+				$scope.form.$setPristine();
 				$scope.$apply();
 			})
 
