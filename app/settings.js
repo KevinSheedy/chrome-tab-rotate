@@ -1,4 +1,4 @@
-var settingsApp = angular.module('settingsApp', []);
+var settingsApp = angular.module('settingsApp', ['ui']);
 
 settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 
@@ -58,6 +58,15 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 			return true;
 		}
 
+		$scope.isValidConfigFile = function(val) {
+			try {
+				JSON.parse(val);
+			} catch (e) {
+				return false;
+			}
+			return true;
+		}
+
 		$scope.resetDefaults = function() {
 			$scope.settings = getDefaults();
 			$scope.form.$setDirty();
@@ -103,6 +112,15 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 			else
 				return "";
 		}
+
+		$scope.alwaysTrue = function() {
+			return true;
+		}
+
+		$scope.alwaysFalse = function() {
+			return false;
+		}
+
 	}
 
 });

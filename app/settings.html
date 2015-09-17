@@ -7,6 +7,9 @@
 	<link rel="stylesheet" href="settings.css">
 	<script src="../bower_components/jquery/dist/jquery.min.js"></script>
 	<script src="../bower_components/angularjs/angular.min.js"></script>
+	<script src="../bower_components/angular-ui/build/angular-ui.min.js"></script>
+	<script src="../bower_components/angular-ui/modules/directives/validate/validate.js"></script>
+
 	<script src="settings.js"></script>
 </head>
 <body>
@@ -40,13 +43,13 @@
 			
 
 			<div class="form-group" ng-show="settings.source == 'DIRECT'" ng-class="validateConfigFile() ? 'has-success' : 'has-error'">
-				<textarea id="settingsTextArea" ng-model="settings.configFile"></textarea>
+				<textarea id="settingsTextArea" name="configFile" ng-model="settings.configFile" ui-validate="'isValidConfigFile($value)'"></textarea>
 				<div id="json-validation-message" class="help-block">JSON: {{validateConfigFile() ? "Valid" : "Invalid"}}</div>
 			</div>
 
 
 			<div id="url-container" class="form-group" ng-show="settings.source == 'URL'" ng-class="urlValid ? 'has-success' : 'has-error'">
-				<input type="text" class="form-control" ng-model="settings.url" id="settingsUrl"></input>
+				<input type="text" class="form-control" ng-model="settings.url" id="settingsUrl" ></input>
 				<button id="fetchSettings" ng-click="fetchSettings()">Test Url</button>
 				<span class="help-block">{{httpStatusText}}</span>
 			</div>
@@ -69,6 +72,9 @@
 					</div>
 				</div>
 			</div>
+
+			<div>form.$valid: {{form.$valid}}</div>
+			<div>form.configFile.$valid: {{form.configFile.$valid}}</div>
 
 		 </form>
 
