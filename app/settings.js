@@ -12,7 +12,7 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 			configFile: ""
 		}
 
-		jQuery.get("config.sample.json", function(res) {
+		jQuery.get("/app/config.sample.json", function(res) {
 			DEFAULT_CONFIG.configFile = res;
 
 			initScope();
