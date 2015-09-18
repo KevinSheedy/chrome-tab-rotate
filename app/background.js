@@ -95,7 +95,7 @@ var getDefaultSettings = (function() {
 
 	var DEFAULT_CONFIG = {
 		source: "DIRECT",
-		url: "http://<your_url>",
+		url: "http://_url_to_your_config_file.json",
 		configFile: ""
 	}
 

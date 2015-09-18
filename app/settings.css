@@ -1,6 +1,5 @@
-#settingsTextArea {
+pre, #configTextArea {
 	width: 800px;
-	height: 600px;
 }
 
 #settingsUrl {
@@ -34,4 +33,22 @@ form {
 
 #url-container, #json-response-container {
 	margin-left: 60px;
+}
+
+pre, .code {
+	font: 100% Consolas, Monaco, monospace;
+	background: #f5f2f0;
+	text-shadow: 0 1px white;
+	white-space: pre;
+	word-wrap: normal;
+	tab-size: 4;
+	color: black;
+	padding: 1em;
+	font-size: 16px;
+	height: 40em;
+
+}
+
+pre {
+	cursor: pointer;
 }

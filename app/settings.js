@@ -8,7 +8,7 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 
 		var DEFAULT_CONFIG = {
 			source: "DIRECT",
-			url: "http://<your_url>",
+			url: "http://_url_to_your_config_file.json",
 			configFile: ""
 		}
 
@@ -27,6 +27,7 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 
 		$scope.isFetchInProgress = false;
 		$scope.fetchSucceeded = true;
+		$scope.editMode = false;
 
 		$scope.fetchSettings = function() {
 
@@ -78,6 +79,7 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 		$scope.save = function() {
 			chrome.storage.sync.set($scope.settings, function() {
 				$scope.formSaved = true;
+				$scope.editMode = false;
 				$scope.form.$setPristine();
 				$scope.$apply();
 			});
@@ -107,6 +109,13 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 
 		$scope.$watch('settings.configFile', function() {
 			Prism.highlightAll();
+		}, true);
+
+		$scope.$watch('editMode', function() {
+			if($scope.editMode) {
+				document.getElementById("configTextArea").focus();
+			}
+
 		}, true);
 
 
