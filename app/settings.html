@@ -45,7 +45,7 @@
 
 			<div class="form-group" ng-show="settings.source == 'DIRECT'" ng-class="validateConfigFile() ? 'has-success' : 'has-error'">
 				<textarea id="configTextArea" name="configTextArea" ng-show="editMode" ng-blur="editMode = false" name="configFile" class="code" ng-model="settings.configFile" ui-validate="'isValidConfigFile($value)'"></textarea>
-				<pre ng-show="!editMode" ng-click="editMode = true"><code class="language-javascript">{{settings.configFile}}</code></pre>
+				<pre ng-show="!editMode" ng-click="editMode = true"><code class="config-code-block language-javascript" prism>{{settings.configFile}}</code></pre>
 				<div id="json-validation-message" class="help-block">JSON: {{validateConfigFile() ? "Valid" : "Invalid"}}</div>
 			</div>
 
@@ -58,7 +58,7 @@
 			</div>
 
 			<div id="json-response-container" class="form-group" ng-show="settings.source == 'URL'" ng-class="validateConfigFile() ? 'has-success' : 'has-error'">
-				<pre ng-click="settings.source = 'DIRECT'; editMode = true;"><code class="language-javascript">{{settings.configFile}}</code></pre>
+				<pre ng-click="settings.source = 'DIRECT'; editMode = true;"><code class="config-code-block language-javascript">{{settings.configFile}}</code></pre>
 				<div id="json-validation-message" class="help-block">JSON: {{validateConfigFile() ? "Valid" : "Invalid"}}</div>
 			</div>
 

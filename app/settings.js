@@ -40,6 +40,7 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 					$scope.settings.configFile = res;
 					$scope.fetchSucceeded = true;
 					$scope.$apply();
+					Prism.highlightAll();
 				},
 				error: function(res) {
 					$scope.fetchSucceeded = false;
@@ -107,7 +108,9 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 			$scope.formStatus = "MODIFIED";
 		}, true);
 
-		$scope.$watch('settings.configFile', function() {
+		// HACK: Prism seems to break angular bindings
+		$scope.$watch('settings.configFile', function(val) {
+			jQuery(".config-code-block").text(val);
 			Prism.highlightAll();
 		}, true);
 
@@ -146,3 +149,17 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 	}
 
 });
+
+
+angular.module('Prism', []).
+	directive('prism', [function() {
+		return {
+			restrict: 'A',
+			link: function ($scope, element, attrs) {
+				element.ready(function() {
+					Prism.highlightElement(element[0]);
+				});
+			}
+		} 
+	}]
+);
