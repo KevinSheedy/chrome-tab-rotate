@@ -25,24 +25,27 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 
 	function initScope() {
 
+		$scope.isFetchInProgress = false;
+		$scope.fetchSucceeded = true;
 
 		$scope.fetchSettings = function() {
 
 			$scope.httpStatusText = "pending..."
+			$scope.isFetchInProgress = true;
 			jQuery.ajax({
 				url: $scope.settings.url,
 				dataType: "text",
 				success: function(res) {
 					$scope.settings.configFile = res;
-					$scope.urlValid = true;
+					$scope.fetchSucceeded = true;
 					$scope.$apply();
 				},
 				error: function(res) {
-					$scope.urlValid = false;
+					$scope.fetchSucceeded = false;
 					$scope.$apply();
 				},
 				complete: function(jqXHR, textStatus) {
-					$scope.httpStatusText = textStatus;
+					$scope.isFetchInProgress = false;
 					$scope.$apply();
 
 				}
@@ -119,6 +122,10 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 
 		$scope.alwaysFalse = function() {
 			return false;
+		}
+
+		$scope.isValidUrl = function() {
+			return $scope.form.url.$pristine || $scope.fetchSucceeded;
 		}
 
 	}

@@ -4,7 +4,8 @@
 }
 
 #settingsUrl {
-	width: 100%;
+	width: 88%;
+	display: inline;
 }
 
 #input-source-container {

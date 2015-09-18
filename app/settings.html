@@ -48,10 +48,11 @@
 			</div>
 
 
-			<div id="url-container" class="form-group" ng-show="settings.source == 'URL'" ng-class="urlValid ? 'has-success' : 'has-error'">
-				<input type="text" class="form-control" ng-model="settings.url" id="settingsUrl" ></input>
-				<button id="fetchSettings" ng-click="fetchSettings()">Test Url</button>
-				<span class="help-block">{{httpStatusText}}</span>
+			<div id="url-container" class="form-group" ng-show="settings.source == 'URL'" ng-class="{'has-success' : form.url.$dirty && isValidUrl(), 'has-error': form.url.$dirty && !isValidUrl(), 'has-feedback': isFetchInProgress}">
+				<button id="fetchSettings" ng-click="fetchSettings()" class="btn btn-primary">Test Url</button>
+				<input type="text" class="form-control" name="url" ng-model="settings.url" id="settingsUrl" ui-validate="'isValidUrl()'"></input>
+				<span class="help-block" ng-show="isFetchInProgress">fetching...</span>
+				<span class="help-block" ng-show="!fetchSucceeded && !isFetchInProgress">failed</span>
 			</div>
 
 			<div id="json-response-container" class="form-group" ng-show="settings.source == 'URL'" ng-class="validateConfigFile() ? 'has-success' : 'has-error'">
