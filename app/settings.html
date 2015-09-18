@@ -61,20 +61,18 @@
 
 			
 
-			<div class="row" ng-class="form.$pristine ? 'has-success' : 'has-error'">
+			<div class="row">
 				
 				<div class="col-md-4">
-					<div class="form-group">
-						<button ng-click="reloadSettingsFromDisc()">Cancel</button>
-						<button ng-click="save()">Save</button>
+
+					<div class="form-group" ng-class="{'has-success': form.$pristine && form.$valid, 'has-error': !form.$valid, 'has-feedback': form.$dirty}" >
+						<button ng-click="reloadSettingsFromDisc()" ng-disabled="form.$pristine" class="btn btn-default btn-lg">Cancel</button>
+						<button ng-click="save()" ng-disabled="form.$pristine" class="btn btn-lg btn-primary">Save</button>
 						<span class="help-block" ng-show="form.$dirty">Modified</span>
 						<span class="help-block" ng-show="formSaved && !form.$dirty">Saved</span>
 					</div>
 				</div>
 			</div>
-
-			<div>form.$valid: {{form.$valid}}</div>
-			<div>form.configFile.$valid: {{form.configFile.$valid}}</div>
 
 		 </form>
 
