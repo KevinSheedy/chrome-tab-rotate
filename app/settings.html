@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<title>Tab Rotate Options</title>
 	<link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../bower_components/prism/themes/prism.css">
 	<link rel="stylesheet" href="settings.css">
 	<script src="../bower_components/jquery/dist/jquery.min.js"></script>
 	<script src="../bower_components/angularjs/angular.min.js"></script>
@@ -56,7 +57,7 @@
 			</div>
 
 			<div id="json-response-container" class="form-group" ng-show="settings.source == 'URL'" ng-class="validateConfigFile() ? 'has-success' : 'has-error'">
-				<pre>{{settings.configFile}}</pre>
+				<pre><code class="language-javascript">{{settings.configFile}}</code></pre>
 				<div id="json-validation-message" class="help-block">JSON: {{validateConfigFile() ? "Valid" : "Invalid"}}</div>
 			</div>
 
@@ -78,6 +79,11 @@
 		 </form>
 
 	 </div>
+
+
+	<script src="../bower_components/prism/prism.js"></script>
+	<script src="../bower_components/prism/components/prism-javascript.min.js"></script>
+
 
 </body>
 </html>

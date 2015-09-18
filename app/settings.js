@@ -105,6 +105,12 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 			$scope.formStatus = "MODIFIED";
 		}, true);
 
+		$scope.$watch('settings.configFile', function() {
+			Prism.highlightAll();
+		}, true);
+
+
+
 		$scope.formStatus = "CLEAN";
 
 		$scope.formMessage = function() {

@@ -17,6 +17,9 @@ gulp.task('bower', function() {
 		  '**/jquery.min.js'
 		, '**/angular.min.js'
 		, '**/bootstrap.min.css'
+		, '**/prism.css'
+		, '**/prism.js'
+		, '**/prism-javascript.min.js'
 
 	])
 	.pipe(gulp.dest('dest'));
