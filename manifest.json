@@ -3,7 +3,7 @@
 
   "name": "Tab Rotate",
   "description": "Loop through a set of tabs - ideal for a Dashboard or Advertisement Display",
-  "version": "0.0.3",
+  "version": "0.0.4",
 
   "browser_action": {
     "default_icon": "app/img/Play-38.png",
@@ -27,6 +27,8 @@
     "activeTab",
     "storage",
     "https://ajax.googleapis.com/",
+    "http://*/",
+    "https://*/",
     "tabs"
   ]
 }
