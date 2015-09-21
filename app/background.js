@@ -40,6 +40,7 @@ function loadSettingsFromDisc() {
 			return;
 		}
 		else {
+			g.settings = settings;
 			g.config = parseSettings(settings);
 
 			applySettings();
@@ -54,8 +55,8 @@ function reloadSettingsFromUrl() {
 		dataType: "text",
 		success: function(res) {
 
-			g.settings.configFile = res;
-			if(validateSettings(g.settings)) {
+			if(validateConfigFile(res)) {
+				g.settings.configFile = res;
 				g.config = parseSettings(g.settings);
 				chrome.storage.sync.set(g.settings, play);
 				return;
@@ -73,9 +74,9 @@ function reloadSettingsFromUrl() {
 	});
 }
 
-function validateSettings(settings) {
+function validateConfigFile(configFile) {
 	try {
-		JSON.parse(settings);
+		JSON.parse(configFile);
 	} catch (e) {
 		return false;
 	}
@@ -134,6 +135,7 @@ function resetGlobals() {
 		nextIndex: 0,
 		timerId: null,
 		loadTime: (new Date()).getTime(),
+		settings: {},
 		config: {}
 	}
 }
@@ -235,11 +237,11 @@ function rotateTab() {
 	if(++g.nextIndex >= g.tabs.length) {
 		g.nextIndex = 0;
 		if(isReloadRequired()) {
-			console.log("reload required");
+			console.log("Reload settings from url: yes");
 			reloadSettingsFromUrl();
 			return;
 		} else {
-			console.log("reload not required");
+			console.log("Reload settings from url: no");
 		}
 
 	}
