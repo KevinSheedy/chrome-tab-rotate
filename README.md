@@ -10,10 +10,10 @@ Allows Chrome to automatically cycle through a set of tabs. Ideal for a Dashboar
 
 ## Settings
 
-### enableAutoReload - boolean
+### readSettingsFromUrl - boolean
 Automatically reload the settings file from the url provided.
 
-### reloadIntervalMinutes - integer
+### settingsReloadIntervalMinutes - integer
 Interval at which the settings file is reloaded.
 
 ### fullscreen - boolean
@@ -29,8 +29,8 @@ Open Chrome in fullscreen mode
 
 ```json
 {
-	"enableAutoReload": false,
-	"reloadIntervalMinutes": 60,
+	"readSettingsFromUrl": false,
+	"settingsReloadIntervalMinutes": 60,
 	"fullscreen": true,
 	"websites" : [
 		{

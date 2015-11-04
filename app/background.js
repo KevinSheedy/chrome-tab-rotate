@@ -55,10 +55,12 @@ function reloadSettingsFromUrl() {
 		dataType: "text",
 		success: function(res) {
 			if(res == state.settings.configFile) {
-				console.log("Settings unchanged");
+				console.log("Settings changed: no");
+				beginCycling();
+				return;
 			}
 			else {
-				console.log("Settings changed");
+				console.log("Settings changed: yes");
 			}
 			if( validateConfigFile(res)) {
 				console.log("Settings are valid");
@@ -255,9 +257,9 @@ function isReloadRequired() {
 	var currentTimeMillis = (new Date()).getTime();
 	var millisSinceLastReload = currentTimeMillis - state.settingsLoadTime;
 
-	var reloadIntervalMillis = state.config.reloadIntervalMinutes * 60 * 1000;
+	var reloadIntervalMillis = state.config.settingsReloadIntervalMinutes * 60 * 1000;
 
-	if(millisSinceLastReload > reloadIntervalMillis && state.config.enableAutoReload) {
+	if(millisSinceLastReload > reloadIntervalMillis && state.config.readSettingsFromUrl) {
 		console.log("Reload settings from url: yes");
 		return true;
 	} else {
