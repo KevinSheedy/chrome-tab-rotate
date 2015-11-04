@@ -30,41 +30,50 @@ function loadSettingsFromDisc() {
 	// Should we do this here??
 	state = resetGlobals();
 
-	chrome.storage.sync.get(null, function(settings) {
+	console.log("Read settings from disc");
+	chrome.storage.sync.get(null, function(discSettings) {
 
-
-		if(jQuery.isEmptyObject(settings)) {
+		if(jQuery.isEmptyObject(discSettings)) {
 			loadDefaultSettings();
 			return;
 		}
 		else {
-			state.settings = settings;
-			state.config = parseSettings(settings);
+			state.settings = discSettings;
+			state.config = parseSettings(discSettings);
 
-			applySettings();
+			beginCycling();
 		}
 	});
 }
 
 function reloadSettingsFromUrl() {
+
+	state.settingsLoadTime = (new Date()).getTime();
 	
 	jQuery.ajax({
 		url: state.config.url,
 		dataType: "text",
 		success: function(res) {
-
-			if(validateConfigFile(res)) {
+			if(res == state.settings.configFile) {
+				console.log("Settings unchanged");
+			}
+			else {
+				console.log("Settings changed");
+			}
+			if( validateConfigFile(res)) {
+				console.log("Settings are valid");
 				state.settings.configFile = res;
 				state.config = parseSettings(state.settings);
-				chrome.storage.sync.set(state.settings, play);
+				console.log("Write settings to disc");
+				chrome.storage.sync.set(state.settings, beginCycling);
 				return;
 			} else {
 				console.log("invalid settings file. Continuing with old settings");
-				play();
+				beginCycling();
 			}
 		},
 		error: function() {
-			play();
+			beginCycling();
 		},
 		complete: function() {
 
@@ -87,7 +96,7 @@ function loadDefaultSettings() {
 
 	state.config = parseSettings(settings);
 
-	applySettings();
+	beginCycling();
 }
 
 var getDefaultSettings = (function() {
@@ -107,19 +116,6 @@ var getDefaultSettings = (function() {
 	}
 })();
 
-function applySettings() {
-
-	getTabsToClose();
-}
-
-function parseSettings(settings) {
-
-	var config = JSON.parse(settings.configFile);
-
-	config.url = settings.url;
-	return config;
-}
-
 function resetGlobals() {
 
 	return {
@@ -129,23 +125,29 @@ function resetGlobals() {
 		maxRotations: 5,
 		nextIndex: 0,
 		timerId: null,
-		loadTime: (new Date()).getTime(),
+		settingsLoadTime: 0,
 		settings: {},
 		config: {}
 	}
 }
 
+function beginCycling() {
 
-
-
-function start() {
-	state.nextIndex = 0;
-	getTabsToClose();
+	// Reload Settings from URL
+	if(isReloadRequired()) {
+		reloadSettingsFromUrl();
+	} else {
+		getTabsToClose();
+	}
 }
 
+function parseSettings(settings) {
 
+	var config = JSON.parse(settings.configFile);
 
-
+	config.url = settings.url;
+	return config;
+}
 
 function getTabsToClose() {
 
@@ -183,6 +185,7 @@ function closeTabs(tabIds) {
 
 	chrome.tabs.remove(tabIds, function() {
 
+		state.tabs = [];
 		insertNextTab();
 	})
 }
@@ -211,10 +214,14 @@ function insertNextTab() {
 
 function rotateTab() {
 
-	console.log("rotateTab()");
-
+	// Break out of infinite loop when pause is clicked
 	if(!state.enableRotate)
 		return;
+
+	if(state.nextIndex == 0 && isReloadRequired()) {
+		beginCycling()
+		return;
+	}
 
 	if(state.rotationCounter++ >= state.maxRotations) {
 		//return;
@@ -225,27 +232,20 @@ function rotateTab() {
 	var sleepDuration = state.config.websites[state.nextIndex].duration;
 
 	// Show the current tab
-	console.log("Show tab:" + state.nextIndex);
+	console.log("Show tab: " + state.nextIndex);
 	chrome.tabs.update(currentTab.id, {"active": true}, function() {});
 
 	// Determine the next tab index
 	if(++state.nextIndex >= state.tabs.length) {
 		state.nextIndex = 0;
-		if(isReloadRequired()) {
-			console.log("Reload settings from url: yes");
-			reloadSettingsFromUrl();
-			return;
-		} else {
-			console.log("Reload settings from url: no");
-		}
 
 	}
 
 	// Preload the future tab in advance
-	console.log("Preload tab:" + state.nextIndex);
+	console.log("Preload tab: " + state.nextIndex);
 	chrome.tabs.reload(state.tabs[state.nextIndex].id);
 	
-	console.log("sleep for:" + sleepDuration);
+	console.log("sleep for: " + sleepDuration);
 	state.timerId = setTimeout(rotateTab, sleepDuration * 1000);
 	
 	//console.log("what next???");
@@ -253,13 +253,15 @@ function rotateTab() {
 
 function isReloadRequired() {
 	var currentTimeMillis = (new Date()).getTime();
-	var millisSinceLastReload = currentTimeMillis - state.loadTime;
+	var millisSinceLastReload = currentTimeMillis - state.settingsLoadTime;
 
 	var reloadIntervalMillis = state.config.reloadIntervalMinutes * 60 * 1000;
 
 	if(millisSinceLastReload > reloadIntervalMillis && state.config.enableAutoReload) {
+		console.log("Reload settings from url: yes");
 		return true;
 	} else {
+		console.log("Reload settings from url: no");
 		return false;
 	}
 }
