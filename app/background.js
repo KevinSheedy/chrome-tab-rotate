@@ -13,9 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 });
 
-
-
-
+var state = resetGlobals();
 
 function play() {
 
@@ -23,14 +21,14 @@ function play() {
 }
 
 function pause() {
-	clearTimeout(g.timerId);
-	g.enableRotate = false;
+	clearTimeout(state.timerId);
+	state.enableRotate = false;
 }
 
 function loadSettingsFromDisc() {
 
 	// Should we do this here??
-	g = resetGlobals();
+	state = resetGlobals();
 
 	chrome.storage.sync.get(null, function(settings) {
 
@@ -40,8 +38,8 @@ function loadSettingsFromDisc() {
 			return;
 		}
 		else {
-			g.settings = settings;
-			g.config = parseSettings(settings);
+			state.settings = settings;
+			state.config = parseSettings(settings);
 
 			applySettings();
 		}
@@ -51,14 +49,14 @@ function loadSettingsFromDisc() {
 function reloadSettingsFromUrl() {
 	
 	jQuery.ajax({
-		url: g.config.url,
+		url: state.config.url,
 		dataType: "text",
 		success: function(res) {
 
 			if(validateConfigFile(res)) {
-				g.settings.configFile = res;
-				g.config = parseSettings(g.settings);
-				chrome.storage.sync.set(g.settings, play);
+				state.settings.configFile = res;
+				state.config = parseSettings(state.settings);
+				chrome.storage.sync.set(state.settings, play);
 				return;
 			} else {
 				console.log("invalid settings file. Continuing with old settings");
@@ -87,7 +85,7 @@ function loadDefaultSettings() {
 
 	var settings = getDefaultSettings();
 
-	g.config = parseSettings(settings);
+	state.config = parseSettings(settings);
 
 	applySettings();
 }
@@ -122,9 +120,6 @@ function parseSettings(settings) {
 	return config;
 }
 
-
-var g = resetGlobals();
-
 function resetGlobals() {
 
 	return {
@@ -144,7 +139,7 @@ function resetGlobals() {
 
 
 function start() {
-	g.nextIndex = 0;
+	state.nextIndex = 0;
 	getTabsToClose();
 }
 
@@ -177,9 +172,9 @@ function getTabsToClose() {
 
 function closeTabs(tabIds) {
 
-	console.log("Fullscreen: " + g.config.fullscreen);
+	console.log("Fullscreen: " + state.config.fullscreen);
 
-	if(g.config.fullscreen) {
+	if(state.config.fullscreen) {
 		chrome.windows.getCurrent({}, function(window) {
 			chrome.windows.update(window.id, {state: "fullscreen"});
 		})
@@ -195,20 +190,20 @@ function closeTabs(tabIds) {
 
 function insertNextTab() {
 
-	if(g.tabs.length >= g.config.websites.length) {
+	if(state.tabs.length >= state.config.websites.length) {
 		rotateTab();
 		return;
 	}
 
-	var url = g.config.websites[g.tabs.length].url;
+	var url = state.config.websites[state.tabs.length].url;
 	
 
 	chrome.tabs.create({
-			"index": g.tabs.length,
+			"index": state.tabs.length,
 			"url": url
 		}, function(tab) {
 			console.log("Inserted tabId: " + tab.id);
-			g.tabs.push(tab);
+			state.tabs.push(tab);
 			insertNextTab();
 		}
 	);
@@ -218,24 +213,24 @@ function rotateTab() {
 
 	console.log("rotateTab()");
 
-	if(!g.enableRotate)
+	if(!state.enableRotate)
 		return;
 
-	if(g.rotationCounter++ >= g.maxRotations) {
+	if(state.rotationCounter++ >= state.maxRotations) {
 		//return;
 	}
 
-	var currentTab = g.tabs[g.nextIndex];
+	var currentTab = state.tabs[state.nextIndex];
 
-	var sleepDuration = g.config.websites[g.nextIndex].duration;
+	var sleepDuration = state.config.websites[state.nextIndex].duration;
 
 	// Show the current tab
-	console.log("Show tab:" + g.nextIndex);
+	console.log("Show tab:" + state.nextIndex);
 	chrome.tabs.update(currentTab.id, {"active": true}, function() {});
 
 	// Determine the next tab index
-	if(++g.nextIndex >= g.tabs.length) {
-		g.nextIndex = 0;
+	if(++state.nextIndex >= state.tabs.length) {
+		state.nextIndex = 0;
 		if(isReloadRequired()) {
 			console.log("Reload settings from url: yes");
 			reloadSettingsFromUrl();
@@ -247,22 +242,22 @@ function rotateTab() {
 	}
 
 	// Preload the future tab in advance
-	console.log("Preload tab:" + g.nextIndex);
-	chrome.tabs.reload(g.tabs[g.nextIndex].id);
+	console.log("Preload tab:" + state.nextIndex);
+	chrome.tabs.reload(state.tabs[state.nextIndex].id);
 	
 	console.log("sleep for:" + sleepDuration);
-	g.timerId = setTimeout(rotateTab, sleepDuration * 1000);
+	state.timerId = setTimeout(rotateTab, sleepDuration * 1000);
 	
 	//console.log("what next???");
 }
 
 function isReloadRequired() {
 	var currentTimeMillis = (new Date()).getTime();
-	var millisSinceLastReload = currentTimeMillis - g.loadTime;
+	var millisSinceLastReload = currentTimeMillis - state.loadTime;
 
-	var reloadIntervalMillis = g.config.reloadIntervalMinutes * 60 * 1000;
+	var reloadIntervalMillis = state.config.reloadIntervalMinutes * 60 * 1000;
 
-	if(millisSinceLastReload > reloadIntervalMillis && g.config.enableAutoReload) {
+	if(millisSinceLastReload > reloadIntervalMillis && state.config.enableAutoReload) {
 		return true;
 	} else {
 		return false;
@@ -309,7 +304,7 @@ var nextIndex = 0;
 
 function wakeUp() {
 
-	initTabs(g.config.websites);
+	initTabs(state.config.websites);
 
 	chrome.tabs.query({"currentWindow": true}, function(tabs){
 		var tab = tabs[nextIndex];
