@@ -5,3 +5,46 @@ Allows Chrome to automatically cycle through a set of tabs. Ideal for a Dashboar
  - Preloads tabs for smoother transitions
  - Configured via a JSON file
  - Configuration can be loaded from a remote server
+
+[Tab Rotate on the Chrome Web Store](https://chrome.google.com/webstore/detail/tab-rotate/pjgjpabbgnnoohijnillgbckikfkbjed)
+
+## Settings
+
+### enableAutoReload - boolean
+Automatically reload the settings file from the url provided.
+
+### reloadIntervalMinutes - integer
+Interval at which the settings file is reloaded.
+
+### fullscreen - boolean
+Open Chrome in fullscreen mode
+
+### websites - list
+
+#### url - string
+
+
+	// Automatically reload the settings file from the url provided
+	"enableAutoReload": false
+
+```json
+{
+	"enableAutoReload": false,
+	"reloadIntervalMinutes": 60,
+	"fullscreen": true,
+	"websites" : [
+		{
+			"url" : "https://github.com/KevinSheedy/chrome-tab-rotate.git",
+			"duration" : 10
+		},
+		{
+			"url" : "https://chrome.google.com/webstore/detail/tab-rotate/pjgjpabbgnnoohijnillgbckikfkbjed",
+			"duration" : 10
+		},
+		{
+			"url" : "https://ie.linkedin.com/in/kevinsheedy",
+			"duration" : 10
+		}
+	]
+}
+```
