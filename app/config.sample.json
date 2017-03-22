@@ -4,6 +4,10 @@
 	"fullscreen": false,
 	"websites" : [
 		{
+			"url" : "chrome-extension://pjgjpabbgnnoohijnillgbckikfkbjed/app/settings.html",
+			"duration" : 10
+		},
+		{
 			"url" : "https://github.com/KevinSheedy/chrome-tab-rotate.git",
 			"duration" : 10
 		},
