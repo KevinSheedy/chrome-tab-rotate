@@ -1,18 +1,12 @@
-
-
-
-
 function renderStatus(statusText) {
 	document.getElementById('status').textContent = statusText;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
 	
-
 	chrome.browserAction.setIcon({
 		path: "Pause-38.png"
 	});
-
 
 	chrome.storage.local.get("playPauseStatus", function(storage) {
 

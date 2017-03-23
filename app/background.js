@@ -1,4 +1,22 @@
 console.log("started daemon: background.js");
+
+var session = newSessionObject();
+
+function newSessionObject() {
+
+	return {
+		tabs: [],
+		enableRotate: true,
+		rotationCounter: 0,
+		maxRotations: 5,
+		nextIndex: 0,
+		timerId: null,
+		settingsLoadTime: 0,
+		settings: {},
+		config: {}
+	}
+}
+
 document.addEventListener('DOMContentLoaded', function() {
 	console.log("DOM Loaded");
 	console.log("Listening for commands...");
@@ -13,33 +31,31 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 });
 
-var state = resetGlobals();
-
 function play() {
 
 	loadSettingsFromDisc();
 }
 
 function pause() {
-	clearTimeout(state.timerId);
-	state.enableRotate = false;
+	clearTimeout(session.timerId);
+	session.enableRotate = false;
 }
 
 function loadSettingsFromDisc() {
 
 	// Should we do this here??
-	state = resetGlobals();
+	session = newSessionObject();
 
 	console.log("Read settings from disc");
-	chrome.storage.sync.get(null, function(discSettings) {
+	chrome.storage.sync.get(null, function(allStorage) {
 
-		if(jQuery.isEmptyObject(discSettings)) {
+		if(jQuery.isEmptyObject(allStorage)) {
 			loadDefaultSettings();
 			return;
 		}
 		else {
-			state.settings = discSettings;
-			state.config = parseSettings(discSettings);
+			session.settings = allStorage;
+			session.config = parseSettings(allStorage);
 
 			beginCycling();
 		}
@@ -48,13 +64,13 @@ function loadSettingsFromDisc() {
 
 function reloadSettingsFromUrl() {
 
-	state.settingsLoadTime = (new Date()).getTime();
+	session.settingsLoadTime = (new Date()).getTime();
 	
 	jQuery.ajax({
-		url: state.config.url,
+		url: session.config.url,
 		dataType: "text",
 		success: function(res) {
-			if(res == state.settings.configFile) {
+			if(res == session.settings.configFile) {
 				console.log("Settings changed: no");
 				beginCycling();
 				return;
@@ -64,10 +80,10 @@ function reloadSettingsFromUrl() {
 			}
 			if( validateConfigFile(res)) {
 				console.log("Settings are valid");
-				state.settings.configFile = res;
-				state.config = parseSettings(state.settings);
+				session.settings.configFile = res;
+				session.config = parseSettings(session.settings);
 				console.log("Write settings to disc");
-				chrome.storage.sync.set(state.settings, beginCycling);
+				chrome.storage.sync.set(session.settings, beginCycling);
 				return;
 			} else {
 				console.log("invalid settings file. Continuing with old settings");
@@ -96,42 +112,27 @@ function loadDefaultSettings() {
 
 	var settings = getDefaultSettings();
 
-	state.config = parseSettings(settings);
+	session.config = parseSettings(settings);
 
 	beginCycling();
 }
 
 var getDefaultSettings = (function() {
 
-	var DEFAULT_CONFIG = {
+	var persistedConfig = {
 		source: "DIRECT",
 		url: "http://_url_to_your_config_file.json",
 		configFile: ""
 	}
 
 	jQuery.get("/app/config.sample.json", function(res) {
-		DEFAULT_CONFIG.configFile = res;
+		persistedConfig.configFile = res;
 	})
 
 	return function() {
-		return jQuery.extend({}, DEFAULT_CONFIG);
+		return jQuery.extend({}, persistedConfig);
 	}
 })();
-
-function resetGlobals() {
-
-	return {
-		tabs: [],
-		enableRotate: true,
-		rotationCounter: 0,
-		maxRotations: 5,
-		nextIndex: 0,
-		timerId: null,
-		settingsLoadTime: 0,
-		settings: {},
-		config: {}
-	}
-}
 
 function beginCycling() {
 
@@ -176,18 +177,18 @@ function getTabsToClose() {
 
 function closeTabs(tabIds) {
 
-	console.log("Fullscreen: " + state.config.fullscreen);
+	console.log("Fullscreen: " + session.config.fullscreen);
 
-	if(state.config.fullscreen) {
+	if(session.config.fullscreen) {
 		chrome.windows.getCurrent({}, function(window) {
-			chrome.windows.update(window.id, {state: "fullscreen"});
+			chrome.windows.update(window.id, {session: "fullscreen"});
 		})
 	}
 
 
 	chrome.tabs.remove(tabIds, function() {
 
-		state.tabs = [];
+		session.tabs = [];
 		insertNextTab();
 	})
 }
@@ -195,20 +196,20 @@ function closeTabs(tabIds) {
 
 function insertNextTab() {
 
-	if(state.tabs.length >= state.config.websites.length) {
+	if(session.tabs.length >= session.config.websites.length) {
 		rotateTab();
 		return;
 	}
 
-	var url = state.config.websites[state.tabs.length].url;
+	var url = session.config.websites[session.tabs.length].url;
 	
 
 	chrome.tabs.create({
-			"index": state.tabs.length,
+			"index": session.tabs.length,
 			"url": url
 		}, function(tab) {
 			console.log("Inserted tabId: " + tab.id);
-			state.tabs.push(tab);
+			session.tabs.push(tab);
 			insertNextTab();
 		}
 	);
@@ -217,49 +218,49 @@ function insertNextTab() {
 function rotateTab() {
 
 	// Break out of infinite loop when pause is clicked
-	if(!state.enableRotate)
+	if(!session.enableRotate)
 		return;
 
-	if(state.nextIndex == 0 && isReloadRequired()) {
+	if(session.nextIndex == 0 && isReloadRequired()) {
 		beginCycling()
 		return;
 	}
 
-	if(state.rotationCounter++ >= state.maxRotations) {
+	if(session.rotationCounter++ >= session.maxRotations) {
 		//return;
 	}
 
-	var currentTab = state.tabs[state.nextIndex];
+	var currentTab = session.tabs[session.nextIndex];
 
-	var sleepDuration = state.config.websites[state.nextIndex].duration;
+	var sleepDuration = session.config.websites[session.nextIndex].duration;
 
 	// Show the current tab
-	console.log("Show tab: " + state.nextIndex);
+	console.log("Show tab: " + session.nextIndex);
 	chrome.tabs.update(currentTab.id, {"active": true}, function() {});
 
 	// Determine the next tab index
-	if(++state.nextIndex >= state.tabs.length) {
-		state.nextIndex = 0;
+	if(++session.nextIndex >= session.tabs.length) {
+		session.nextIndex = 0;
 
 	}
 
 	// Preload the future tab in advance
-	console.log("Preload tab: " + state.nextIndex);
-	chrome.tabs.reload(state.tabs[state.nextIndex].id);
+	console.log("Preload tab: " + session.nextIndex);
+	chrome.tabs.reload(session.tabs[session.nextIndex].id);
 	
 	console.log("sleep for: " + sleepDuration);
-	state.timerId = setTimeout(rotateTab, sleepDuration * 1000);
+	session.timerId = setTimeout(rotateTab, sleepDuration * 1000);
 	
 	//console.log("what next???");
 }
 
 function isReloadRequired() {
 	var currentTimeMillis = (new Date()).getTime();
-	var millisSinceLastReload = currentTimeMillis - state.settingsLoadTime;
+	var millisSinceLastReload = currentTimeMillis - session.settingsLoadTime;
 
-	var reloadIntervalMillis = state.config.settingsReloadIntervalMinutes * 60 * 1000;
+	var reloadIntervalMillis = session.config.settingsReloadIntervalMinutes * 60 * 1000;
 
-	if(millisSinceLastReload > reloadIntervalMillis && state.config.readSettingsFromUrl) {
+	if(millisSinceLastReload > reloadIntervalMillis && session.config.readSettingsFromUrl) {
 		console.log("Reload settings from url: yes");
 		return true;
 	} else {
@@ -308,7 +309,7 @@ var nextIndex = 0;
 
 function wakeUp() {
 
-	initTabs(state.config.websites);
+	initTabs(session.config.websites);
 
 	chrome.tabs.query({"currentWindow": true}, function(tabs){
 		var tab = tabs[nextIndex];

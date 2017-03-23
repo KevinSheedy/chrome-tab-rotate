@@ -2,8 +2,6 @@ var settingsApp = angular.module('settingsApp', ['ui']);
 
 settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 
-
-
 	var getDefaults = (function() {
 
 		var DEFAULT_CONFIG = {
