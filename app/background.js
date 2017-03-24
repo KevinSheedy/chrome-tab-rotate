@@ -110,29 +110,27 @@ function validateConfigFile(configFile) {
 
 function loadDefaultSettings() {
 
-	var settings = getDefaultSettings();
-
-	session.config = parseSettings(settings);
-
-	beginCycling();
+	createStorageObject()
+		.then(function(storageObject) {
+			session.config = parseSettings(storageObject);
+			beginCycling();
+		})
 }
 
-var getDefaultSettings = (function() {
+function createStorageObject() {
+	return new Promise(function(resolve, reject) {
+		var storageObject = {
+			source: "DIRECT",
+			url: "http://_url_to_your_config_file.json",
+			configFile: ""
+		}
 
-	var persistedConfig = {
-		source: "DIRECT",
-		url: "http://_url_to_your_config_file.json",
-		configFile: ""
-	}
-
-	jQuery.get("/app/config.sample.json", function(res) {
-		persistedConfig.configFile = res;
+		jQuery.get("/app/config.sample.json", function(res) {
+			storageObject.configFile = res;
+			resolve(jQuery.extend({}, storageObject));
+		})
 	})
-
-	return function() {
-		return jQuery.extend({}, persistedConfig);
-	}
-})();
+}
 
 function beginCycling() {
 
@@ -144,11 +142,11 @@ function beginCycling() {
 	}
 }
 
-function parseSettings(settings) {
+function parseSettings(storageObject) {
 
-	var config = JSON.parse(settings.configFile);
+	var config = JSON.parse(storageObject.configFile);
 
-	config.url = settings.url;
+	config.url = storageObject.url;
 	return config;
 }
 
