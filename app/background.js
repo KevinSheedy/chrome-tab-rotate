@@ -50,7 +50,10 @@ function loadSettingsFromDisc() {
 	chrome.storage.sync.get(null, function(allStorage) {
 
 		if(jQuery.isEmptyObject(allStorage)) {
-			loadDefaultSettings();
+			loadDefaultSettings().then(function(defaultSettings) {
+				session.config = defaultSettings;
+				beginCycling();
+			});
 			return;
 		}
 		else {
@@ -110,11 +113,12 @@ function validateConfigFile(configFile) {
 
 function loadDefaultSettings() {
 
-	createStorageObject()
-		.then(function(storageObject) {
-			session.config = parseSettings(storageObject);
-			beginCycling();
-		})
+	return new Promise(function(resolve, reject) {
+		createStorageObject()
+			.then(function(storageObject) {
+				resolve(parseSettings(storageObject));
+			})
+	})
 }
 
 function createStorageObject() {
