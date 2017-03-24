@@ -33,7 +33,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function play() {
 
-	loadSettingsFromDisc();
+	loadSettingsFromDisc().then(function() {
+		beginCycling();
+	});
 }
 
 function pause() {
@@ -43,26 +45,28 @@ function pause() {
 
 function loadSettingsFromDisc() {
 
-	// Should we do this here??
-	session = newSessionObject();
+	return new Promise(function(resolve, reject) {
 
-	console.log("Read settings from disc");
-	chrome.storage.sync.get(null, function(allStorage) {
+		// Should we do this here??
+		session = newSessionObject();
 
-		if(jQuery.isEmptyObject(allStorage)) {
-			loadDefaultSettings().then(function(defaultSettings) {
-				session.config = defaultSettings;
-				beginCycling();
-			});
-			return;
-		}
-		else {
-			session.settings = allStorage;
-			session.config = parseSettings(allStorage);
+		console.log("Read settings from disc");
+		chrome.storage.sync.get(null, function(allStorage) {
 
-			beginCycling();
-		}
-	});
+			if(jQuery.isEmptyObject(allStorage)) {
+				loadDefaultSettings().then(function(defaultSettings) {
+					session.config = defaultSettings;
+					resolve();
+				});
+				return;
+			}
+			else {
+				session.settings = allStorage;
+				session.config = parseSettings(allStorage);
+				resolve();
+			}
+		});
+	})
 }
 
 function reloadSettingsFromUrl() {
