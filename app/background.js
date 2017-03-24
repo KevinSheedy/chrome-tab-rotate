@@ -142,7 +142,9 @@ function beginCycling() {
 	if(isReloadRequired()) {
 		reloadSettingsFromUrl();
 	} else {
-		getTabsToClose();
+		getTabsToClose()
+			.then(closeTabs)
+			.then(insertNextTab);
 	}
 }
 
@@ -156,42 +158,44 @@ function parseSettings(storageObject) {
 
 function getTabsToClose() {
 
-	var queryInactiveTabs = {
-		"currentWindow": true
-	}
+	return new Promise(function(resolve, reject) {
+		var queryInactiveTabs = {
+			"currentWindow": true
+		}
 
-	var tabIds = [];
+		var tabIds = [];
 
-	chrome.tabs.query(queryInactiveTabs, function(tabs) {
-		for (var i = 0; i < tabs.length; i++) {
+		chrome.tabs.query(queryInactiveTabs, function(tabs) {
+			for (var i = 0; i < tabs.length; i++) {
 
-			var tab = tabs[i];
+				var tab = tabs[i];
 
-			if(!tab.url.startsWith("chrome")) {
-				tabIds.push(tabs[i].id);
-			}
-		};
+				if(!tab.url.startsWith("chrome")) {
+					tabIds.push(tabs[i].id);
+				}
+			};
 
-		closeTabs(tabIds);
+			resolve(tabIds);
+		})
 	})
-	
 }
 
 function closeTabs(tabIds) {
 
-	console.log("Fullscreen: " + session.config.fullscreen);
+	return new Promise(function(resolve, reject) {
+		console.log("Fullscreen: " + session.config.fullscreen);
 
-	if(session.config.fullscreen) {
-		chrome.windows.getCurrent({}, function(window) {
-			chrome.windows.update(window.id, {session: "fullscreen"});
+		if(session.config.fullscreen) {
+			chrome.windows.getCurrent({}, function(window) {
+				chrome.windows.update(window.id, {session: "fullscreen"});
+			})
+		}
+
+		chrome.tabs.remove(tabIds, function() {
+
+			session.tabs = [];
+			resolve();
 		})
-	}
-
-
-	chrome.tabs.remove(tabIds, function() {
-
-		session.tabs = [];
-		insertNextTab();
 	})
 }
 
@@ -204,7 +208,6 @@ function insertNextTab() {
 	}
 
 	var url = session.config.websites[session.tabs.length].url;
-	
 
 	chrome.tabs.create({
 			"index": session.tabs.length,
