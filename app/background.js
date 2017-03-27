@@ -12,7 +12,7 @@ function newSessionObject() {
 		nextIndex: 0,
 		timerId: null,
 		settingsLoadTime: 0,
-		settings: {},
+		storageObject: {},
 		config: {}
 	}
 }
@@ -32,10 +32,11 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function play() {
+	
+	session = newSessionObject();
 
-	loadSettingsFromDisc().then(function() {
-		beginCycling();
-	});
+	loadSettingsFromDisc()
+		.then(beginCycling);
 }
 
 function pause() {
@@ -47,9 +48,6 @@ function loadSettingsFromDisc() {
 
 	return new Promise(function(resolve, reject) {
 
-		// Should we do this here??
-		session = newSessionObject();
-
 		console.log("Read settings from disc");
 		chrome.storage.sync.get(null, function(allStorage) {
 
@@ -58,10 +56,9 @@ function loadSettingsFromDisc() {
 					session.config = defaultSettings;
 					resolve();
 				});
-				return;
 			}
 			else {
-				session.settings = allStorage;
+				session.storageObject = allStorage;
 				session.config = parseSettings(allStorage);
 				resolve();
 			}
@@ -77,7 +74,7 @@ function reloadSettingsFromUrl() {
 		url: session.config.url,
 		dataType: "text",
 		success: function(res) {
-			if(res == session.settings.configFile) {
+			if(res == session.storageObject.configFile) {
 				console.log("Settings changed: no");
 				beginCycling();
 				return;
@@ -87,10 +84,10 @@ function reloadSettingsFromUrl() {
 			}
 			if( validateConfigFile(res)) {
 				console.log("Settings are valid");
-				session.settings.configFile = res;
-				session.config = parseSettings(session.settings);
+				session.storageObject.configFile = res;
+				session.config = parseSettings(session.storageObject);
 				console.log("Write settings to disc");
-				chrome.storage.sync.set(session.settings, beginCycling);
+				chrome.storage.sync.set(session.storageObject, beginCycling);
 				return;
 			} else {
 				console.log("invalid settings file. Continuing with old settings");
