@@ -68,39 +68,43 @@ function loadSettingsFromDisc() {
 
 function reloadSettingsFromUrl() {
 
-	session.settingsLoadTime = (new Date()).getTime();
-	
-	jQuery.ajax({
-		url: session.config.url,
-		dataType: "text",
-		success: function(res) {
-			if(res == session.storageObject.configFile) {
-				console.log("Settings changed: no");
-				beginCycling();
-				return;
-			}
-			else {
-				console.log("Settings changed: yes");
-			}
-			if( validateConfigFile(res)) {
-				console.log("Settings are valid");
-				session.storageObject.configFile = res;
-				session.config = parseSettings(session.storageObject);
-				console.log("Write settings to disc");
-				chrome.storage.sync.set(session.storageObject, beginCycling);
-				return;
-			} else {
-				console.log("invalid settings file. Continuing with old settings");
-				beginCycling();
-			}
-		},
-		error: function() {
-			beginCycling();
-		},
-		complete: function() {
+	return new Promise(function(resolve, reject) {
 
-		}
-	});
+		session.settingsLoadTime = (new Date()).getTime();
+		
+		jQuery.ajax({
+			url: session.config.url,
+			dataType: "text",
+			success: function(res) {
+				if(res == session.storageObject.configFile) {
+					console.log("Settings changed: no");
+					resolve();
+					return;
+				}
+				else {
+					console.log("Settings changed: yes");
+				}
+				if( validateConfigFile(res)) {
+					console.log("Settings are valid");
+					session.storageObject.configFile = res;
+					session.config = parseSettings(session.storageObject);
+					console.log("Write settings to disc");
+					chrome.storage.sync.set(session.storageObject, function(){resolve()});
+					return;
+				} else {
+					console.log("invalid settings file. Continuing with old settings");
+					resolve();
+				}
+			},
+			error: function() {
+				resolve();
+			},
+			complete: function() {
+
+			}
+		});
+	})
+
 }
 
 function validateConfigFile(configFile) {
@@ -141,7 +145,8 @@ function beginCycling() {
 
 	// Reload Settings from URL
 	if(isReloadRequired()) {
-		reloadSettingsFromUrl();
+		reloadSettingsFromUrl()
+			.then(beginCycling);
 	} else {
 		getTabsToClose()
 			.then(closeTabs)
