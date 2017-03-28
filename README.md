@@ -38,15 +38,18 @@ Begin rotating tabs automatically as soon as Chrome is opened
 	"websites" : [
 		{
 			"url" : "https://github.com/KevinSheedy/chrome-tab-rotate.git",
-			"duration" : 10
+			"duration" : 10,
+			"tabReloadIntervalSeconds": 120
 		},
 		{
 			"url" : "https://chrome.google.com/webstore/detail/tab-rotate/pjgjpabbgnnoohijnillgbckikfkbjed",
-			"duration" : 10
+			"duration" : 10,
+			"tabReloadIntervalSeconds": 180
 		},
 		{
 			"url" : "https://ie.linkedin.com/in/kevinsheedy",
-			"duration" : 10
+			"duration" : 10,
+			"tabReloadIntervalSeconds": 240
 		}
 	]
 }

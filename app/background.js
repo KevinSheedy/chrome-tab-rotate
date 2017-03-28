@@ -16,6 +16,7 @@ function newSessionObject() {
 
 	return {
 		tabs: [],
+		tabReloadTime: [],
 		enableRotate: false,
 		rotationCounter: 0,
 		maxRotations: 5,
@@ -44,8 +45,9 @@ function play() {
 	
 	chrome.browserAction.setIcon({path: "app/img/Pause-38.png"});
 	chrome.browserAction.setTitle({"title": "Pause Tab Rotate"});
+	session = newSessionObject();
 	session.enableRotate = true;
-	beginCycling();
+	loadSettings().then(beginCycling);
 }
 
 function pause() {
@@ -64,6 +66,8 @@ function loadSettings() {
 				loadSettingsFromUrl().then(function() {
 					resolve();
 				})
+			} else {
+				resolve();
 			}
 		})
 	})
@@ -72,8 +76,6 @@ function loadSettings() {
 function loadSettingsFromDisc() {
 
 	return new Promise(function(resolve, reject) {
-
-		session = newSessionObject();
 
 		console.log("Read settings from disc");
 		chrome.storage.sync.get(null, function(allStorage) {
@@ -171,16 +173,10 @@ function createStorageObject() {
 
 function beginCycling() {
 
-	// Reload Settings from URL
-	if(isSettingsReloadRequired()) {
-		loadSettings()
-			.then(beginCycling);
-	} else {
 		getTabsToClose()
 			.then(closeTabs)
 			.then(insertTabs)
 			.then(rotateTabAndScheduleNextRotation);
-	}
 }
 
 function parseSettings(storageObject) {
@@ -245,6 +241,7 @@ function insertTabs() {
 
 			insertTab(session.config.websites[i].url, i, function(index, tab){
 				session.tabs[index] = tab;
+				session.tabReloadTime[index] = (new Date()).getTime();
 				counter++;
 				if(counter >= session.config.websites.length) {
 					resolve();
@@ -296,12 +293,22 @@ function rotateTabAndScheduleNextRotation() {
 		session.nextIndex = 0;
 	}
 
-	// Preload the future tab in advance
-	console.log("Preload tab: " + session.nextIndex);
-	chrome.tabs.reload(session.tabs[session.nextIndex].id);
+	preloadTab(session.nextIndex);
 	
 	console.log("sleep for: " + sleepDuration);
 	session.timerId = setTimeout(rotateTabAndScheduleNextRotation, sleepDuration * 1000);
+}
+
+function preloadTab(tabIndex) {
+
+	if(!isTabReloadRequired(tabIndex)) {
+		return;
+	}
+
+	// Preload the future tab in advance
+	console.log("Preload tab: " + tabIndex);
+	chrome.tabs.reload(session.tabs[tabIndex].id);
+	session.tabReloadTime[tabIndex] = (new Date()).getTime();
 }
 
 function isSettingsReloadRequired() {
@@ -315,6 +322,19 @@ function isSettingsReloadRequired() {
 		return true;
 	} else {
 		console.log("Reload settings from url: no");
+		return false;
+	}
+}
+
+function isTabReloadRequired(tabIndex) {
+	var currentTimeMillis = (new Date()).getTime();
+	var millisSinceLastReload = currentTimeMillis - session.tabReloadTime[tabIndex];
+
+	var reloadIntervalMillis = session.config.websites[tabIndex].tabReloadIntervalSeconds * 1000;
+
+	if(millisSinceLastReload > reloadIntervalMillis) {
+		return true;
+	} else {
 		return false;
 	}
 }
