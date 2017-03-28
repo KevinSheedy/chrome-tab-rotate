@@ -75,6 +75,7 @@ function reloadSettingsFromUrl() {
 		jQuery.ajax({
 			url: session.config.url,
 			dataType: "text",
+			cache: false,
 			success: function(res) {
 				if(res == session.storageObject.configFile) {
 					console.log("Settings changed: no");
@@ -177,7 +178,7 @@ function getTabsToClose() {
 
 				var tab = tabs[i];
 
-				if(!tab.url.startsWith("chrome")) {
+				if(!tab.url.startsWith("chrome:")) {
 					tabIds.push(tabs[i].id);
 				}
 			};
