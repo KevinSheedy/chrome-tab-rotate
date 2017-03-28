@@ -144,13 +144,14 @@ function createStorageObject() {
 function beginCycling() {
 
 	// Reload Settings from URL
-	if(isReloadRequired()) {
+	if(isSettingsReloadRequired()) {
 		reloadSettingsFromUrl()
 			.then(beginCycling);
 	} else {
 		getTabsToClose()
 			.then(closeTabs)
-			.then(insertNextTab);
+			.then(insertTabs)
+			.then(rotateTabAndScheduleNextRotation);
 	}
 }
 
@@ -206,33 +207,45 @@ function closeTabs(tabIds) {
 }
 
 
-function insertNextTab() {
+function insertTabs() {
 
-	if(session.tabs.length >= session.config.websites.length) {
-		rotateTab();
-		return;
-	}
+	return new Promise(function(resolve, reject) {
 
-	var url = session.config.websites[session.tabs.length].url;
+		var counter = 0;
+		session.tabs = [];
+		for(var i=0; i<session.config.websites.length; i++) {
 
+			insertTab(session.config.websites[i].url, i, function(index, tab){
+				session.tabs[index] = tab;
+				counter++;
+				if(counter >= session.config.websites.length) {
+					resolve();
+				}
+			});
+
+		}
+	})	
+}
+
+function insertTab(url, indexOfTab, callback) {
 	chrome.tabs.create({
-			"index": session.tabs.length,
+			"index": indexOfTab,
 			"url": url
 		}, function(tab) {
 			console.log("Inserted tabId: " + tab.id);
-			session.tabs.push(tab);
-			insertNextTab();
+			
+			callback(indexOfTab, tab);
 		}
 	);
 }
 
-function rotateTab() {
+function rotateTabAndScheduleNextRotation() {
 
 	// Break out of infinite loop when pause is clicked
 	if(!session.enableRotate)
 		return;
 
-	if(session.nextIndex == 0 && isReloadRequired()) {
+	if(session.nextIndex == 0 && isSettingsReloadRequired()) {
 		beginCycling()
 		return;
 	}
@@ -252,7 +265,6 @@ function rotateTab() {
 	// Determine the next tab index
 	if(++session.nextIndex >= session.tabs.length) {
 		session.nextIndex = 0;
-
 	}
 
 	// Preload the future tab in advance
@@ -260,12 +272,10 @@ function rotateTab() {
 	chrome.tabs.reload(session.tabs[session.nextIndex].id);
 	
 	console.log("sleep for: " + sleepDuration);
-	session.timerId = setTimeout(rotateTab, sleepDuration * 1000);
-	
-	//console.log("what next???");
+	session.timerId = setTimeout(rotateTabAndScheduleNextRotation, sleepDuration * 1000);
 }
 
-function isReloadRequired() {
+function isSettingsReloadRequired() {
 	var currentTimeMillis = (new Date()).getTime();
 	var millisSinceLastReload = currentTimeMillis - session.settingsLoadTime;
 
