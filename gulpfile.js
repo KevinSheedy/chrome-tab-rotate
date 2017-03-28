@@ -36,4 +36,4 @@ gulp.task('zip', function () {
 		.pipe(gulp.dest('zip'));
 });
 
-gulp.task('default', ['clean', 'project', 'app', 'bower', 'zip']);
+gulp.task('default', ['clean', 'project', 'app', 'bower']);
