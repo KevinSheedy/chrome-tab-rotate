@@ -2,7 +2,6 @@ var gulp = require('gulp');
 var del = require('del');
 var zip = require('gulp-zip');
 var manifest = require('./manifest.json');
-var mainBowerFiles = require('main-bower-files');
 
 gulp.task('app', function() {
 	return gulp.src('**/app/**').pipe(gulp.dest('dest'));
@@ -26,11 +25,6 @@ gulp.task('bower', function() {
 	])
 	.pipe(gulp.dest('dest'));
 });
-
-// gulp.task('bower_foo', function() {
-//     return gulp.src(mainBowerFiles(/* options */), { base: 'bower_components' })
-//         .pipe(gulp.dest('dest/bower_components'))
-// });
 
 gulp.task('clean', function() {
 	return del(['dest']);

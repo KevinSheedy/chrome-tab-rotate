@@ -1,0 +1,32 @@
+{
+  "name": "chrome-tab-rotate",
+  "version": "0.0.9",
+  "description": "Loop through a set of tabs - ideal for a Dashboard or Advertisement Display",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "gulp": "^3.9.1"
+  },
+  "devDependencies": {
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-zip": "^4.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KevinSheedy/chrome-tab-rotate.git"
+  },
+  "keywords": [
+    "tab",
+    "rotate",
+    "dashboard"
+  ],
+  "author": "Kevin Sheedy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KevinSheedy/chrome-tab-rotate/issues"
+  },
+  "homepage": "https://github.com/KevinSheedy/chrome-tab-rotate#readme"
+}
