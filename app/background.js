@@ -43,14 +43,14 @@ function iconClicked() {
 function play() {
 	
 	chrome.browserAction.setIcon({path: "app/img/Pause-38.png"});
-	chrome.browserAction.setTitle("Pause");
+	chrome.browserAction.setTitle({"title": "Pause Tab Rotate"});
 	session.enableRotate = true;
 	beginCycling();
 }
 
 function pause() {
 	chrome.browserAction.setIcon({path: "app/img/Play-38.png"});
-	chrome.browserAction.setTitle("Play");
+	chrome.browserAction.setTitle({"title": "Start Tab Rotate"});
 	clearTimeout(session.timerId);
 	session.enableRotate = false;
 }
