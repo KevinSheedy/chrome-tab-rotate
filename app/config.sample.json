@@ -2,7 +2,7 @@
 	"readSettingsFromUrl": true,
 	"settingsReloadIntervalMinutes": 1,
 	"fullscreen": false,
-	"autoLaunch": false,
+	"autoStart": false,
 	"websites" : [
 		{
 			"url" : "chrome-extension://pjgjpabbgnnoohijnillgbckikfkbjed/app/settings.html",

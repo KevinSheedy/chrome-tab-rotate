@@ -7,9 +7,8 @@ loadSettings().then(function(){
 
 	initEventListeners();
 
-	console.log("session.config.autoLaunch:" + session.config.autoLaunch);
-	if(session.config.autoLaunch == true) {
-		beginCycling();
+	if(session.config.autoStart == true) {
+		play();
 	}
 });
 
@@ -17,7 +16,7 @@ function newSessionObject() {
 
 	return {
 		tabs: [],
-		enableRotate: true,
+		enableRotate: false,
 		rotationCounter: 0,
 		maxRotations: 5,
 		nextIndex: 0,
@@ -28,25 +27,30 @@ function newSessionObject() {
 	}
 }
 
-
 function initEventListeners() {
-		chrome.runtime.onMessage.addListener( function(request) {
-			console.log("Received Command: " + request.playPauseStatus);
 
-			if(request.playPauseStatus == "PLAY")
-				play();
-			else
-				pause();
-		});
+		chrome.browserAction.onClicked.addListener(iconClicked);
+}
+
+function iconClicked() {
+	if(session.enableRotate) {
+		pause();
+	} else {
+		play();
+	}
 }
 
 function play() {
 	
-	loadSettings()
-		.then(beginCycling);
+	chrome.browserAction.setIcon({path: "app/img/Pause-38.png"});
+	chrome.browserAction.setTitle("Pause");
+	session.enableRotate = true;
+	beginCycling();
 }
 
 function pause() {
+	chrome.browserAction.setIcon({path: "app/img/Play-38.png"});
+	chrome.browserAction.setTitle("Play");
 	clearTimeout(session.timerId);
 	session.enableRotate = false;
 }

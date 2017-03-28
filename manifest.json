@@ -7,7 +7,6 @@
 
   "browser_action": {
     "default_icon": "app/img/Play-38.png",
-    "default_popup": "app/play-pause.html",
     "default_title": "Start Tab Rotate"
   },
   "options_page": "app/settings.html",
