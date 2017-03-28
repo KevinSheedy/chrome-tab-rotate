@@ -19,6 +19,9 @@ Interval at which the settings file is reloaded.
 ### fullscreen - boolean
 Open Chrome in fullscreen mode
 
+### autoStart - boolean
+Begin rotating tabs automatically as soon as Chrome is opened
+
 ### websites - list
 
 #### url - string
