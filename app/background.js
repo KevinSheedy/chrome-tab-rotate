@@ -1,6 +1,17 @@
 console.log("started daemon: background.js");
 
+// Global Session Object
 var session = newSessionObject();
+
+loadSettings().then(function(){
+
+	initEventListeners();
+
+	console.log("session.config.autoLaunch:" + session.config.autoLaunch);
+	if(session.config.autoLaunch == true) {
+		beginCycling();
+	}
+});
 
 function newSessionObject() {
 
@@ -17,25 +28,21 @@ function newSessionObject() {
 	}
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-	console.log("DOM Loaded");
-	console.log("Listening for commands...");
 
-	chrome.runtime.onMessage.addListener( function(request) {
-		console.log("Received Command: " + request.playPauseStatus);
+function initEventListeners() {
+		chrome.runtime.onMessage.addListener( function(request) {
+			console.log("Received Command: " + request.playPauseStatus);
 
-		if(request.playPauseStatus == "PLAY")
-			play();
-		else
-			pause();
-	});
-});
+			if(request.playPauseStatus == "PLAY")
+				play();
+			else
+				pause();
+		});
+}
 
 function play() {
 	
-	session = newSessionObject();
-
-	loadSettingsFromDisc()
+	loadSettings()
 		.then(beginCycling);
 }
 
@@ -44,9 +51,25 @@ function pause() {
 	session.enableRotate = false;
 }
 
+function loadSettings() {
+
+	return new Promise(function(resolve, reject) {
+
+		loadSettingsFromDisc().then(function(){
+			if(session.config.readSettingsFromUrl) {
+				loadSettingsFromUrl().then(function() {
+					resolve();
+				})
+			}
+		})
+	})
+}
+
 function loadSettingsFromDisc() {
 
 	return new Promise(function(resolve, reject) {
+
+		session = newSessionObject();
 
 		console.log("Read settings from disc");
 		chrome.storage.sync.get(null, function(allStorage) {
@@ -66,7 +89,7 @@ function loadSettingsFromDisc() {
 	})
 }
 
-function reloadSettingsFromUrl() {
+function loadSettingsFromUrl() {
 
 	return new Promise(function(resolve, reject) {
 
@@ -146,7 +169,7 @@ function beginCycling() {
 
 	// Reload Settings from URL
 	if(isSettingsReloadRequired()) {
-		reloadSettingsFromUrl()
+		loadSettings()
 			.then(beginCycling);
 	} else {
 		getTabsToClose()
@@ -195,7 +218,7 @@ function closeTabs(tabIds) {
 
 		if(session.config.fullscreen) {
 			chrome.windows.getCurrent({}, function(window) {
-				chrome.windows.update(window.id, {session: "fullscreen"});
+				chrome.windows.update(window.id, {state: "fullscreen"});
 			})
 		}
 
@@ -247,7 +270,8 @@ function rotateTabAndScheduleNextRotation() {
 		return;
 
 	if(session.nextIndex == 0 && isSettingsReloadRequired()) {
-		beginCycling()
+		loadSettings()
+			.then(beginCycling);
 		return;
 	}
 
