@@ -4,7 +4,7 @@ var zip = require('gulp-zip');
 var manifest = require('./manifest.json');
 
 gulp.task('app', function() {
-	return gulp.src('**/app/**').pipe(gulp.dest('dest'));
+	return gulp.src('app/**').pipe(gulp.dest('dest/app'));
 });
 
 gulp.task('project', function() {
@@ -13,17 +13,17 @@ gulp.task('project', function() {
 
 gulp.task('bower', function() {
 	return gulp.src([
-		  '**/jquery.min.js'
-		, '**/angular.min.js'
-		, '**/bootstrap.min.css'
-		, '**/angular-ui.min.js'
-		, '**/validate.js'
-		, '**/prism.css'
-		, '**/prism.js'
-		, '**/prism-javascript.min.js'
+		  'bower_components/**/jquery.min.js'
+		, 'bower_components/**/angular.min.js'
+		, 'bower_components/**/bootstrap.min.css'
+		, 'bower_components/**/angular-ui.min.js'
+		, 'bower_components/**/validate.js'
+		, 'bower_components/**/prism.css'
+		, 'bower_components/**/prism.js'
+		, 'bower_components/**/prism-javascript.min.js'
 
 	])
-	.pipe(gulp.dest('dest'));
+	.pipe(gulp.dest('dest/bower_components'));
 });
 
 gulp.task('clean', function() {
