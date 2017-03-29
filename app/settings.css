@@ -27,6 +27,15 @@ form {
 	margin-left: 20px;
 }
 
+h3, label {
+
+	font-weight: normal;
+}
+
+h3 {
+	font-size: 18px;
+}
+
 .help-block {
 	font-weight: bold;
 }
@@ -44,7 +53,7 @@ pre, .code {
 	tab-size: 4;
 	color: black;
 	padding: 1em;
-	font-size: 16px;
+	font-size: 12px;
 	height: 40em;
 
 }

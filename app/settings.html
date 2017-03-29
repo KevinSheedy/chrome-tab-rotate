@@ -17,26 +17,23 @@
 
 	<div id="main-container" class="container">
 
-		<h1>Tab Rotate Options</h1>
+
+		<h1><img src="img/Play-48.png"></img>  Tab Rotate Options</h1>
 
 
 		<form name="form" ng-controller="SettingsCtrl">
 
-			<div id="resets-container">
-				<button ng-click="resetDefaults()">Reset Defaults</button>
-				<button ng-click="clearStorage()">Clear Storage</button>
-			</div>
 
-			<h3>Load Config from:</h3>
+			<h3>Config Source:</h3>
 			<div class="form-group" id="input-source-container">
 				<label>
 					<input type="radio" ng-model="settings.source" value="DIRECT">
-					Text Box
+					Local Storage
 				</label><br/>
 
 				<label>
 					<input type="radio" ng-model="settings.source" value="URL">
-					Url
+					Remote Url
 				</label>
 			</div>
 
@@ -74,6 +71,13 @@
 						<span class="help-block" ng-show="form.$dirty">Modified</span>
 						<span class="help-block" ng-show="formSaved && !form.$dirty">Saved</span>
 					</div>
+				</div>
+
+
+				<div id="resets-container">
+					<br></br>
+					<button ng-click="resetDefaults()">Reset Defaults</button>
+					<button ng-click="clearStorage()">Clear Storage</button>
 				</div>
 			</div>
 
