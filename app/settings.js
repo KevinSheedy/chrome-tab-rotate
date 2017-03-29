@@ -30,7 +30,7 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 		$scope.fetchSucceeded = true;
 		$scope.editMode = false;
 
-		$scope.fetchSettings = function() {
+		$scope.fetchRemoteSettings = function() {
 
 			$scope.httpStatusText = "pending..."
 			$scope.isFetchInProgress = true;
@@ -92,6 +92,16 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 			chrome.storage.sync.get(null, function(allStorage) {
 
 				$scope.settings = jQuery.isEmptyObject(allStorage) ? newStorageObject() : allStorage;
+
+				if(jQuery.isEmptyObject(allStorage)) {
+					$scope.settings = newStorageObject();
+					chrome.storage.sync.set($scope.settings, function(){
+						console.log("Local storage is empty. Saving some default settings")
+					});
+				} else {
+					$scope.settings = allStorage;
+				}
+
 				$scope.form.$setPristine();
 				$scope.$apply();
 			})

@@ -81,6 +81,8 @@ function loadSettingsFromDisc() {
 		chrome.storage.sync.get(null, function(allStorage) {
 
 			if(jQuery.isEmptyObject(allStorage)) {
+				// On first use, we open the settings page
+				openSettingsPage();
 				loadDefaultSettings().then(function(defaultSettings) {
 					session.config = defaultSettings;
 					resolve();
@@ -135,6 +137,15 @@ function loadSettingsFromUrl() {
 		});
 	})
 
+}
+
+function openSettingsPage() {
+	chrome.tabs.create({
+			"index": 0,
+			"url": "app/settings.html"
+		}, function(tab) {
+
+		});
 }
 
 function validateConfigFile(configFile) {
