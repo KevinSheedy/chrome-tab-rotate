@@ -27,7 +27,7 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 	function initScope(newStorageObject) {
 
 		$scope.isFetchInProgress = false;
-		$scope.fetchSucceeded = true;
+		$scope.fetchSucceeded = null;
 		$scope.editMode = false;
 
 		$scope.fetchRemoteSettings = function() {
@@ -37,7 +37,7 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 			jQuery.ajax({
 				url: $scope.settings.url,
 				dataType: "text",
-				success: function(res) {
+				success: function(res, textStatus, jqXHR) {
 					$scope.settings.configFile = res;
 					$scope.fetchSucceeded = true;
 					$scope.$apply();
