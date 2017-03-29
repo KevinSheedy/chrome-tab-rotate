@@ -2,26 +2,29 @@ var settingsApp = angular.module('settingsApp', ['ui']);
 
 settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 
-	var getDefaults = (function() {
+	loadSampleConfig()
+		.then(initScope);
 
-		var DEFAULT_CONFIG = {
-			source: "DIRECT",
-			url: "http://_url_to_your_config_file.json",
-			configFile: ""
-		}
+	function loadSampleConfig() {
+		return new Promise(function(resolve, reject) {
+			var storageObject = {
+				source: "DIRECT",
+				url: "http://_url_to_your_config_file.json",
+				configFile: ""
+			}
 
-		jQuery.get("/app/config.sample.json", function(res) {
-			DEFAULT_CONFIG.configFile = res;
+			jQuery.get("/app/config.sample.json", function(res) {
+				storageObject.configFile = res;
 
-			initScope();
+				// Resolves to a function that builds a new Storage Object
+				resolve(function(){
+					return  jQuery.extend({}, storageObject);
+				});
+			})
 		})
+	}
 
-		return function() {
-			return jQuery.extend({}, DEFAULT_CONFIG);
-		}
-	})();
-
-	function initScope() {
+	function initScope(newStorageObject) {
 
 		$scope.isFetchInProgress = false;
 		$scope.fetchSucceeded = true;
@@ -61,9 +64,9 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 			return true;
 		}
 
-		$scope.isValidConfigFile = function(val) {
+		$scope.isValidConfigFile = function(jsonText) {
 			try {
-				JSON.parse(val);
+				JSON.parse(jsonText);
 			} catch (e) {
 				return false;
 			}
@@ -71,7 +74,7 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 		}
 
 		$scope.resetDefaults = function() {
-			$scope.settings = getDefaults();
+			$scope.settings = newStorageObject();
 			$scope.form.$setDirty();
 		}
 
@@ -86,9 +89,9 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 
 		$scope.reloadSettingsFromDisc = function() {
 
-			chrome.storage.sync.get(null, function(val) {
+			chrome.storage.sync.get(null, function(allStorage) {
 
-				$scope.settings = jQuery.isEmptyObject(val) ? getDefaults() : val;
+				$scope.settings = jQuery.isEmptyObject(allStorage) ? newStorageObject() : allStorage;
 				$scope.form.$setPristine();
 				$scope.$apply();
 			})
@@ -99,7 +102,7 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 			chrome.storage.sync.clear();
 		}
 
-		$scope.settings = getDefaults();
+		$scope.settings = newStorageObject();
 		$scope.reloadSettingsFromDisc();
 
 		$scope.$watch('settings', function() {
