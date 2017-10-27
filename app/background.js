@@ -62,7 +62,7 @@ function loadSettings() {
 	return new Promise(function(resolve, reject) {
 
 		loadSettingsFromDisc().then(function(){
-			if(session.config.readSettingsFromUrl) {
+			if(session.config.configSource == 'URL') {
 				loadSettingsFromUrl().then(function() {
 					resolve();
 				})
@@ -170,15 +170,15 @@ function loadDefaultSettings() {
 function createStorageObject() {
 	return new Promise(function(resolve, reject) {
 		var storageObject = {
-			source: "DIRECT",
+			configSource: "LOCAL_STORAGE",
 			url: "http://_url_to_your_config_file.json",
 			configFile: ""
 		}
 
-		jQuery.get("/app/config.sample.json", function(res) {
-			storageObject.configFile = res;
+		jQuery.get("/app/config.sample.json", null, function(text) {
+			storageObject.configFile = text;
 			resolve(jQuery.extend({}, storageObject));
-		})
+		}, 'text')
 	})
 }
 
@@ -194,6 +194,7 @@ function parseSettings(storageObject) {
 
 	var config = JSON.parse(storageObject.configFile);
 
+	config.configSource = storageObject.configSource;
 	config.url = storageObject.url;
 	return config;
 }
@@ -212,9 +213,9 @@ function getTabsToClose() {
 
 				var tab = tabs[i];
 
-				if(!tab.url.startsWith("chrome:")) {
+				//if(!tab.url.startsWith("chrome:")) {
 					tabIds.push(tabs[i].id);
-				}
+				//}
 			};
 
 			resolve(tabIds);
@@ -328,7 +329,7 @@ function isSettingsReloadRequired() {
 
 	var reloadIntervalMillis = session.config.settingsReloadIntervalMinutes * 60 * 1000;
 
-	if(millisSinceLastReload > reloadIntervalMillis && session.config.readSettingsFromUrl) {
+	if(millisSinceLastReload > reloadIntervalMillis && session.config.configSource == 'URL') {
 		console.log("Reload settings from url: yes");
 		return true;
 	} else {

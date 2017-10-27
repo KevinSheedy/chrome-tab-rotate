@@ -8,19 +8,19 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 	function loadSampleConfig() {
 		return new Promise(function(resolve, reject) {
 			var storageObject = {
-				source: "DIRECT",
+				configSource: "LOCAL_STORAGE",
 				url: "https://raw.githubusercontent.com/KevinSheedy/chrome-tab-rotate/master/app/config.sample.json",
 				configFile: ""
 			}
 
-			jQuery.get("/app/config.sample.json", function(res) {
-				storageObject.configFile = res;
+			jQuery.get("/app/config.sample.json", null, function(text) {
+				storageObject.configFile = text;
 
 				// Resolves to a function that builds a new Storage Object
 				resolve(function(){
 					return  jQuery.extend({}, storageObject);
 				});
-			})
+			}, 'text')
 		})
 	}
 
