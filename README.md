@@ -10,9 +10,6 @@ Allows Chrome to automatically cycle through a set of tabs. Ideal for a Dashboar
 
 ## Settings
 
-### readSettingsFromUrl - boolean
-Automatically reload the settings file from the url provided.
-
 ### settingsReloadIntervalMinutes - integer
 Interval at which the settings file is reloaded.
 
@@ -32,7 +29,6 @@ Begin rotating tabs automatically as soon as Chrome is opened
 
 ```json
 {
-	"readSettingsFromUrl": false,
 	"settingsReloadIntervalMinutes": 60,
 	"fullscreen": true,
 	"websites" : [
