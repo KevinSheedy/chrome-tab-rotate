@@ -27,12 +27,12 @@
 			<h3>Config Source:</h3>
 			<div class="form-group" id="input-source-container">
 				<label>
-					<input type="radio" ng-model="settings.configSource" value="LOCAL_STORAGE">
+					<input type="radio" ng-model="settings.source" value="DIRECT">
 					Local Storage
 				</label><br/>
 
 				<label>
-					<input type="radio" ng-model="settings.configSource" value="URL">
+					<input type="radio" ng-model="settings.source" value="URL">
 					Remote Url
 				</label>
 			</div>
@@ -40,14 +40,14 @@
 			
 			
 
-			<div class="form-group" ng-show="settings.configSource == 'LOCAL_STORAGE'" ng-class="validateConfigFile() ? 'has-success' : 'has-error'">
+			<div class="form-group" ng-show="settings.source == 'DIRECT'" ng-class="validateConfigFile() ? 'has-success' : 'has-error'">
 				<textarea id="configTextArea" name="configTextArea" ng-show="editMode" ng-blur="editMode = false" name="configFile" class="code" ng-model="settings.configFile" ui-validate="'isValidConfigFile($value)'"></textarea>
 				<pre ng-show="!editMode" ng-click="editMode = true"><code class="config-code-block language-javascript" prism>{{settings.configFile}}</code></pre>
 				<div id="json-validation-message" class="help-block">JSON: {{validateConfigFile() ? "Valid" : "Invalid"}}</div>
 			</div>
 
 
-			<div id="url-container" class="form-group" ng-show="settings.configSource == 'URL'" ng-class="{'has-success' : form.url.$dirty && isValidUrl(), 'has-error': form.url.$dirty && !isValidUrl(), 'has-feedback': isFetchInProgress}">
+			<div id="url-container" class="form-group" ng-show="settings.source == 'URL'" ng-class="{'has-success' : form.url.$dirty && isValidUrl(), 'has-error': form.url.$dirty && !isValidUrl(), 'has-feedback': isFetchInProgress}">
 				<button id="fetchRemoteSettings" ng-click="fetchRemoteSettings()" class="btn btn-primary">Test Url</button>
 				<input type="text" class="form-control" name="url" ng-model="settings.url" id="settingsUrl" ui-validate="'isValidUrl()'"></input>
 				
@@ -56,8 +56,8 @@
 				<span class="help-block" ng-show="fetchSucceeded && !isFetchInProgress">success</span>
 			</div>
 
-			<div id="json-response-container" class="form-group" ng-show="settings.configSource == 'URL'" ng-class="validateConfigFile() ? 'has-success' : 'has-error'">
-				<pre ng-click="settings.configSource = 'LOCAL_STORAGE'; editMode = true;"><code class="config-code-block language-javascript">{{settings.configFile}}</code></pre>
+			<div id="json-response-container" class="form-group" ng-show="settings.source == 'URL'" ng-class="validateConfigFile() ? 'has-success' : 'has-error'">
+				<pre ng-click="settings.source = 'DIRECT'; editMode = true;"><code class="config-code-block language-javascript">{{settings.configFile}}</code></pre>
 				<div id="json-validation-message" class="help-block">JSON: {{validateConfigFile() ? "Valid" : "Invalid"}}</div>
 			</div>
 

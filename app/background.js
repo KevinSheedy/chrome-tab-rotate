@@ -62,7 +62,7 @@ function loadSettings() {
 	return new Promise(function(resolve, reject) {
 
 		loadSettingsFromDisc().then(function(){
-			if(session.config.configSource == 'URL') {
+			if(session.config.source == 'URL') {
 				loadSettingsFromUrl().then(function() {
 					resolve();
 				})
@@ -170,7 +170,7 @@ function loadDefaultSettings() {
 function createStorageObject() {
 	return new Promise(function(resolve, reject) {
 		var storageObject = {
-			configSource: "LOCAL_STORAGE",
+			source: "DIRECT",
 			url: "http://_url_to_your_config_file.json",
 			configFile: ""
 		}
@@ -194,7 +194,7 @@ function parseSettings(storageObject) {
 
 	var config = JSON.parse(storageObject.configFile);
 
-	config.configSource = storageObject.configSource;
+	config.source = storageObject.source;
 	config.url = storageObject.url;
 	return config;
 }
@@ -329,7 +329,7 @@ function isSettingsReloadRequired() {
 
 	var reloadIntervalMillis = session.config.settingsReloadIntervalMinutes * 60 * 1000;
 
-	if(millisSinceLastReload > reloadIntervalMillis && session.config.configSource == 'URL') {
+	if(millisSinceLastReload > reloadIntervalMillis && session.config.source == 'URL') {
 		console.log("Reload settings from url: yes");
 		return true;
 	} else {

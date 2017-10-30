@@ -1,6 +1,6 @@
 {
   "name": "chrome-tab-rotate",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Loop through a set of tabs - ideal for a Dashboard or Advertisement Display",
   "main": "gulpfile.js",
   "dependencies": {
