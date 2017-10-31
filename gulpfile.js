@@ -13,14 +13,13 @@ gulp.task('project', function() {
 
 gulp.task('lib', function() {
 	return gulp.src([
-		  'node_modules/**/jquery/dist/jquery.min.js'
-		, 'node_modules/**/angular/angular.min.js'
-		, 'node_modules/**/bootstrap.min.css'
-		, 'node_modules/**/angular-ui.min.js'
-		, 'node_modules/**/angular-ui-validate/dist/validate.min.js'
-		, 'node_modules/**/prism.css'
-		, 'node_modules/**/prism.js'
-		, 'node_modules/**/prism-javascript.min.js'
+		  'node_modules/jquery/dist/jquery.min.js'
+		, 'node_modules/angular/angular.min.js'
+		, 'node_modules/bootstrap/dist/css/bootstrap.min.css'
+		, 'node_modules/angular-ui-validate/dist/validate.min.js'
+		, 'node_modules/prismjs/themes/prism.css'
+		, 'node_modules/prismjs/prism.js'
+		, 'node_modules/prismjs/components/prism-javascript.min.js'
 
 	])
 	.pipe(gulp.dest('dest/lib'));
