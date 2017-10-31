@@ -12,7 +12,7 @@
   "options_page": "app/settings.html",
 
   "background": {
-    "scripts": ["lib/jquery.min.js", "app/background.js"]
+    "scripts": ["lib/jquery.min.js", "app/background.js", "app/import-analytics.js"]
   },
 
   "icons": {
@@ -21,6 +21,8 @@
     "48": "app/img/Play-48.png",
     "128": "app/img/Play-128.png"
   },
+
+  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
   
   "permissions": [
     "activeTab",
