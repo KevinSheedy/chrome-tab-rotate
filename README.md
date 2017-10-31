@@ -23,6 +23,13 @@ Begin rotating tabs automatically as soon as Chrome is opened
 
 #### url - string
 
+#### duration - integer
+Number of seconds the tab will be displayed
+
+#### tabReloadIntervalSeconds - integer
+Interval in seconds at which the tab will be reloaded
+Set to `0` for no reload
+
 
 	// Automatically reload the settings file from the url provided
 	"enableAutoReload": false

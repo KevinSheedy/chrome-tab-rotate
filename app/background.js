@@ -344,7 +344,9 @@ function isTabReloadRequired(tabIndex) {
 
 	var reloadIntervalMillis = session.config.websites[tabIndex].tabReloadIntervalSeconds * 1000;
 
-	if(millisSinceLastReload > reloadIntervalMillis) {
+	if(reloadIntervalMillis <= 0) {
+		return false;
+	} else if(millisSinceLastReload > reloadIntervalMillis) {
 		return true;
 	} else {
 		return false;
