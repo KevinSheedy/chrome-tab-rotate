@@ -2,6 +2,9 @@ var settingsApp = angular.module('settingsApp', []);
 
 settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 
+	// Google Analytics
+	ga('send', 'pageview', '/options.html');
+
 	loadSampleConfig()
 		.then(initScope);
 

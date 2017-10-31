@@ -5,6 +5,8 @@ var session = newSessionObject();
 
 loadSettings().then(function(){
 
+	ga('send', 'pageview', '/background.js');
+
 	initEventListeners();
 
 	if(session.config.autoStart == true) {
@@ -42,6 +44,14 @@ function iconClicked() {
 }
 
 function play() {
+
+	// Google Analytics
+	ga('send', {
+		hitType: 'event',
+		eventCategory: 'user-action',
+		eventAction: 'play',
+		eventLabel: 'play'
+	});
 	
 	chrome.browserAction.setIcon({path: "app/img/Pause-38.png"});
 	chrome.browserAction.setTitle({"title": "Pause Tab Rotate"});
@@ -51,6 +61,15 @@ function play() {
 }
 
 function pause() {
+
+	// Google Analytics
+	ga('send', {
+		hitType: 'event',
+		eventCategory: 'user-action',
+		eventAction: 'pause',
+		eventLabel: 'pause'
+	});
+
 	chrome.browserAction.setIcon({path: "app/img/Play-38.png"});
 	chrome.browserAction.setTitle({"title": "Start Tab Rotate"});
 	clearTimeout(session.timerId);
@@ -236,7 +255,6 @@ function closeTabs(tabIds) {
 
 		chrome.tabs.remove(tabIds, function() {
 
-			session.tabs = [];
 			resolve();
 		})
 	})
