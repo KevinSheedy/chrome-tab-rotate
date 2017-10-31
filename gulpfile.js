@@ -11,19 +11,19 @@ gulp.task('project', function() {
 	return gulp.src(['manifest.json', 'README.md']).pipe(gulp.dest('dest'));
 });
 
-gulp.task('bower', function() {
+gulp.task('lib', function() {
 	return gulp.src([
-		  'bower_components/**/jquery.min.js'
-		, 'bower_components/**/angular.min.js'
-		, 'bower_components/**/bootstrap.min.css'
-		, 'bower_components/**/angular-ui.min.js'
-		, 'bower_components/**/validate.js'
-		, 'bower_components/**/prism.css'
-		, 'bower_components/**/prism.js'
-		, 'bower_components/**/prism-javascript.min.js'
+		  'node_modules/**/jquery/dist/jquery.min.js'
+		, 'node_modules/**/angular/angular.min.js'
+		, 'node_modules/**/bootstrap.min.css'
+		, 'node_modules/**/angular-ui.min.js'
+		, 'node_modules/**/angular-ui-validate/dist/validate.min.js'
+		, 'node_modules/**/prism.css'
+		, 'node_modules/**/prism.js'
+		, 'node_modules/**/prism-javascript.min.js'
 
 	])
-	.pipe(gulp.dest('dest/bower_components'));
+	.pipe(gulp.dest('dest/lib'));
 });
 
 gulp.task('clean', function() {
@@ -36,4 +36,4 @@ gulp.task('zip', function () {
 		.pipe(gulp.dest('zip'));
 });
 
-gulp.task('default', ['clean', 'project', 'app', 'bower']);
+gulp.task('default', ['clean', 'project', 'app', 'lib']);

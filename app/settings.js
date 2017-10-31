@@ -1,4 +1,4 @@
-var settingsApp = angular.module('settingsApp', ['ui']);
+var settingsApp = angular.module('settingsApp', []);
 
 settingsApp.controller('SettingsCtrl', function ($scope, $http) {
 
