@@ -185,8 +185,8 @@ function createStorageObject() {
 function beginCycling() {
 
 		getTabsToClose()
-			.then(closeTabs)
 			.then(insertTabs)
+			.then(closeTabs)
 			.then(rotateTabAndScheduleNextRotation);
 }
 
@@ -243,7 +243,7 @@ function closeTabs(tabIds) {
 }
 
 
-function insertTabs() {
+function insertTabs(tabIdsToClose) {
 
 	return new Promise(function(resolve, reject) {
 
@@ -256,7 +256,7 @@ function insertTabs() {
 				session.tabReloadTime[index] = (new Date()).getTime();
 				counter++;
 				if(counter >= session.config.websites.length) {
-					resolve();
+					resolve(tabIdsToClose);
 				}
 			});
 
