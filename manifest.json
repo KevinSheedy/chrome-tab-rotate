@@ -3,7 +3,7 @@
 
   "name": "Tab Rotate",
   "description": "Loop through a set of tabs - ideal for a Dashboard or Advertisement Display",
-  "version": "0.0.19",
+  "version": "0.1.0",
 
   "browser_action": {
     "default_icon": "app/img/Play-38.png",
@@ -22,7 +22,7 @@
     "128": "app/img/Play-128.png"
   },
 
-  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
+  "content_security_policy": "script-src 'self' https://www.google-analytics.com; object-src 'self'",
   
   "permissions": [
     "activeTab",
