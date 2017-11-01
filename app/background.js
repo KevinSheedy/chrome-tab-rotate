@@ -25,6 +25,8 @@ function newSessionObject() {
 		nextIndex: 0,
 		timerId: null,
 		settingsLoadTime: 0,
+		playStartTime: 0,
+		analyticsCounter: 0,
 		storageObject: {},
 		config: {}
 	}
@@ -52,11 +54,14 @@ function play() {
 		eventAction: 'play',
 		eventLabel: 'play'
 	});
+
 	
 	chrome.browserAction.setIcon({path: "app/img/Pause-38.png"});
 	chrome.browserAction.setTitle({"title": "Pause Tab Rotate"});
 	session = newSessionObject();
 	session.enableRotate = true;
+	session.playStartTime = (new Date()).getTime();
+	session.analyticsCounter = 0;
 	loadSettings().then(beginCycling);
 }
 
@@ -300,6 +305,8 @@ function rotateTabAndScheduleNextRotation() {
 	if(!session.enableRotate)
 		return;
 
+	analyticsHeartbeat();
+
 	if(session.nextIndex == 0 && isSettingsReloadRequired()) {
 		loadSettings()
 			.then(beginCycling);
@@ -368,5 +375,23 @@ function isTabReloadRequired(tabIndex) {
 		return true;
 	} else {
 		return false;
+	}
+}
+
+function analyticsHeartbeat() {
+	var ANALYTICS_INTERVAL_MILLIS = 60 * 60 * 1000;
+	var nowMillis = (new Date()).getTime();
+	var playDurationMillis = nowMillis - session.playStartTime;
+	var nextAnalyticsSendTime = ANALYTICS_INTERVAL_MILLIS * (session.analyticsCounter + 1);
+
+	if(playDurationMillis > nextAnalyticsSendTime) {
+		session.analyticsCounter++;
+
+		ga('send', {
+			hitType: 'event',
+			eventCategory: 'heartbeat',
+			eventAction: 'heartbeat',
+			eventLabel: 'heartbeat'
+		});
 	}
 }
