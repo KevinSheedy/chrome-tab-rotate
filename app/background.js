@@ -105,7 +105,8 @@ function loadSettingsFromDisc() {
 		chrome.storage.sync.get(null, function(allStorage) {
 
 			if(jQuery.isEmptyObject(allStorage)) {
-				// On first use, we open the settings page
+				// This is the first use of the plugin
+				analyticsReportInstallation();
 				openSettingsPage();
 				loadDefaultSettings().then(function(defaultSettings) {
 					session.config = defaultSettings;
@@ -385,6 +386,8 @@ function analyticsHeartbeat() {
 	var nextAnalyticsSendTime = ANALYTICS_INTERVAL_MILLIS * (session.analyticsCounter + 1);
 
 	if(playDurationMillis > nextAnalyticsSendTime) {
+
+		console.log('analytics: heartbeat');
 		session.analyticsCounter++;
 
 		ga('send', {
@@ -394,4 +397,17 @@ function analyticsHeartbeat() {
 			eventLabel: 'heartbeat'
 		});
 	}
+}
+
+function analyticsReportInstallation() {
+
+	console.log('analytics: install');
+
+	// Google Analytics
+	ga('send', {
+		hitType: 'event',
+		eventCategory: 'user-action',
+		eventAction: 'install',
+		eventLabel: 'install'
+	});
 }
