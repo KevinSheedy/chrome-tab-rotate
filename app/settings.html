@@ -1,95 +1,95 @@
 <!doctype html>
 <html lang="en" ng-app="settingsApp">
 <head>
-	<meta charset="utf-8">
-	<title>Tab Rotate Options</title>
-	<script src="import-analytics.js"></script>
-	<link rel="stylesheet" href="../lib/bootstrap.min.css">
-	<link rel="stylesheet" href="../lib/prism.css">
-	<link rel="stylesheet" href="settings.css">
-	<script src="../lib/jquery.min.js"></script>
-	<script src="../lib/angular.min.js"></script>
-	<script src="../lib/validate.min.js"></script>
+  <meta charset="utf-8">
+  <title>Tab Rotate Options</title>
+  <script src="import-analytics.js"></script>
+  <link rel="stylesheet" href="../lib/bootstrap.min.css">
+  <link rel="stylesheet" href="../lib/prism.css">
+  <link rel="stylesheet" href="settings.css">
+  <script src="../lib/jquery.min.js"></script>
+  <script src="../lib/angular.min.js"></script>
+  <script src="../lib/validate.min.js"></script>
 
-	<script src="settings.js"></script>
+  <script src="settings.js"></script>
 </head>
 <body>
 
-	<div id="main-container" class="container">
+  <div id="main-container" class="container">
 
 
-		<h1><img src="img/Play-48.png"></img>  Tab Rotate Options</h1>
+    <h1><img src="img/Play-48.png"></img>  Tab Rotate Options</h1>
 
 
-		<form name="form" ng-controller="SettingsCtrl">
+    <form name="form" ng-controller="SettingsCtrl">
 
 
-			<h3>Config Source:</h3>
-			<div class="form-group" id="input-source-container">
-				<label>
-					<input type="radio" ng-model="settings.source" value="DIRECT">
-					Local Storage
-				</label><br/>
+      <h3>Config Source:</h3>
+      <div class="form-group" id="input-source-container">
+        <label>
+          <input type="radio" ng-model="settings.source" value="DIRECT">
+          Local Storage
+        </label><br/>
 
-				<label>
-					<input type="radio" ng-model="settings.source" value="URL">
-					Remote Url
-				</label>
-			</div>
+        <label>
+          <input type="radio" ng-model="settings.source" value="URL">
+          Remote Url
+        </label>
+      </div>
 
-			
-			
+      
+      
 
-			<div class="form-group" ng-show="settings.source == 'DIRECT'" ng-class="validateConfigFile() ? 'has-success' : 'has-error'">
-				<textarea id="configTextArea" name="configTextArea" ng-show="editMode" ng-blur="editMode = false" name="configFile" class="code" ng-model="settings.configFile" ui-validate="'isValidConfigFile($value)'"></textarea>
-				<pre ng-show="!editMode" ng-click="editMode = true"><code class="config-code-block language-javascript" prism>{{settings.configFile}}</code></pre>
-				<div id="json-validation-message" class="help-block">JSON: {{validateConfigFile() ? "Valid" : "Invalid"}}</div>
-			</div>
-
-
-			<div id="url-container" class="form-group" ng-show="settings.source == 'URL'" ng-class="{'has-success' : form.url.$dirty && isValidUrl(), 'has-error': form.url.$dirty && !isValidUrl(), 'has-feedback': isFetchInProgress}">
-				<button id="fetchRemoteSettings" ng-click="fetchRemoteSettings()" class="btn btn-primary">Test Url</button>
-				<input type="text" class="form-control" name="url" ng-model="settings.url" id="settingsUrl" ui-validate="'isValidUrl()'"></input>
-				
-				<span class="help-block" ng-show="isFetchInProgress">fetching...</span>
-				<span class="help-block" ng-show="!fetchSucceeded && !isFetchInProgress">failed</span>
-				<span class="help-block" ng-show="fetchSucceeded && !isFetchInProgress">success</span>
-			</div>
-
-			<div id="json-response-container" class="form-group" ng-show="settings.source == 'URL'" ng-class="validateConfigFile() ? 'has-success' : 'has-error'">
-				<pre ng-click="settings.source = 'DIRECT'; editMode = true;"><code class="config-code-block language-javascript">{{settings.configFile}}</code></pre>
-				<div id="json-validation-message" class="help-block">JSON: {{validateConfigFile() ? "Valid" : "Invalid"}}</div>
-			</div>
-
-			
-
-			<div class="row">
-				
-				<div class="col-md-4">
-
-					<div class="form-group" ng-class="{'has-success': form.$pristine && form.$valid, 'has-error': !form.$valid, 'has-feedback': form.$dirty}" >
-						<button ng-click="reloadSettingsFromDisc()" ng-disabled="form.$pristine" class="btn btn-default btn-lg">Cancel</button>
-						<button ng-click="save()" ng-disabled="form.$pristine" class="btn btn-lg btn-primary">Save</button>
-						<span class="help-block" ng-show="form.$dirty">Modified</span>
-						<span class="help-block" ng-show="formSaved && !form.$dirty">Saved</span>
-					</div>
-				</div>
+      <div class="form-group" ng-show="settings.source == 'DIRECT'" ng-class="validateConfigFile() ? 'has-success' : 'has-error'">
+        <textarea id="configTextArea" name="configTextArea" ng-show="editMode" ng-blur="editMode = false" name="configFile" class="code" ng-model="settings.configFile" ui-validate="'isValidConfigFile($value)'"></textarea>
+        <pre ng-show="!editMode" ng-click="editMode = true"><code class="config-code-block language-javascript" prism>{{settings.configFile}}</code></pre>
+        <div id="json-validation-message" class="help-block">JSON: {{validateConfigFile() ? "Valid" : "Invalid"}}</div>
+      </div>
 
 
-				<div id="resets-container">
-					<br></br>
-					<button ng-click="resetDefaults()">Reset Defaults</button>
-					<button ng-click="clearStorage()">Clear Storage</button>
-				</div>
-			</div>
+      <div id="url-container" class="form-group" ng-show="settings.source == 'URL'" ng-class="{'has-success' : form.url.$dirty && isValidUrl(), 'has-error': form.url.$dirty && !isValidUrl(), 'has-feedback': isFetchInProgress}">
+        <button id="fetchRemoteSettings" ng-click="fetchRemoteSettings()" class="btn btn-primary">Test Url</button>
+        <input type="text" class="form-control" name="url" ng-model="settings.url" id="settingsUrl" ui-validate="'isValidUrl()'"></input>
+        
+        <span class="help-block" ng-show="isFetchInProgress">fetching...</span>
+        <span class="help-block" ng-show="!fetchSucceeded && !isFetchInProgress">failed</span>
+        <span class="help-block" ng-show="fetchSucceeded && !isFetchInProgress">success</span>
+      </div>
 
-		 </form>
+      <div id="json-response-container" class="form-group" ng-show="settings.source == 'URL'" ng-class="validateConfigFile() ? 'has-success' : 'has-error'">
+        <pre ng-click="settings.source = 'DIRECT'; editMode = true;"><code class="config-code-block language-javascript">{{settings.configFile}}</code></pre>
+        <div id="json-validation-message" class="help-block">JSON: {{validateConfigFile() ? "Valid" : "Invalid"}}</div>
+      </div>
 
-	 </div>
+      
+
+      <div class="row">
+        
+        <div class="col-md-4">
+
+          <div class="form-group" ng-class="{'has-success': form.$pristine && form.$valid, 'has-error': !form.$valid, 'has-feedback': form.$dirty}" >
+            <button ng-click="reloadSettingsFromDisc()" ng-disabled="form.$pristine" class="btn btn-default btn-lg">Cancel</button>
+            <button ng-click="save()" ng-disabled="form.$pristine" class="btn btn-lg btn-primary">Save</button>
+            <span class="help-block" ng-show="form.$dirty">Modified</span>
+            <span class="help-block" ng-show="formSaved && !form.$dirty">Saved</span>
+          </div>
+        </div>
 
 
-	<script src="../lib/prism.js"></script>
-	<script src="../lib/prism-javascript.min.js"></script>
+        <div id="resets-container">
+          <br></br>
+          <button ng-click="resetDefaults()">Reset Defaults</button>
+          <button ng-click="clearStorage()">Clear Storage</button>
+        </div>
+      </div>
+
+     </form>
+
+   </div>
+
+
+  <script src="../lib/prism.js"></script>
+  <script src="../lib/prism-javascript.min.js"></script>
 
 
 </body>

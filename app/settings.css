@@ -1,63 +1,63 @@
 pre, #configTextArea {
-	width: 800px;
+  width: 800px;
 }
 
 #settingsUrl {
-	width: 88%;
-	display: inline;
+  width: 88%;
+  display: inline;
 }
 
 #input-source-container {
-	margin-left: 30px;
+  margin-left: 30px;
 }
 
 #resets-container {
-	text-align: right;
+  text-align: right;
 }
 
 #json-validation-message {
-	text-align: right;
+  text-align: right;
 }
 
 #main-container {
-	width: 900px;
+  width: 900px;
 }
 
 form {
-	margin-left: 20px;
+  margin-left: 20px;
 }
 
 h3, label {
 
-	font-weight: normal;
+  font-weight: normal;
 }
 
 h3 {
-	font-size: 18px;
+  font-size: 18px;
 }
 
 .help-block {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 #url-container, #json-response-container {
-	margin-left: 60px;
+  margin-left: 60px;
 }
 
 pre, .code {
-	font: 100% Consolas, Monaco, monospace;
-	background: #f5f2f0;
-	text-shadow: 0 1px white;
-	white-space: pre;
-	word-wrap: normal;
-	tab-size: 4;
-	color: black;
-	padding: 1em;
-	font-size: 12px;
-	height: 40em;
+  font: 100% Consolas, Monaco, monospace;
+  background: #f5f2f0;
+  text-shadow: 0 1px white;
+  white-space: pre;
+  word-wrap: normal;
+  tab-size: 4;
+  color: black;
+  padding: 1em;
+  font-size: 12px;
+  height: 40em;
 
 }
 
 pre {
-	cursor: pointer;
+  cursor: pointer;
 }
