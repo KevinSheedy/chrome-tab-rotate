@@ -1,6 +1,6 @@
 {
   "name": "chrome-tab-rotate",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Loop through a set of tabs - ideal for a Dashboard or Advertisement Display",
   "main": "gulpfile.js",
   "dependencies": {
@@ -12,11 +12,13 @@
   },
   "devDependencies": {
     "del": "3.0.0",
+    "eslint": "^4.18.2",
     "gulp": "3.9.1",
     "gulp-zip": "4.0.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "./node_modules/.bin/eslint --fix"
   },
   "repository": {
     "type": "git",
