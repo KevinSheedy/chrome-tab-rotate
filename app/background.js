@@ -1,5 +1,19 @@
 console.log('started daemon: background.js');
 
+fetch('../manifest.json')
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(myJson) {
+    console.log(myJson);
+    ga('send', {
+      hitType: 'event',
+      eventCategory: 'version',
+      eventAction: myJson.version,
+      eventLabel: myJson.version
+    });
+  });
+
 // Global Session Object
 var session = newSessionObject();
 
@@ -345,7 +359,14 @@ function preloadTab(tabIndex) {
 
   // Preload the future tab in advance
   console.log('Preload tab: ' + tabIndex);
-  chrome.tabs.reload(session.tabs[tabIndex].id);
+
+  let {id} = session.tabs[tabIndex];
+  let {url} = session.config.websites[tabIndex];
+  chrome.tabs.reload(id, {},
+    // Issue 19 - Reset the url on reload - occasionally errors cause a redirect.
+    () => chrome.tabs.update(id, {url})
+  );
+  
   session.tabReloadTime[tabIndex] = (new Date()).getTime();
 }
 
