@@ -10,7 +10,7 @@ fetch('../manifest.json')
     ga('send', {
       hitType: 'event',
       eventCategory: 'version',
-      eventAction: manifest.version,
+      eventAction: 'manifest',
       eventLabel: manifest.version
     });
   });
