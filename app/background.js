@@ -1,18 +1,21 @@
 console.log('started daemon: background.js');
+let MANIFEST = {};
 
 fetch('../manifest.json')
   .then(function(response) {
     return response.json();
   })
-  .then(function(myJson) {
-    console.log(myJson);
+  .then(function(manifest) {
+    MANIFEST = manifest;
     ga('send', {
       hitType: 'event',
       eventCategory: 'version',
-      eventAction: myJson.version,
-      eventLabel: myJson.version
+      eventAction: manifest.version,
+      eventLabel: manifest.version
     });
   });
+
+const getVersion = () => MANIFEST.version || 'unknown';
 
 // Global Session Object
 var session = newSessionObject();
@@ -40,6 +43,7 @@ function newSessionObject() {
     timerId: null,
     settingsLoadTime: 0,
     playStartTime: 0,
+    lastHeartbeatTime: 0,
     analyticsCounter: 0,
     storageObject: {},
     config: {}
@@ -66,7 +70,7 @@ function play() {
     hitType: 'event',
     eventCategory: 'user-action',
     eventAction: 'play',
-    eventLabel: 'play'
+    eventLabel: getVersion()
   });
 
   
@@ -86,7 +90,7 @@ function pause() {
     hitType: 'event',
     eventCategory: 'user-action',
     eventAction: 'pause',
-    eventLabel: 'pause'
+    eventLabel: getVersion()
   });
 
   chrome.browserAction.setIcon({path: 'app/img/Play-38.png'});
@@ -401,24 +405,61 @@ function isTabReloadRequired(tabIndex) {
 }
 
 function analyticsHeartbeat() {
-  var ANALYTICS_INTERVAL_MILLIS = 60 * 60 * 1000;
-  var nowMillis = (new Date()).getTime();
-  var playDurationMillis = nowMillis - session.playStartTime;
-  var nextAnalyticsSendTime = ANALYTICS_INTERVAL_MILLIS * (session.analyticsCounter + 1);
 
-  if(playDurationMillis > nextAnalyticsSendTime) {
+  console.log('analyticsHeartbeat');
+  // All units in millis
+  const now = (new Date()).getTime();
+  const previous = session.lastHeartbeatTime || now;
+  const MINUTE = (60 * 1000), 
+    HOUR = 60 * MINUTE, DAY = 24 * HOUR, WEEK = 7 * DAY, MONTH = 30 * DAY, YEAR = 365 * DAY;
+  const uptime = now - session.playStartTime;
 
-    console.log('analytics: heartbeat');
-    session.analyticsCounter++;
+  const tenMinuteMark = session.playStartTime + (10 * MINUTE),
+    twentyMinuteMark = session.playStartTime + (20 * MINUTE),
+    thirtyMinuteMark = session.playStartTime + (30 * MINUTE),
+    fortyMinuteMark = session.playStartTime + (40 * MINUTE),
+    fiftyMinuteMark = session.playStartTime + (50 * MINUTE),
+    sixtyMinuteMark = session.playStartTime + (60 * MINUTE);
 
-    ga('send', {
-      hitType: 'event',
-      eventCategory: 'heartbeat',
-      eventAction: 'heartbeat',
-      eventLabel: 'heartbeat'
-    });
-  }
+  (previous < tenMinuteMark && tenMinuteMark < now) && sendHeartbeat('10mins');
+  (previous < twentyMinuteMark && twentyMinuteMark < now) && sendHeartbeat('20mins');
+  (previous < thirtyMinuteMark && thirtyMinuteMark < now) && sendHeartbeat('30mins');
+  (previous < fortyMinuteMark && fortyMinuteMark < now) && sendHeartbeat('40mins');
+  (previous < fiftyMinuteMark && fiftyMinuteMark < now) && sendHeartbeat('50mins');
+  (previous < sixtyMinuteMark && sixtyMinuteMark < now) && sendHeartbeat('60mins');
+
+  const REALTIME_PULSE_INTERVAL = 3 * MINUTE;
+  const lastPulseMark = now - (uptime % REALTIME_PULSE_INTERVAL);
+  (previous < lastPulseMark && lastPulseMark < now) && sendHeartbeat('pulse');
+
+
+  const lastHourMark = now - (uptime % HOUR);
+  (previous < lastHourMark && lastHourMark < now) && sendHeartbeat('hour');
+
+  const lastDayMark = now - (uptime % DAY);
+  (previous < lastDayMark && lastDayMark < now) && sendHeartbeat('day');
+
+  const lastWeekMark = now - (uptime % WEEK);
+  (previous < lastWeekMark && lastWeekMark < now) && sendHeartbeat('week');
+
+  const lastMonthMark = now - (uptime % MONTH);
+  (previous < lastMonthMark && lastMonthMark < now) && sendHeartbeat('month');
+
+  const lastYearMark = now - (uptime % YEAR);
+  (previous < lastYearMark && lastYearMark < now) && sendHeartbeat('year');
+
+  session.lastHeartbeatTime = now;
 }
+
+const sendHeartbeat = (action) => {
+  console.log('sendHeartbeat', action);
+  ga('send', {
+    hitType: 'event',
+    eventCategory: 'heartbeat',
+    eventAction: action,
+    eventLabel: getVersion(),
+  });
+};
 
 function analyticsReportInstallation() {
 
@@ -429,6 +470,6 @@ function analyticsReportInstallation() {
     hitType: 'event',
     eventCategory: 'user-action',
     eventAction: 'install',
-    eventLabel: 'install'
+    eventLabel: getVersion()
   });
 }
