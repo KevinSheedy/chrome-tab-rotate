@@ -31,5 +31,7 @@
     "http://*/",
     "https://*/",
     "tabs"
-  ]
+  ],
+
+  "kiosk_enabled" : true
 }
