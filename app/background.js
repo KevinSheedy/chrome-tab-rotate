@@ -163,6 +163,7 @@ function loadSettingsFromUrl() {
           console.log('Settings are valid');
           session.storageObject.configFile = res;
           session.config = parseSettings(session.storageObject);
+          session.settingsChangeTime = (new Date()).getTime();
           console.log('Write settings to disc');
           chrome.storage.sync.set(session.storageObject, function(){resolve();});
           return;
@@ -226,6 +227,10 @@ function createStorageObject() {
 }
 
 function beginCycling() {
+  if(session.settingsLoadTime > session.settingsChangeTime) {
+    rotateTabAndScheduleNextRotation();
+    return;
+  }
 
   getTabsToClose()
     .then(insertTabs)
