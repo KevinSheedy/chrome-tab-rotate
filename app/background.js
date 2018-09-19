@@ -227,7 +227,7 @@ function createStorageObject() {
 }
 
 function beginCycling() {
-  if(session.settingsLoadTime > session.settingsChangeTime) {
+  if(session.settingsChangeTime && session.settingsLoadTime > session.settingsChangeTime) {
     rotateTabAndScheduleNextRotation();
     return;
   }
