@@ -1,13 +1,14 @@
 import analytics from './analytics';
 
-console.log('started daemon: background.js');
+const { heartbeat } = analytics;
+
 analytics.startup();
 
 // Global Session Object
 var session = newSessionObject();
 
 loadSettings().then(function() {
-  ga('send', 'pageview', '/background.js');
+  analytics.backgroundPageview();
 
   initEventListeners();
 
@@ -27,7 +28,6 @@ function newSessionObject() {
     timerId: null,
     settingsLoadTime: 0,
     playStartTime: 0,
-    lastHeartbeatTime: 0,
     analyticsCounter: 0,
     storageObject: {},
     config: {},
@@ -87,7 +87,7 @@ function loadSettingsFromDisc() {
     chrome.storage.sync.get(null, function(allStorage) {
       if (jQuery.isEmptyObject(allStorage)) {
         // This is the first use of the plugin
-        analyticsReportInstallation();
+        analytics.install();
         openSettingsPage();
         loadDefaultSettings().then(function(defaultSettings) {
           session.config = defaultSettings;
@@ -281,7 +281,8 @@ function rotateTabAndScheduleNextRotation() {
   // Break out of infinite loop when pause is clicked
   if (!session.enableRotate) return;
 
-  analyticsHeartbeat();
+  const { playStartTime } = session;
+  analytics.analyticsHeartbeat(playStartTime);
 
   if (session.nextIndex == 0 && isSettingsReloadRequired()) {
     loadSettings().then(beginCycling);
@@ -370,71 +371,3 @@ function isTabReloadRequired(tabIndex) {
   }
 }
 
-function analyticsHeartbeat() {
-  console.log('analyticsHeartbeat');
-  // All units in millis
-  const now = new Date().getTime();
-  const previous = session.lastHeartbeatTime || now;
-  const MINUTE = 60 * 1000,
-    HOUR = 60 * MINUTE,
-    DAY = 24 * HOUR,
-    WEEK = 7 * DAY,
-    MONTH = 30 * DAY,
-    YEAR = 365 * DAY;
-  const uptime = now - session.playStartTime;
-
-  const tenMinuteMark = session.playStartTime + 10 * MINUTE,
-    twentyMinuteMark = session.playStartTime + 20 * MINUTE,
-    thirtyMinuteMark = session.playStartTime + 30 * MINUTE,
-    fortyMinuteMark = session.playStartTime + 40 * MINUTE,
-    fiftyMinuteMark = session.playStartTime + 50 * MINUTE,
-    sixtyMinuteMark = session.playStartTime + 60 * MINUTE;
-
-  previous < tenMinuteMark && tenMinuteMark < now && sendHeartbeat('10mins');
-  previous < twentyMinuteMark &&
-    twentyMinuteMark < now &&
-    sendHeartbeat('20mins');
-  previous < thirtyMinuteMark &&
-    thirtyMinuteMark < now &&
-    sendHeartbeat('30mins');
-  previous < fortyMinuteMark &&
-    fortyMinuteMark < now &&
-    sendHeartbeat('40mins');
-  previous < fiftyMinuteMark &&
-    fiftyMinuteMark < now &&
-    sendHeartbeat('50mins');
-  previous < sixtyMinuteMark &&
-    sixtyMinuteMark < now &&
-    sendHeartbeat('60mins');
-
-  const REALTIME_PULSE_INTERVAL = 3 * MINUTE;
-  const lastPulseMark = now - (uptime % REALTIME_PULSE_INTERVAL);
-  previous < lastPulseMark && lastPulseMark < now && sendHeartbeat('pulse');
-
-  const lastHourMark = now - (uptime % HOUR);
-  previous < lastHourMark && lastHourMark < now && sendHeartbeat('hour');
-
-  const lastDayMark = now - (uptime % DAY);
-  previous < lastDayMark && lastDayMark < now && sendHeartbeat('day');
-
-  const lastWeekMark = now - (uptime % WEEK);
-  previous < lastWeekMark && lastWeekMark < now && sendHeartbeat('week');
-
-  const lastMonthMark = now - (uptime % MONTH);
-  previous < lastMonthMark && lastMonthMark < now && sendHeartbeat('month');
-
-  const lastYearMark = now - (uptime % YEAR);
-  previous < lastYearMark && lastYearMark < now && sendHeartbeat('year');
-
-  session.lastHeartbeatTime = now;
-}
-
-const sendHeartbeat = action => {
-  console.log('sendHeartbeat', action);
-  analytics.heartbeat(action);
-};
-
-function analyticsReportInstallation() {
-  console.log('analytics: install');
-  analytics.install();
-}
