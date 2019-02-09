@@ -1,10 +1,10 @@
-var gulp = require('gulp');
-var babel = require('rollup-plugin-babel');
-var json = require('rollup-plugin-json');
-var del = require('del');
-var zip = require('gulp-zip');
-var sourcemaps = require('gulp-sourcemaps');
-var rollup = require('gulp-better-rollup');
+import gulp from 'gulp';
+import babel from 'rollup-plugin-babel';
+import json from 'rollup-plugin-json';
+import del from 'del';
+import zip from 'gulp-zip';
+import sourcemaps from 'gulp-sourcemaps';
+import rollup from 'gulp-better-rollup';
 import manifest from './manifest.json';
 
 gulp.task('js', function() {

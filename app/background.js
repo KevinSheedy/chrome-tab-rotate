@@ -1,23 +1,7 @@
-import manifest from '../manifest.json';
+import analytics from './analytics';
 
-console.log('started daemon: background.js', manifest.version);
-let MANIFEST = {};
-
-fetch('../manifest.json')
-  .then(function(response) {
-    return response.json();
-  })
-  .then(function(manifest) {
-    MANIFEST = manifest;
-    ga('send', {
-      hitType: 'event',
-      eventCategory: 'version',
-      eventAction: 'manifest',
-      eventLabel: manifest.version,
-    });
-  });
-
-const getVersion = () => MANIFEST.version || 'unknown';
+console.log('started daemon: background.js');
+analytics.startup();
 
 // Global Session Object
 var session = newSessionObject();
@@ -63,13 +47,7 @@ function iconClicked() {
 }
 
 function play() {
-  // Google Analytics
-  ga('send', {
-    hitType: 'event',
-    eventCategory: 'user-action',
-    eventAction: 'play',
-    eventLabel: getVersion(),
-  });
+  analytics.play();
 
   chrome.browserAction.setIcon({ path: 'app/img/Pause-38.png' });
   chrome.browserAction.setTitle({ title: 'Pause Tab Rotate' });
@@ -81,13 +59,7 @@ function play() {
 }
 
 function pause() {
-  // Google Analytics
-  ga('send', {
-    hitType: 'event',
-    eventCategory: 'user-action',
-    eventAction: 'pause',
-    eventLabel: getVersion(),
-  });
+  analytics.pause();
 
   chrome.browserAction.setIcon({ path: 'app/img/Play-38.png' });
   chrome.browserAction.setTitle({ title: 'Start Tab Rotate' });
@@ -170,13 +142,10 @@ function loadSettingsFromUrl() {
 }
 
 function openSettingsPage() {
-  chrome.tabs.create(
-    {
-      index: 0,
-      url: 'app/settings.html',
-    },
-    function(tab) {},
-  );
+  chrome.tabs.create({
+    index: 0,
+    url: 'app/settings.html',
+  });
 }
 
 function validateConfigFile(configFile) {
@@ -462,22 +431,10 @@ function analyticsHeartbeat() {
 
 const sendHeartbeat = action => {
   console.log('sendHeartbeat', action);
-  ga('send', {
-    hitType: 'event',
-    eventCategory: 'heartbeat',
-    eventAction: action,
-    eventLabel: getVersion(),
-  });
+  analytics.heartbeat(action);
 };
 
 function analyticsReportInstallation() {
   console.log('analytics: install');
-
-  // Google Analytics
-  ga('send', {
-    hitType: 'event',
-    eventCategory: 'user-action',
-    eventAction: 'install',
-    eventLabel: getVersion(),
-  });
+  analytics.install();
 }
