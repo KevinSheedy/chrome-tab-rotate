@@ -28,6 +28,7 @@
     "activeTab",
     "storage",
     "https://ajax.googleapis.com/",
+    "file://*/",
     "http://*/",
     "https://*/",
     "tabs"
