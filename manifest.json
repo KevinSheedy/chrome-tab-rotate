@@ -12,7 +12,11 @@
   "options_page": "app/settings.html",
 
   "background": {
-    "scripts": ["lib/jquery.min.js", "app/background.js", "app/import-analytics.js"]
+    "scripts": [
+      "lib/jquery.min.js",
+      "app/background.js",
+      "app/import-analytics.js"
+    ]
   },
 
   "icons": {
@@ -23,7 +27,7 @@
   },
 
   "content_security_policy": "script-src 'self' https://www.google-analytics.com; object-src 'self'",
-  
+
   "permissions": [
     "activeTab",
     "storage",
