@@ -3,26 +3,21 @@ import sampleConfig from './config.sample.json';
 
 const { heartbeat } = analytics;
 
-analytics.startup();
+let session = newSessionObject();
 
-// Global Session Object
-var session = newSessionObject();
-
-loadSettings().then(function() {
+loadSettings().then(() => {
   analytics.backgroundPageview();
 
   initEventListeners();
 
-  if (session.config.autoStart == true) {
-    play();
-  }
+  session.config.autoStart && play();
 });
 
 function newSessionObject() {
   return {
     tabs: [],
     tabReloadTime: [],
-    enableRotate: false,
+    isRotateEnabled: false,
     rotationCounter: 0,
     maxRotations: 5,
     nextIndex: 0,
@@ -40,11 +35,7 @@ function initEventListeners() {
 }
 
 function iconClicked() {
-  if (session.enableRotate) {
-    pause();
-  } else {
-    play();
-  }
+  session.isRotateEnabled ? pause() : play();
 }
 
 function play() {
@@ -53,7 +44,7 @@ function play() {
   chrome.browserAction.setIcon({ path: 'app/img/Pause-38.png' });
   chrome.browserAction.setTitle({ title: 'Pause Tab Rotate' });
   session = newSessionObject();
-  session.enableRotate = true;
+  session.isRotateEnabled = true;
   session.playStartTime = new Date().getTime();
   session.analyticsCounter = 0;
   loadSettings().then(beginCycling);
@@ -65,7 +56,7 @@ function pause() {
   chrome.browserAction.setIcon({ path: 'app/img/Play-38.png' });
   chrome.browserAction.setTitle({ title: 'Start Tab Rotate' });
   clearTimeout(session.timerId);
-  session.enableRotate = false;
+  session.isRotateEnabled = false;
 }
 
 function loadSettings() {
@@ -85,7 +76,7 @@ function loadSettings() {
 function loadSettingsFromDisc() {
   return new Promise(function(resolve, reject) {
     console.log('Read settings from disc');
-    chrome.storage.sync.get(null, function(allStorage) {
+    chrome.storage.sync.get(null, allStorage => {
       if (jQuery.isEmptyObject(allStorage)) {
         // This is the first use of the plugin
         analytics.install();
@@ -109,7 +100,7 @@ function loadSettingsFromUrl() {
       url: session.config.url,
       dataType: 'text',
       cache: false,
-      success: function(res) {
+      success: res => {
         if (res == session.storageObject.configFile) {
           console.log('Settings changed: no');
           resolve();
@@ -262,7 +253,7 @@ function insertTab(url, indexOfTab, callback) {
 
 function rotateTabAndScheduleNextRotation() {
   // Break out of infinite loop when pause is clicked
-  if (!session.enableRotate) return;
+  if (!session.isRotateEnabled) return;
 
   const { playStartTime } = session;
   analytics.analyticsHeartbeat(playStartTime);

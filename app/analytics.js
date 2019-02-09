@@ -106,4 +106,6 @@ const analytics = {
   },
 };
 
+analytics.startup();
+
 export default analytics;
