@@ -1,4 +1,5 @@
 import analytics from './analytics';
+import sampleConfig from './config.sample.json';
 
 const { heartbeat } = analytics;
 
@@ -89,10 +90,8 @@ function loadSettingsFromDisc() {
         // This is the first use of the plugin
         analytics.install();
         openSettingsPage();
-        loadDefaultSettings().then(function(defaultSettings) {
-          session.config = defaultSettings;
-          resolve();
-        });
+        session.config = loadDefaultSettings();
+        resolve();
       } else {
         session.storageObject = allStorage;
         session.config = parseSettings(allStorage);
@@ -158,31 +157,15 @@ function validateConfigFile(configFile) {
 }
 
 function loadDefaultSettings() {
-  return new Promise(function(resolve, reject) {
-    createStorageObject().then(function(storageObject) {
-      resolve(parseSettings(storageObject));
-    });
-  });
+  return parseSettings(createStorageObject());
 }
 
 function createStorageObject() {
-  return new Promise(function(resolve, reject) {
-    var storageObject = {
-      source: 'DIRECT',
-      url: 'http://_url_to_your_config_file.json',
-      configFile: '',
-    };
-
-    jQuery.get(
-      '/app/config.sample.json',
-      null,
-      function(text) {
-        storageObject.configFile = text;
-        resolve(jQuery.extend({}, storageObject));
-      },
-      'text',
-    );
-  });
+  return {
+    source: 'DIRECT',
+    url: 'http://_url_to_your_config_file.json',
+    configFile: sampleConfig,
+  };
 }
 
 function beginCycling() {
@@ -370,4 +353,3 @@ function isTabReloadRequired(tabIndex) {
     return false;
   }
 }
-
