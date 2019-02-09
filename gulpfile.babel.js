@@ -1,18 +1,33 @@
 var gulp = require('gulp');
-var babel = require('gulp-babel');
+var babel = require('rollup-plugin-babel');
+var json = require('rollup-plugin-json');
 var del = require('del');
 var zip = require('gulp-zip');
+var sourcemaps = require('gulp-sourcemaps');
+var rollup = require('gulp-better-rollup');
 import manifest from './manifest.json';
 
 gulp.task('js', function() {
-  return gulp
-    .src('app/**/*.js')
-    .pipe(
-      babel({
-        presets: ['@babel/env'],
-      }),
-    )
-    .pipe(gulp.dest('dest/app'));
+  return (
+    gulp
+      .src('app/**/*.js')
+      .pipe(sourcemaps.init())
+      .pipe(
+        rollup(
+          {
+            // There is no `input` option as rollup integrates into the gulp pipeline
+            plugins: [babel(), json()],
+          },
+          {
+            // Rollups `sourcemap` option is unsupported. Use `gulp-sourcemaps` plugin instead
+            format: 'cjs',
+          },
+        ),
+      )
+      // inlining the sourcemap into the exported .js file
+      .pipe(sourcemaps.write())
+      .pipe(gulp.dest('dest/app'))
+  );
 });
 
 gulp.task('app', function() {
