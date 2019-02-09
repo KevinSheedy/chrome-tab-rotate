@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var babel = require('gulp-babel');
 var del = require('del');
 var zip = require('gulp-zip');
 var manifest = require('./manifest.json');
@@ -8,7 +9,9 @@ gulp.task('app', function() {
 });
 
 gulp.task('project', function() {
-  return gulp.src(['manifest.json', 'README.md']).pipe(gulp.dest('dest'));
+  return gulp.src(['manifest.json', 'README.md']).pipe(babel({
+            presets: ['@babel/env']
+        })).pipe(gulp.dest('dest'));
 });
 
 gulp.task('lib', function() {
@@ -35,4 +38,4 @@ gulp.task('zip', function () {
     .pipe(gulp.dest('zip'));
 });
 
-gulp.task('default', ['clean', 'project', 'app', 'lib']);
+gulp.task('default', gulp.series('clean', 'project', 'app', 'lib'));
