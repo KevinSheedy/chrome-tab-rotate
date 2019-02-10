@@ -225,9 +225,19 @@ function insertTabs(tabIdsToClose) {
     let counter = 0;
     session.tabs = [];
     for (let i = 0; i < session.config.websites.length; i++) {
-      insertTab(session.config.websites[i].url, i, (index, tab) => {
+      let url = '';
+      let reloadTime = 0;
+
+      // Issue #27
+      // Reduce cpu/memory usage on startup
+      // Only load the first two web pages, then load subsequent pages one by one.
+      if (i < 2) {
+        url = session.config.websites[i].url;
+        reloadTime = new Date().getTime();
+      }
+      insertTab(url, i, (index, tab) => {
         session.tabs[index] = tab;
-        session.tabReloadTime[index] = new Date().getTime();
+        session.tabReloadTime[index] = reloadTime;
         counter++;
         if (counter >= session.config.websites.length) {
           resolve(tabIdsToClose);
@@ -290,13 +300,14 @@ function preloadTab(tabIndex) {
     return;
   }
 
+  const { url } = session.config.websites[tabIndex];
+  const { id } = session.tabs[tabIndex];
+
   console.log('Preload tab: ' + tabIndex);
 
-  const { id } = session.tabs[tabIndex];
-  const { url } = session.config.websites[tabIndex];
-  chrome.tabs.reload(
+  chrome.tabs.update(
     id,
-    {},
+    { url },
     // Issue 19 - Reset the url on reload - occasionally errors cause a redirect.
     () => chrome.tabs.update(id, { url }),
   );
