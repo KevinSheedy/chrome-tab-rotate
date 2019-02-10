@@ -1,4 +1,5 @@
 module.exports = {
+  plugins: ['prettier', 'standard'],
   env: {
     browser: true,
     es6: true,
@@ -6,7 +7,7 @@ module.exports = {
   parserOptions: {
     sourceType: 'module',
   },
-  extends: 'eslint:recommended',
+  extends: ['standard', 'prettier'],
   rules: {
     indent: ['error', 2],
     'linebreak-style': ['error', 'unix'],

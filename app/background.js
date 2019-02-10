@@ -1,7 +1,8 @@
 import analytics from './analytics';
 import sampleConfig from './config.sample.json';
 
-const { heartbeat } = analytics;
+const chrome = window.chrome || {};
+const jQuery = window.jQuery || {};
 
 let session = newSessionObject();
 
@@ -19,7 +20,6 @@ function newSessionObject() {
     tabReloadTime: [],
     isRotateEnabled: false,
     rotationCounter: 0,
-    maxRotations: 5,
     nextIndex: 0,
     timerId: null,
     settingsLoadTime: 0,
@@ -62,7 +62,7 @@ function pause() {
 function loadSettings() {
   return new Promise(function(resolve, reject) {
     loadSettingsFromDisc().then(function() {
-      if (session.config.source == 'URL') {
+      if (session.config.source === 'URL') {
         loadSettingsFromUrl().then(function() {
           resolve();
         });
@@ -101,7 +101,7 @@ function loadSettingsFromUrl() {
       dataType: 'text',
       cache: false,
       success: res => {
-        if (res == session.storageObject.configFile) {
+        if (res === session.storageObject.configFile) {
           console.log('Settings changed: no');
           resolve();
           return;
@@ -117,7 +117,6 @@ function loadSettingsFromUrl() {
           chrome.storage.sync.set(session.storageObject, function() {
             resolve();
           });
-          return;
         } else {
           console.log('invalid settings file. Continuing with old settings');
           resolve();
@@ -175,7 +174,7 @@ function beginCycling() {
 }
 
 function parseSettings(storageObject) {
-  var config = JSON.parse(storageObject.configFile);
+  const config = JSON.parse(storageObject.configFile);
 
   config.source = storageObject.source;
   config.url = storageObject.url;
@@ -184,19 +183,19 @@ function parseSettings(storageObject) {
 
 function getTabsToClose() {
   return new Promise(function(resolve, reject) {
-    var queryInactiveTabs = {
+    const queryInactiveTabs = {
       currentWindow: true,
     };
 
-    var tabIds = [];
+    const tabIds = [];
 
     chrome.tabs.query(queryInactiveTabs, function(tabs) {
-      for (var i = 0; i < tabs.length; i++) {
-        var tab = tabs[i];
+      for (let i = 0; i < tabs.length; i++) {
+        // const tab = tabs[i];
 
-        //if(!tab.url.startsWith("chrome:")) {
+        // if(!tab.url.startsWith("chrome:")) {
         tabIds.push(tabs[i].id);
-        //}
+        // }
       }
 
       resolve(tabIds);
@@ -221,11 +220,11 @@ function closeTabs(tabIds) {
 }
 
 function insertTabs(tabIdsToClose) {
-  return new Promise(function(resolve, reject) {
-    var counter = 0;
+  return new Promise((resolve, reject) => {
+    let counter = 0;
     session.tabs = [];
-    for (var i = 0; i < session.config.websites.length; i++) {
-      insertTab(session.config.websites[i].url, i, function(index, tab) {
+    for (let i = 0; i < session.config.websites.length; i++) {
+      insertTab(session.config.websites[i].url, i, (index, tab) => {
         session.tabs[index] = tab;
         session.tabReloadTime[index] = new Date().getTime();
         counter++;
@@ -243,7 +242,7 @@ function insertTab(url, indexOfTab, callback) {
       index: indexOfTab,
       url: url,
     },
-    function(tab) {
+    tab => {
       console.log('Inserted tabId: ' + tab.id);
 
       callback(indexOfTab, tab);
@@ -258,22 +257,18 @@ function rotateTabAndScheduleNextRotation() {
   const { playStartTime } = session;
   analytics.analyticsHeartbeat(playStartTime);
 
-  if (session.nextIndex == 0 && isSettingsReloadRequired()) {
+  if (session.nextIndex === 0 && isSettingsReloadRequired()) {
     loadSettings().then(beginCycling);
     return;
   }
 
-  if (session.rotationCounter++ >= session.maxRotations) {
-    //return;
-  }
+  const currentTab = session.tabs[session.nextIndex];
 
-  var currentTab = session.tabs[session.nextIndex];
-
-  var sleepDuration = session.config.websites[session.nextIndex].duration;
+  const sleepDuration = session.config.websites[session.nextIndex].duration;
 
   // Show the current tab
   console.log('Show tab: ' + session.nextIndex);
-  chrome.tabs.update(currentTab.id, { active: true }, function() {});
+  chrome.tabs.update(currentTab.id, { active: true });
 
   // Determine the next tab index
   if (++session.nextIndex >= session.tabs.length) {
@@ -294,11 +289,10 @@ function preloadTab(tabIndex) {
     return;
   }
 
-  // Preload the future tab in advance
   console.log('Preload tab: ' + tabIndex);
 
-  let { id } = session.tabs[tabIndex];
-  let { url } = session.config.websites[tabIndex];
+  const { id } = session.tabs[tabIndex];
+  const { url } = session.config.websites[tabIndex];
   chrome.tabs.reload(
     id,
     {},
@@ -310,15 +304,15 @@ function preloadTab(tabIndex) {
 }
 
 function isSettingsReloadRequired() {
-  var currentTimeMillis = new Date().getTime();
-  var millisSinceLastReload = currentTimeMillis - session.settingsLoadTime;
+  const currentTimeMillis = new Date().getTime();
+  const millisSinceLastReload = currentTimeMillis - session.settingsLoadTime;
 
-  var reloadIntervalMillis =
+  const reloadIntervalMillis =
     session.config.settingsReloadIntervalMinutes * 60 * 1000;
 
   if (
     millisSinceLastReload > reloadIntervalMillis &&
-    session.config.source == 'URL'
+    session.config.source === 'URL'
   ) {
     console.log('Reload settings from url: yes');
     return true;
@@ -329,11 +323,11 @@ function isSettingsReloadRequired() {
 }
 
 function isTabReloadRequired(tabIndex) {
-  var currentTimeMillis = new Date().getTime();
-  var millisSinceLastReload =
+  const currentTimeMillis = new Date().getTime();
+  const millisSinceLastReload =
     currentTimeMillis - session.tabReloadTime[tabIndex];
 
-  var reloadIntervalMillis =
+  const reloadIntervalMillis =
     session.config.websites[tabIndex].tabReloadIntervalSeconds * 1000;
 
   if (reloadIntervalMillis <= 0) {
