@@ -62,3 +62,11 @@ Set to `0` for no reload
   ]
 }
 ```
+
+## Crowdfunding
+
+Support the project on [Patreon](https://www.patreon.com/kevdev)
+
+## Acknowledgments
+
+Top tier Patrons will be acknowledged here
