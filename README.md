@@ -66,6 +66,7 @@ Set to `0` for no reload
 ## Crowdfunding
 
 Support the project on [Patreon](https://www.patreon.com/kevdev)
+<a href="https://www.patreon.com/bePatron?u=17314138" data-patreon-widget-type="become-patron-button">Become a Patron!</a><script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>
 
 ## Acknowledgments
 
