@@ -1,6 +1,8 @@
 import gulp from 'gulp';
 import babel from 'rollup-plugin-babel';
 import json from 'rollup-plugin-json';
+import resolve from 'rollup-plugin-node-resolve';
+import commonjs from 'rollup-plugin-commonjs';
 import del from 'del';
 import zip from 'gulp-zip';
 import sourcemaps from 'gulp-sourcemaps';
@@ -16,11 +18,16 @@ gulp.task('js', function() {
         rollup(
           {
             // There is no `input` option as rollup integrates into the gulp pipeline
-            plugins: [babel(), json()],
+            plugins: [
+              resolve(),
+              commonjs(),
+              babel({ runtimeHelpers: true }),
+              json(),
+            ],
           },
           {
             // Rollups `sourcemap` option is unsupported. Use `gulp-sourcemaps` plugin instead
-            format: 'cjs',
+            format: 'iife',
           },
         ),
       )
@@ -41,6 +48,7 @@ gulp.task('project', function() {
 gulp.task('lib', function() {
   return gulp
     .src([
+      'node_modules/@babel/polyfill/dist/polyfill.min.js',
       'node_modules/jquery/dist/jquery.min.js',
       'node_modules/angular/angular.min.js',
       'node_modules/bootstrap/dist/css/bootstrap.min.css',

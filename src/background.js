@@ -1,8 +1,10 @@
 import analytics from './analytics';
-import sampleConfig from './config.sample.json';
+import dataLayer from './dataLayer';
 
 const chrome = window.chrome || {};
 const jQuery = window.jQuery || {};
+
+dataLayer.init();
 
 let session = newSessionObject();
 
@@ -74,22 +76,7 @@ function loadSettings() {
 }
 
 function loadSettingsFromDisc() {
-  return new Promise((resolve, reject) => {
-    console.log('Read settings from disc');
-    chrome.storage.sync.get(null, allStorage => {
-      if (jQuery.isEmptyObject(allStorage)) {
-        // This is the first use of the plugin
-        analytics.install();
-        openSettingsPage();
-        session.config = loadDefaultSettings();
-        resolve();
-      } else {
-        session.storageObject = allStorage;
-        session.config = parseSettings(allStorage);
-        resolve();
-      }
-    });
-  });
+  return new Promise((resolve, reject) => {});
 }
 
 function loadSettingsFromUrl() {
@@ -130,13 +117,6 @@ function loadSettingsFromUrl() {
   });
 }
 
-function openSettingsPage() {
-  chrome.tabs.create({
-    index: 0,
-    url: 'app/settings.html',
-  });
-}
-
 function isValidConfigFile(configFile) {
   try {
     JSON.parse(configFile);
@@ -145,18 +125,6 @@ function isValidConfigFile(configFile) {
     return false;
   }
   return true;
-}
-
-function loadDefaultSettings() {
-  return parseSettings(createStorageObject());
-}
-
-function createStorageObject() {
-  return {
-    source: 'DIRECT',
-    url: 'http://_url_to_your_config_file.json',
-    configFile: JSON.stringify(sampleConfig, null, 2),
-  };
 }
 
 function beginCycling() {
@@ -172,14 +140,6 @@ function beginCycling() {
     .then(insertTabs)
     .then(closeTabs)
     .then(rotateTabAndScheduleNextRotation);
-}
-
-function parseSettings(storageObject) {
-  const config = JSON.parse(storageObject.configFile);
-
-  config.source = storageObject.source;
-  config.url = storageObject.url;
-  return config;
 }
 
 function getTabsToClose() {
