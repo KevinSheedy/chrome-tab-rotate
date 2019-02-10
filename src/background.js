@@ -41,7 +41,7 @@ function iconClicked() {
 function play() {
   analytics.play();
 
-  chrome.browserAction.setIcon({ path: 'app/img/Pause-38.png' });
+  chrome.browserAction.setIcon({ path: 'src/img/Pause-38.png' });
   chrome.browserAction.setTitle({ title: 'Pause Tab Rotate' });
   session = newSessionObject();
   session.isRotateEnabled = true;
@@ -53,7 +53,7 @@ function play() {
 function pause() {
   analytics.pause();
 
-  chrome.browserAction.setIcon({ path: 'app/img/Play-38.png' });
+  chrome.browserAction.setIcon({ path: 'src/img/Play-38.png' });
   chrome.browserAction.setTitle({ title: 'Start Tab Rotate' });
   clearTimeout(session.timerId);
   session.isRotateEnabled = false;

@@ -68,7 +68,7 @@ Set to `0` for no reload
 Support the project by becoming a [Patron](https://www.patreon.com/kevdev)
 <br/>
 <br/>
-<a href="https://www.patreon.com/bePatron?u=17314138"><img src="./app/img/become_a_patron_button@2x.png" height="40" width="170" title="Become a Patron!" alt="Flower"></a>
+<a href="https://www.patreon.com/bePatron?u=17314138"><img src="./src/img/become_a_patron_button@2x.png" height="40" width="170" title="Become a Patron!" alt="Flower"></a>
 
 ## Acknowledgments
 
