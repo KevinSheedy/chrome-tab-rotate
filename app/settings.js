@@ -1,64 +1,56 @@
+import analytics from './analytics';
+import sampleConfig from './config.sample.json';
+
+const chrome = window.chrome || {};
+const angular = window.angular || {};
+const jQuery = window.jQuery || {};
+const Prism = window.Prism || {};
+
+function loadSampleConfig() {
+  return {
+    source: 'DIRECT',
+    url:
+      'https://raw.githubusercontent.com/KevinSheedy/chrome-tab-rotate/master/app/config.sample.json',
+    configFile: sampleConfig,
+  };
+}
+
 var settingsApp = angular.module('settingsApp', []);
 
-settingsApp.controller('SettingsCtrl', function ($scope, $http) {
+settingsApp.controller('SettingsCtrl', function($scope, $http) {
+  analytics.optionsPageview();
 
-  // Google Analytics
-  ga('send', 'pageview', '/options.html');
-
-  loadSampleConfig()
-    .then(initScope);
-
-  function loadSampleConfig() {
-    return new Promise(function(resolve, reject) {
-      var storageObject = {
-        source: 'DIRECT',
-        url: 'https://raw.githubusercontent.com/KevinSheedy/chrome-tab-rotate/master/app/config.sample.json',
-        configFile: ''
-      };
-
-      jQuery.get('/app/config.sample.json', null, function(text) {
-        storageObject.configFile = text;
-
-        // Resolves to a function that builds a new Storage Object
-        resolve(function(){
-          return  jQuery.extend({}, storageObject);
-        });
-      }, 'text');
-    });
-  }
+  initScope(loadSampleConfig);
 
   function initScope(newStorageObject) {
-
     $scope.isFetchInProgress = false;
     $scope.fetchSucceeded = null;
     $scope.editMode = false;
 
-    $scope.fetchRemoteSettings = function() {
-
+    $scope.fetchRemoteSettings = () => {
       $scope.httpStatusText = 'pending...';
       $scope.isFetchInProgress = true;
       jQuery.ajax({
         url: $scope.settings.url,
         dataType: 'text',
-        success: function(res, textStatus, jqXHR) {
+        success: (res, textStatus, jqXHR) => {
           $scope.settings.configFile = res;
           $scope.fetchSucceeded = true;
           $scope.$apply();
           Prism.highlightAll();
         },
-        error: function(res) {
+        error: res => {
           $scope.fetchSucceeded = false;
           $scope.$apply();
         },
-        complete: function(jqXHR, textStatus) {
+        complete: (jqXHR, textStatus) => {
           $scope.isFetchInProgress = false;
           $scope.$apply();
-
-        }
+        },
       });
     };
 
-    $scope.validateConfigFile = function() {
+    $scope.validateConfigFile = () => {
       try {
         JSON.parse($scope.settings.configFile);
       } catch (e) {
@@ -67,7 +59,7 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
       return true;
     };
 
-    $scope.isValidConfigFile = function(jsonText) {
+    $scope.isValidConfigFile = jsonText => {
       try {
         JSON.parse(jsonText);
       } catch (e) {
@@ -76,13 +68,13 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
       return true;
     };
 
-    $scope.resetDefaults = function() {
+    $scope.resetDefaults = () => {
       $scope.settings = newStorageObject();
       $scope.form.$setDirty();
     };
 
-    $scope.save = function() {
-      chrome.storage.sync.set($scope.settings, function() {
+    $scope.save = () => {
+      chrome.storage.sync.set($scope.settings, () => {
         $scope.formSaved = true;
         $scope.editMode = false;
         $scope.form.$setPristine();
@@ -90,15 +82,15 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
       });
     };
 
-    $scope.reloadSettingsFromDisc = function() {
+    $scope.reloadSettingsFromDisc = () => {
+      chrome.storage.sync.get(null, allStorage => {
+        $scope.settings = jQuery.isEmptyObject(allStorage)
+          ? newStorageObject()
+          : allStorage;
 
-      chrome.storage.sync.get(null, function(allStorage) {
-
-        $scope.settings = jQuery.isEmptyObject(allStorage) ? newStorageObject() : allStorage;
-
-        if(jQuery.isEmptyObject(allStorage)) {
+        if (jQuery.isEmptyObject(allStorage)) {
           $scope.settings = newStorageObject();
-          chrome.storage.sync.set($scope.settings, function(){
+          chrome.storage.sync.set($scope.settings, () => {
             console.log('Local storage is empty. Saving some default settings');
           });
         } else {
@@ -108,72 +100,74 @@ settingsApp.controller('SettingsCtrl', function ($scope, $http) {
         $scope.form.$setPristine();
         $scope.$apply();
       });
-
     };
 
-    $scope.clearStorage = function() {
+    $scope.clearStorage = () => {
       chrome.storage.sync.clear();
     };
 
     $scope.settings = newStorageObject();
     $scope.reloadSettingsFromDisc();
 
-    $scope.$watch('settings', function() {
-      $scope.formStatus = 'MODIFIED';
-    }, true);
+    $scope.$watch(
+      'settings',
+      () => {
+        $scope.formStatus = 'MODIFIED';
+      },
+      true,
+    );
 
     // HACK: Prism seems to break angular bindings
-    $scope.$watch('settings.configFile', function(val) {
-      jQuery('.config-code-block').text(val);
-      Prism.highlightAll();
-    }, true);
+    $scope.$watch(
+      'settings.configFile',
+      val => {
+        jQuery('.config-code-block').text(val);
+        Prism.highlightAll();
+      },
+      true,
+    );
 
-    $scope.$watch('editMode', function() {
-      if($scope.editMode) {
-        document.getElementById('configTextArea').focus();
-      }
-
-    }, true);
-
-
+    $scope.$watch(
+      'editMode',
+      () => {
+        if ($scope.editMode) {
+          document.getElementById('configTextArea').focus();
+        }
+      },
+      true,
+    );
 
     $scope.formStatus = 'CLEAN';
 
-    $scope.formMessage = function() {
-      if($scope.formStatus == 'MODIFIED')
-        return 'modified';
-      else if($scope.formStatus == 'SAVED')
-        return 'Saved';
-      else
-        return '';
+    $scope.formMessage = () => {
+      if ($scope.formStatus === 'MODIFIED') return 'modified';
+      else if ($scope.formStatus === 'SAVED') return 'Saved';
+      else return '';
     };
 
-    $scope.alwaysTrue = function() {
+    $scope.alwaysTrue = () => {
       return true;
     };
 
-    $scope.alwaysFalse = function() {
+    $scope.alwaysFalse = () => {
       return false;
     };
 
-    $scope.isValidUrl = function() {
+    $scope.isValidUrl = () => {
       return $scope.form.url.$pristine || $scope.fetchSucceeded;
     };
-
   }
-
 });
 
-
-angular.module('Prism', []).
-  directive('prism', [function() {
+angular.module('Prism', []).directive('prism', [
+  () => {
     return {
       restrict: 'A',
-      link: function ($scope, element, attrs) {
-        element.ready(function() {
+      link: ($scope, element, attrs) => {
+        element.ready(() => {
           Prism.highlightElement(element[0]);
         });
-      }
-    }; 
-  }]
-  );
+      },
+    };
+  },
+]);

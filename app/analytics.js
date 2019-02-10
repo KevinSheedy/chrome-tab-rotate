@@ -46,6 +46,7 @@ const analytics = {
     });
   },
   backgroundPageview: () => ga('send', 'pageview', '/background.js'),
+  optionsPageview: () => ga('send', 'pageview', '/options.js'),
   analyticsHeartbeat(playStartTime) {
     console.log('analyticsHeartbeat');
     // All units in millis
