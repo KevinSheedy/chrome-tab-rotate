@@ -10,7 +10,7 @@ import manifest from './manifest.json';
 gulp.task('js', function() {
   return (
     gulp
-      .src('app/**/*.js')
+      .src('src/**/*.js')
       .pipe(sourcemaps.init())
       .pipe(
         rollup(
@@ -26,16 +26,16 @@ gulp.task('js', function() {
       )
       // inlining the sourcemap into the exported .js file
       .pipe(sourcemaps.write())
-      .pipe(gulp.dest('dest/app'))
+      .pipe(gulp.dest('build/src'))
   );
 });
 
-gulp.task('app', function() {
-  return gulp.src(['app/**', '!app/**/*.js']).pipe(gulp.dest('dest/app'));
+gulp.task('src', function() {
+  return gulp.src(['src/**', '!src/**/*.js']).pipe(gulp.dest('build/src'));
 });
 
 gulp.task('project', function() {
-  return gulp.src(['manifest.json', 'README.md']).pipe(gulp.dest('dest'));
+  return gulp.src(['manifest.json', 'README.md']).pipe(gulp.dest('build'));
 });
 
 gulp.task('lib', function() {
@@ -49,18 +49,18 @@ gulp.task('lib', function() {
       'node_modules/prismjs/prism.js',
       'node_modules/prismjs/components/prism-javascript.min.js',
     ])
-    .pipe(gulp.dest('dest/lib'));
+    .pipe(gulp.dest('build/lib'));
 });
 
 gulp.task('clean', function() {
-  return del(['dest']);
+  return del(['build']);
 });
 
 gulp.task('zip', function() {
   return gulp
-    .src('dest/**')
+    .src('build/**')
     .pipe(zip('tab-rotate-' + manifest.version + '.zip'))
     .pipe(gulp.dest('zip'));
 });
 
-gulp.task('default', gulp.series('clean', 'project', 'app', 'js', 'lib'));
+gulp.task('default', gulp.series('clean', 'project', 'src', 'js', 'lib'));
