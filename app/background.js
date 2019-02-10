@@ -60,10 +60,10 @@ function pause() {
 }
 
 function loadSettings() {
-  return new Promise(function(resolve, reject) {
-    loadSettingsFromDisc().then(function() {
+  return new Promise((resolve, reject) => {
+    loadSettingsFromDisc().then(() => {
       if (session.config.source === 'URL') {
-        loadSettingsFromUrl().then(function() {
+        loadSettingsFromUrl().then(() => {
           resolve();
         });
       } else {
@@ -74,7 +74,7 @@ function loadSettings() {
 }
 
 function loadSettingsFromDisc() {
-  return new Promise(function(resolve, reject) {
+  return new Promise((resolve, reject) => {
     console.log('Read settings from disc');
     chrome.storage.sync.get(null, allStorage => {
       if (jQuery.isEmptyObject(allStorage)) {
@@ -93,7 +93,7 @@ function loadSettingsFromDisc() {
 }
 
 function loadSettingsFromUrl() {
-  return new Promise(function(resolve, reject) {
+  return new Promise((resolve, reject) => {
     session.settingsLoadTime = new Date().getTime();
 
     jQuery.ajax({
@@ -108,7 +108,7 @@ function loadSettingsFromUrl() {
         } else {
           console.log('Settings changed: yes');
         }
-        if (validateConfigFile(res)) {
+        if (isValidConfigFile(res)) {
           console.log('Settings are valid');
           session.storageObject.configFile = res;
           session.config = parseSettings(session.storageObject);
@@ -137,10 +137,11 @@ function openSettingsPage() {
   });
 }
 
-function validateConfigFile(configFile) {
+function isValidConfigFile(configFile) {
   try {
     JSON.parse(configFile);
   } catch (e) {
+    console.error('isValidConfigFile()', e);
     return false;
   }
   return true;
@@ -182,14 +183,14 @@ function parseSettings(storageObject) {
 }
 
 function getTabsToClose() {
-  return new Promise(function(resolve, reject) {
+  return new Promise((resolve, reject) => {
     const queryInactiveTabs = {
       currentWindow: true,
     };
 
     const tabIds = [];
 
-    chrome.tabs.query(queryInactiveTabs, function(tabs) {
+    chrome.tabs.query(queryInactiveTabs, tabs => {
       for (let i = 0; i < tabs.length; i++) {
         // const tab = tabs[i];
 
@@ -204,16 +205,16 @@ function getTabsToClose() {
 }
 
 function closeTabs(tabIds) {
-  return new Promise(function(resolve, reject) {
+  return new Promise((resolve, reject) => {
     console.log('Fullscreen: ' + session.config.fullscreen);
 
     if (session.config.fullscreen) {
-      chrome.windows.getCurrent({}, function(window) {
+      chrome.windows.getCurrent({}, window => {
         chrome.windows.update(window.id, { state: 'fullscreen' });
       });
     }
 
-    chrome.tabs.remove(tabIds, function() {
+    chrome.tabs.remove(tabIds, () => {
       resolve();
     });
   });
