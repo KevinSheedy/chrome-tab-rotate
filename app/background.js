@@ -155,7 +155,7 @@ function createStorageObject() {
   return {
     source: 'DIRECT',
     url: 'http://_url_to_your_config_file.json',
-    configFile: sampleConfig,
+    configFile: JSON.stringify(sampleConfig, null, 2),
   };
 }
 
