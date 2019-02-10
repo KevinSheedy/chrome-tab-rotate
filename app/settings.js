@@ -7,11 +7,12 @@ const jQuery = window.jQuery || {};
 const Prism = window.Prism || {};
 
 function loadSampleConfig() {
+  console.log('sampleConfig', sampleConfig);
   return {
     source: 'DIRECT',
     url:
       'https://raw.githubusercontent.com/KevinSheedy/chrome-tab-rotate/master/app/config.sample.json',
-    configFile: sampleConfig,
+    configFile: JSON.stringify(sampleConfig, null, 2),
   };
 }
 

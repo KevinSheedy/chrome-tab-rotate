@@ -1,4 +1,5 @@
-pre, #configTextArea {
+pre,
+#configTextArea {
   width: 800px;
 }
 
@@ -12,7 +13,8 @@ pre, #configTextArea {
 }
 
 #resets-container {
-  text-align: right;
+  display: flex;
+  justify-content: flex-end;
 }
 
 #json-validation-message {
@@ -27,8 +29,8 @@ form {
   margin-left: 20px;
 }
 
-h3, label {
-
+h3,
+label {
   font-weight: normal;
 }
 
@@ -40,11 +42,13 @@ h3 {
   font-weight: bold;
 }
 
-#url-container, #json-response-container {
+#url-container,
+#json-response-container {
   margin-left: 60px;
 }
 
-pre, .code {
+pre,
+.code {
   font: 100% Consolas, Monaco, monospace;
   background: #f5f2f0;
   text-shadow: 0 1px white;
@@ -55,7 +59,6 @@ pre, .code {
   padding: 1em;
   font-size: 12px;
   height: 40em;
-
 }
 
 pre {
