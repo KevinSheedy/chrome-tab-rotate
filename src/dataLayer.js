@@ -24,55 +24,28 @@ function openSettingsPage() {
 }
 
 async function init() {
-  const foo = await readSettingsFromDisc();
-  console.log('foo', foo);
+  const settings = await readSettingsFromDisc();
+  console.log('settings', settings);
+  if (settings.source === 'URL') {
+    const remoteSettings = await loadSettingsFromUrl(settings.url);
+    console.log('remoteSettings', remoteSettings);
+  }
   //   .then(saveSettingsToCache)
   //   .then(loadSettingsFromUrlIfNecessary);
   // console.log('cache', cache);
 }
 
-// function init() {}
-
-function saveSettingsToCache(settings) {
-  return new Promise(resolve => {
-    cache = settings;
-    resolve(settings);
-  });
-}
-function loadSettingsFromUrlIfNecessary(settings) {
-  return new Promise(resolve => {
-    if (settings.source !== 'URL') {
-      resolve(settings);
-      return;
-    }
+async function loadSettingsFromUrl(url) {
+  return new Promise((resolve, reject) => {
     jQuery.ajax({
-      url: settings.url,
+      url: url,
       dataType: 'text',
       cache: false,
       success: res => {
-        if (res === cache.configFile) {
-          console.log('Settings changed: no');
-          resolve();
-          return;
-        } else {
-          console.log('Settings changed: yes');
-        }
-        if (isValidConfigFile(res)) {
-          console.log('Settings are valid');
-          session.storageObject.configFile = res;
-          session.config = parseSettings(session.storageObject);
-          session.settingsChangeTime = new Date().getTime();
-          console.log('Write settings to disc');
-          chrome.storage.sync.set(session.storageObject, function() {
-            resolve();
-          });
-        } else {
-          console.log('invalid settings file. Continuing with old settings');
-          resolve();
-        }
+        resolve(res);
       },
       error: function() {
-        resolve();
+        reject(new Error('request failed'));
       },
       complete: function() {},
     });
