@@ -7,7 +7,6 @@ const jQuery = window.jQuery || {};
 const Prism = window.Prism || {};
 
 function loadSampleConfig() {
-  console.log('sampleConfig', sampleConfig);
   return {
     source: 'DIRECT',
     url:

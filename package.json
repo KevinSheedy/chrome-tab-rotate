@@ -4,7 +4,7 @@
   "description": "Loop through a set of tabs - ideal for a Dashboard or Advertisement Display",
   "main": "gulpfile.js",
   "dependencies": {
-    "angular": "1.6.6",
+    "angular": "^1.7.7",
     "angular-ui-validate": "1.2.3",
     "bootstrap": "^4.2.1",
     "jquery": "^3.3.1",
