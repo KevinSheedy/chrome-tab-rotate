@@ -4,7 +4,15 @@ import dataLayer from './dataLayer';
 const chrome = window.chrome || {};
 const jQuery = window.jQuery || {};
 
-dataLayer.init();
+async function start() {
+  let didSettingsChange = await dataLayer.reload();
+  const config = dataLayer.getConfig();
+  console.log('config', config);
+  console.log('didSettingsChange', didSettingsChange);
+  didSettingsChange = await dataLayer.reload();
+  console.log('didSettingsChange', didSettingsChange);
+}
+start();
 
 let session = newSessionObject();
 

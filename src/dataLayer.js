@@ -23,19 +23,31 @@ function openSettingsPage() {
   });
 }
 
-async function init() {
-  const settings = await readSettingsFromDisc();
-  console.log('settings', settings);
-  if (settings.source === 'URL') {
-    const remoteSettings = await loadSettingsFromUrl(settings.url);
-    console.log('remoteSettings', remoteSettings);
+async function reload() {
+  const discSettings = await readSettingsFromDisc();
+  let didSettingsChange = false;
+  if (JSON.stringify(discSettings) !== JSON.stringify(cache)) {
+    didSettingsChange = true;
+    cache = discSettings;
   }
-  //   .then(saveSettingsToCache)
-  //   .then(loadSettingsFromUrlIfNecessary);
-  // console.log('cache', cache);
+  console.log('cache', cache);
+  if (cache.source === 'URL') {
+    const configFile = await loadConfigFileFromUrl(cache.url);
+    console.log('configFile', configFile);
+    if (isValidConfigFile(configFile) && configFile !== cache.configFile) {
+      cache.configFile = configFile;
+      didSettingsChange = true;
+      saveToDisc(cache);
+    }
+  }
+  return didSettingsChange;
 }
 
-async function loadSettingsFromUrl(url) {
+function saveToDisc(storage) {
+  chrome.storage.sync.set(storage);
+}
+
+async function loadConfigFileFromUrl(url) {
   return new Promise((resolve, reject) => {
     jQuery.ajax({
       url: url,
@@ -68,4 +80,18 @@ function readSettingsFromDisc() {
   });
 }
 
-export default { init };
+function isValidConfigFile(configFile) {
+  try {
+    JSON.parse(configFile);
+  } catch (e) {
+    console.error('isValidConfigFile()', e);
+    return false;
+  }
+  return true;
+}
+
+function getConfig() {
+  return { ...JSON.parse(cache.configFile) };
+}
+
+export default { reload, getConfig };
