@@ -1,29 +1,18 @@
 module.exports = {
-  "env": {
-    "browser": true,
-    "es6": true
+  plugins: ['prettier', 'standard'],
+  env: {
+    browser: true,
+    es6: true,
   },
-  "parserOptions": {
-    "sourceType": "module",
+  parserOptions: {
+    sourceType: 'module',
   },
-  "extends": "eslint:recommended",
-  "rules": {
-    "indent": [
-      "error",
-      2
-    ],
-    "linebreak-style": [
-      "error",
-      "unix"
-    ],
-    "quotes": [
-      "error",
-      "single"
-    ],
-    "semi": [
-      "error",
-      "always"
-    ],
-    "no-console": 0
-  }
+  extends: ['standard', 'prettier'],
+  rules: {
+    indent: ['error', 2],
+    'linebreak-style': ['error', 'unix'],
+    quotes: ['error', 'single'],
+    semi: ['error', 'always'],
+    'no-console': 0,
+  },
 };
