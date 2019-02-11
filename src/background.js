@@ -66,10 +66,10 @@ async function beginCycle(isFirstCycle = false) {
       await initTabs();
     }
   }
-  rotateTabAndScheduleNextRotation();
+  rotateTabAndScheduleNextRotation(isFirstCycle);
 }
 
-async function rotateTabAndScheduleNextRotation() {
+async function rotateTabAndScheduleNextRotation(isFirstCycle) {
   // Break out of infinite loop when pause is clicked
   if (!session.isRotateEnabled) return;
 
@@ -88,12 +88,14 @@ async function rotateTabAndScheduleNextRotation() {
   if (++session.nextIndex >= session.tabs.length) {
     session.nextIndex = 0;
   }
-  preloadTab(session.nextIndex);
+  preloadTab(session.nextIndex, isFirstCycle);
 
   console.log('sleep for: ' + sleepDuration);
 
   session.timerId = setTimeout(
-    session.nextIndex === 0 ? beginCycle : rotateTabAndScheduleNextRotation,
+    session.nextIndex === 0
+      ? beginCycle
+      : () => rotateTabAndScheduleNextRotation(isFirstCycle),
     sleepDuration * 1000,
   );
 }
@@ -148,13 +150,13 @@ function insertTabs(tabIdsToClose) {
     let counter = 0;
     session.tabs = [];
     for (let i = 0; i < session.config.websites.length; i++) {
-      let url = '';
+      let url = 'about:blank';
       let reloadTime = 0;
 
       // Issue #27
       // Reduce cpu/memory usage on startup
       // Only load the first two web pages, then load subsequent pages one by one.
-      if (i < 999999) {
+      if (i < 2) {
         url = session.config.websites[i].url;
         reloadTime = new Date().getTime();
       }
@@ -184,8 +186,8 @@ function insertTab(url, indexOfTab, callback) {
   );
 }
 
-function preloadTab(tabIndex) {
-  if (!isTabReloadRequired(tabIndex)) {
+function preloadTab(tabIndex, isFirstCycle) {
+  if (!isTabReloadRequired(tabIndex) && !isFirstCycle) {
     console.log('Do not Preload tab: ' + tabIndex);
     return;
   }
