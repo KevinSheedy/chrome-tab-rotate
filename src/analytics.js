@@ -3,7 +3,7 @@ const { version } = manifest;
 const ga = window.ga || (() => null);
 console.log('started daemon: background.js');
 
-let lastHeartbeatTime = new Date().getTime();
+let lastHeartbeatTime = 0;
 
 const analytics = {
   startup: () =>

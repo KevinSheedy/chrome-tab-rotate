@@ -24,7 +24,6 @@ function newSessionObject() {
     nextIndex: 0,
     timerId: null,
     playStartTime: 0,
-    analyticsCounter: 0,
     config: {},
   };
 }
@@ -45,7 +44,6 @@ async function play() {
   session = newSessionObject();
   session.isRotateEnabled = true;
   session.playStartTime = new Date().getTime();
-  session.analyticsCounter = 0;
   beginCycle(true);
 }
 
