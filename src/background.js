@@ -154,7 +154,7 @@ function insertTabs(tabIdsToClose) {
       // Issue #27
       // Reduce cpu/memory usage on startup
       // Only load the first two web pages, then load subsequent pages one by one.
-      if (i < 2) {
+      if (i < 999999) {
         url = session.config.websites[i].url;
         reloadTime = new Date().getTime();
       }
