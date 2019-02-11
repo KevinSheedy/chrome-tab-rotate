@@ -48,9 +48,7 @@ async function play() {
   session.isRotateEnabled = true;
   session.playStartTime = new Date().getTime();
   session.analyticsCounter = 0;
-  await dataLayer.reload();
-  session.config = dataLayer.getConfig();
-  beginCycling();
+  beginCycle(true);
 }
 
 function pause() {
@@ -62,22 +60,61 @@ function pause() {
   session.isRotateEnabled = false;
 }
 
-async function beginCycling() {
-  if (
-    session.settingsChangeTime &&
-    session.settingsLoadTime > session.settingsChangeTime
-  ) {
-    rotateTabAndScheduleNextRotation();
-    return;
+async function beginCycle(isFirstCycle = false) {
+  console.log('isFirstCycle', isFirstCycle);
+  if (isFirstCycle || isSettingsReloadRequired()) {
+    console.log('session', session);
+    const didSettingsChange = await dataLayer.reload();
+    session.config = dataLayer.getConfig();
+    if (isFirstCycle || didSettingsChange) {
+      await initTabs();
+    }
   }
-
-  const tabIdsToClose = await getTabsToClose();
-  await insertTabs();
-  await closeTabs(tabIdsToClose);
   rotateTabAndScheduleNextRotation();
 }
 
-function getTabsToClose() {
+async function rotateTabAndScheduleNextRotation() {
+  // Break out of infinite loop when pause is clicked
+  if (!session.isRotateEnabled) return;
+
+  const { playStartTime } = session;
+  analytics.analyticsHeartbeat(playStartTime);
+
+  if (session.nextIndex === 0) {
+    setTimeout(beginCycle, 0);
+    return;
+  }
+
+  const currentTab = session.tabs[session.nextIndex];
+
+  const sleepDuration = session.config.websites[session.nextIndex].duration;
+
+  // Show the current tab
+  console.log('Show tab: ' + session.nextIndex);
+  chrome.tabs.update(currentTab.id, { active: true });
+
+  // Determine the next tab index
+  if (++session.nextIndex >= session.tabs.length) {
+    session.nextIndex = 0;
+  }
+
+  preloadTab(session.nextIndex);
+
+  console.log('sleep for: ' + sleepDuration);
+  session.timerId = setTimeout(
+    rotateTabAndScheduleNextRotation,
+    sleepDuration * 1000,
+  );
+}
+
+async function initTabs() {
+  const tabIdsToClose = await getTabsToClose();
+  console.log('tabIdsToClose', tabIdsToClose);
+  await insertTabs();
+  await closeTabs(tabIdsToClose);
+}
+
+async function getTabsToClose() {
   return new Promise((resolve, reject) => {
     const queryInactiveTabs = {
       currentWindow: true,
@@ -153,40 +190,6 @@ function insertTab(url, indexOfTab, callback) {
 
       callback(indexOfTab, tab);
     },
-  );
-}
-
-function rotateTabAndScheduleNextRotation() {
-  // Break out of infinite loop when pause is clicked
-  if (!session.isRotateEnabled) return;
-
-  const { playStartTime } = session;
-  analytics.analyticsHeartbeat(playStartTime);
-
-  if (session.nextIndex === 0 && isSettingsReloadRequired()) {
-    loadSettings().then(beginCycling);
-    return;
-  }
-
-  const currentTab = session.tabs[session.nextIndex];
-
-  const sleepDuration = session.config.websites[session.nextIndex].duration;
-
-  // Show the current tab
-  console.log('Show tab: ' + session.nextIndex);
-  chrome.tabs.update(currentTab.id, { active: true });
-
-  // Determine the next tab index
-  if (++session.nextIndex >= session.tabs.length) {
-    session.nextIndex = 0;
-  }
-
-  preloadTab(session.nextIndex);
-
-  console.log('sleep for: ' + sleepDuration);
-  session.timerId = setTimeout(
-    rotateTabAndScheduleNextRotation,
-    sleepDuration * 1000,
   );
 }
 

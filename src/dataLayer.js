@@ -1,14 +1,12 @@
-// import 'regenerator-runtime/runtime';
-import { path } from 'ramda';
 import analytics from './analytics';
 import sampleConfig from './config.sample.json';
-
-console.log('path', path);
 
 const chrome = window.chrome || {};
 const jQuery = window.jQuery || {};
 
 let cache = null;
+let settingsLoadTime = 0;
+let settingsChangeTime = 0;
 
 const DEFAULT_STORAGE_OBJECT = {
   source: 'DIRECT',
@@ -24,21 +22,23 @@ function openSettingsPage() {
 }
 
 async function reload() {
+  settingsLoadTime = new Date().getTime();
   const discSettings = await readSettingsFromDisc();
   let didSettingsChange = false;
   if (JSON.stringify(discSettings) !== JSON.stringify(cache)) {
     didSettingsChange = true;
     cache = discSettings;
   }
-  console.log('cache', cache);
   if (cache.source === 'URL') {
     const configFile = await loadConfigFileFromUrl(cache.url);
-    console.log('configFile', configFile);
     if (isValidConfigFile(configFile) && configFile !== cache.configFile) {
       cache.configFile = configFile;
       didSettingsChange = true;
       saveToDisc(cache);
     }
+  }
+  if (didSettingsChange) {
+    settingsChangeTime = new Date().getTime();
   }
   return didSettingsChange;
 }
@@ -94,4 +94,17 @@ function getConfig() {
   return { ...JSON.parse(cache.configFile) };
 }
 
-export default { reload, getConfig };
+function getSettingsLoadTime() {
+  return settingsLoadTime;
+}
+
+function getSettingsChangeTime() {
+  return settingsChangeTime;
+}
+
+export default {
+  reload,
+  getConfig,
+  getSettingsLoadTime,
+  getSettingsChangeTime,
+};
