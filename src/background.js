@@ -21,7 +21,6 @@ function newSessionObject() {
     tabs: [],
     tabReloadTime: [],
     isRotateEnabled: false,
-    rotationCounter: 0,
     nextIndex: 0,
     timerId: null,
     playStartTime: 0,
