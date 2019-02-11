@@ -48,7 +48,6 @@ gulp.task('project', function() {
 gulp.task('lib', function() {
   return gulp
     .src([
-      'node_modules/@babel/polyfill/dist/polyfill.min.js',
       'node_modules/jquery/dist/jquery.min.js',
       'node_modules/angular/angular.min.js',
       'node_modules/bootstrap/dist/css/bootstrap.min.css',
