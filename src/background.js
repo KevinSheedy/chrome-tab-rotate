@@ -80,11 +80,6 @@ async function rotateTabAndScheduleNextRotation() {
   const { playStartTime } = session;
   analytics.analyticsHeartbeat(playStartTime);
 
-  if (session.nextIndex === 0) {
-    setTimeout(beginCycle, 0);
-    return;
-  }
-
   const currentTab = session.tabs[session.nextIndex];
 
   const sleepDuration = session.config.websites[session.nextIndex].duration;
@@ -97,12 +92,12 @@ async function rotateTabAndScheduleNextRotation() {
   if (++session.nextIndex >= session.tabs.length) {
     session.nextIndex = 0;
   }
-
   preloadTab(session.nextIndex);
 
   console.log('sleep for: ' + sleepDuration);
+
   session.timerId = setTimeout(
-    rotateTabAndScheduleNextRotation,
+    session.nextIndex === 0 ? beginCycle : rotateTabAndScheduleNextRotation,
     sleepDuration * 1000,
   );
 }
