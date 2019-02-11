@@ -1,27 +1,36 @@
 import manifest from '../manifest.json';
 const { version } = manifest;
-const ga = window.ga || (() => null);
 console.log('started daemon: background.js');
 
-let lastHeartbeatTime = 0;
+const _ga = (...args) => {
+  if (window.ga) {
+    ga(...args);
+  } else {
+    console.log('ga not available');
+  }
+};
+
+const state = {
+  lastHeartbeatTime: 0,
+};
 
 const analytics = {
   startup: () =>
-    ga('send', {
+    _ga('send', {
       hitType: 'event',
       eventCategory: 'version',
       eventAction: 'manifest',
       eventLabel: version,
     }),
   play: () =>
-    ga('send', {
+    _ga('send', {
       hitType: 'event',
       eventCategory: 'user-action',
       eventAction: 'play',
       eventLabel: version,
     }),
   pause: () =>
-    ga('send', {
+    _ga('send', {
       hitType: 'event',
       eventCategory: 'user-action',
       eventAction: 'pause',
@@ -29,7 +38,7 @@ const analytics = {
     }),
   heartbeat: action => {
     console.log('analytics.heartbeat', action);
-    ga('send', {
+    _ga('send', {
       hitType: 'event',
       eventCategory: 'heartbeat',
       eventAction: action,
@@ -38,20 +47,20 @@ const analytics = {
   },
   install: () => {
     console.log('analytics: install');
-    ga('send', {
+    _ga('send', {
       hitType: 'event',
       eventCategory: 'user-action',
       eventAction: 'install',
       eventLabel: version,
     });
   },
-  backgroundPageview: () => ga('send', 'pageview', '/background.js'),
-  optionsPageview: () => ga('send', 'pageview', '/options.js'),
+  backgroundPageview: () => _ga('send', 'pageview', '/background.js'),
+  optionsPageview: () => _ga('send', 'pageview', '/options.js'),
   analyticsHeartbeat(playStartTime) {
     console.log('analyticsHeartbeat');
     // All units in millis
     const now = new Date().getTime();
-    const previous = lastHeartbeatTime || now;
+    const previous = state.lastHeartbeatTime || now;
     const MINUTE = 60 * 1000;
     const HOUR = 60 * MINUTE;
     const DAY = 24 * HOUR;
@@ -103,7 +112,7 @@ const analytics = {
     const lastYearMark = now - (uptime % YEAR);
     previous < lastYearMark && lastYearMark < now && this.heartbeat('year');
 
-    lastHeartbeatTime = now;
+    state.lastHeartbeatTime = now;
   },
 };
 
