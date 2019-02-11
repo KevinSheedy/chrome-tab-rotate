@@ -2,27 +2,19 @@ import analytics from './analytics';
 import dataLayer from './dataLayer';
 
 const chrome = window.chrome || {};
-const jQuery = window.jQuery || {};
-
-async function start() {
-  let didSettingsChange = await dataLayer.reload();
-  const config = dataLayer.getConfig();
-  console.log('config', config);
-  console.log('didSettingsChange', didSettingsChange);
-  didSettingsChange = await dataLayer.reload();
-  console.log('didSettingsChange', didSettingsChange);
-}
-start();
 
 let session = newSessionObject();
 
-loadSettings().then(() => {
+async function init() {
+  await dataLayer.reload();
+  session.config = dataLayer.getConfig();
   analytics.backgroundPageview();
 
   initEventListeners();
 
   session.config.autoStart && play();
-});
+}
+init();
 
 function newSessionObject() {
   return {
@@ -35,7 +27,6 @@ function newSessionObject() {
     settingsLoadTime: 0,
     playStartTime: 0,
     analyticsCounter: 0,
-    storageObject: {},
     config: {},
   };
 }
@@ -48,7 +39,7 @@ function iconClicked() {
   session.isRotateEnabled ? pause() : play();
 }
 
-function play() {
+async function play() {
   analytics.play();
 
   chrome.browserAction.setIcon({ path: 'src/img/Pause-38.png' });
@@ -57,7 +48,9 @@ function play() {
   session.isRotateEnabled = true;
   session.playStartTime = new Date().getTime();
   session.analyticsCounter = 0;
-  loadSettings().then(beginCycling);
+  await dataLayer.reload();
+  session.config = dataLayer.getConfig();
+  beginCycling();
 }
 
 function pause() {
@@ -69,73 +62,7 @@ function pause() {
   session.isRotateEnabled = false;
 }
 
-function loadSettings() {
-  return new Promise((resolve, reject) => {
-    loadSettingsFromDisc().then(() => {
-      if (session.config.source === 'URL') {
-        loadSettingsFromUrl().then(() => {
-          resolve();
-        });
-      } else {
-        resolve();
-      }
-    });
-  });
-}
-
-function loadSettingsFromDisc() {
-  return new Promise((resolve, reject) => {});
-}
-
-function loadSettingsFromUrl() {
-  return new Promise((resolve, reject) => {
-    session.settingsLoadTime = new Date().getTime();
-
-    jQuery.ajax({
-      url: session.config.url,
-      dataType: 'text',
-      cache: false,
-      success: res => {
-        if (res === session.storageObject.configFile) {
-          console.log('Settings changed: no');
-          resolve();
-          return;
-        } else {
-          console.log('Settings changed: yes');
-        }
-        if (isValidConfigFile(res)) {
-          console.log('Settings are valid');
-          session.storageObject.configFile = res;
-          session.config = parseSettings(session.storageObject);
-          session.settingsChangeTime = new Date().getTime();
-          console.log('Write settings to disc');
-          chrome.storage.sync.set(session.storageObject, function() {
-            resolve();
-          });
-        } else {
-          console.log('invalid settings file. Continuing with old settings');
-          resolve();
-        }
-      },
-      error: function() {
-        resolve();
-      },
-      complete: function() {},
-    });
-  });
-}
-
-function isValidConfigFile(configFile) {
-  try {
-    JSON.parse(configFile);
-  } catch (e) {
-    console.error('isValidConfigFile()', e);
-    return false;
-  }
-  return true;
-}
-
-function beginCycling() {
+async function beginCycling() {
   if (
     session.settingsChangeTime &&
     session.settingsLoadTime > session.settingsChangeTime
@@ -144,10 +71,10 @@ function beginCycling() {
     return;
   }
 
-  getTabsToClose()
-    .then(insertTabs)
-    .then(closeTabs)
-    .then(rotateTabAndScheduleNextRotation);
+  const tabIdsToClose = await getTabsToClose();
+  await insertTabs();
+  await closeTabs(tabIdsToClose);
+  rotateTabAndScheduleNextRotation();
 }
 
 function getTabsToClose() {
