@@ -4,13 +4,12 @@ import sampleConfig from './config.sample.json';
 const chrome = window.chrome || {};
 const angular = window.angular || {};
 const jQuery = window.jQuery || {};
-const Prism = window.Prism || {};
 
 function loadSampleConfig() {
   return {
     source: 'DIRECT',
     url:
-      'https://raw.githubusercontent.com/KevinSheedy/chrome-tab-rotate/master/app/config.sample.json',
+      'https://raw.githubusercontent.com/KevinSheedy/chrome-tab-rotate/master/src/config.sample.json',
     configFile: JSON.stringify(sampleConfig, null, 2),
   };
 }
@@ -37,7 +36,7 @@ settingsApp.controller('SettingsCtrl', function($scope, $http) {
           $scope.settings.configFile = res;
           $scope.fetchSucceeded = true;
           $scope.$apply();
-          Prism.highlightAll();
+          window.Prism.highlightAll();
         },
         error: res => {
           $scope.fetchSucceeded = false;
@@ -122,7 +121,7 @@ settingsApp.controller('SettingsCtrl', function($scope, $http) {
       'settings.configFile',
       val => {
         jQuery('.config-code-block').text(val);
-        Prism.highlightAll();
+        window.Prism.highlightAll();
       },
       true,
     );
@@ -165,7 +164,7 @@ angular.module('Prism', []).directive('prism', [
       restrict: 'A',
       link: ($scope, element, attrs) => {
         element.ready(() => {
-          Prism.highlightElement(element[0]);
+          window.Prism.highlightElement(element[0]);
         });
       },
     };

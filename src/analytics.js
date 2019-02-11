@@ -52,20 +52,20 @@ const analytics = {
     // All units in millis
     const now = new Date().getTime();
     const previous = lastHeartbeatTime || now;
-    const MINUTE = 60 * 1000,
-      HOUR = 60 * MINUTE,
-      DAY = 24 * HOUR,
-      WEEK = 7 * DAY,
-      MONTH = 30 * DAY,
-      YEAR = 365 * DAY;
+    const MINUTE = 60 * 1000;
+    const HOUR = 60 * MINUTE;
+    const DAY = 24 * HOUR;
+    const WEEK = 7 * DAY;
+    const MONTH = 30 * DAY;
+    const YEAR = 365 * DAY;
     const uptime = now - playStartTime;
 
-    const tenMinuteMark = playStartTime + 10 * MINUTE,
-      twentyMinuteMark = playStartTime + 20 * MINUTE,
-      thirtyMinuteMark = playStartTime + 30 * MINUTE,
-      fortyMinuteMark = playStartTime + 40 * MINUTE,
-      fiftyMinuteMark = playStartTime + 50 * MINUTE,
-      sixtyMinuteMark = playStartTime + 60 * MINUTE;
+    const tenMinuteMark = playStartTime + 10 * MINUTE;
+    const twentyMinuteMark = playStartTime + 20 * MINUTE;
+    const thirtyMinuteMark = playStartTime + 30 * MINUTE;
+    const fortyMinuteMark = playStartTime + 40 * MINUTE;
+    const fiftyMinuteMark = playStartTime + 50 * MINUTE;
+    const sixtyMinuteMark = playStartTime + 60 * MINUTE;
 
     previous < tenMinuteMark && tenMinuteMark < now && this.heartbeat('10mins');
     previous < twentyMinuteMark &&
