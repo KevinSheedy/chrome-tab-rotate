@@ -17,7 +17,7 @@ const DEFAULT_STORAGE_OBJECT = {
 function openSettingsPage() {
   chrome.tabs.create({
     index: 0,
-    url: 'app/settings.html',
+    url: 'src/settings.html',
   });
 }
 
