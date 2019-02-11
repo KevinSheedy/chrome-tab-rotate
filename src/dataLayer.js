@@ -102,9 +102,14 @@ function getSettingsChangeTime() {
   return settingsChangeTime;
 }
 
+function isRemoteLoadingEnabled() {
+  return cache.source === 'URL';
+}
+
 export default {
   reload,
   getConfig,
   getSettingsLoadTime,
   getSettingsChangeTime,
+  isRemoteLoadingEnabled,
 };

@@ -24,7 +24,6 @@ function newSessionObject() {
     rotationCounter: 0,
     nextIndex: 0,
     timerId: null,
-    settingsLoadTime: 0,
     playStartTime: 0,
     analyticsCounter: 0,
     config: {},
@@ -190,6 +189,7 @@ function insertTab(url, indexOfTab, callback) {
 
 function preloadTab(tabIndex) {
   if (!isTabReloadRequired(tabIndex)) {
+    console.log('Do not Preload tab: ' + tabIndex);
     return;
   }
 
@@ -210,14 +210,19 @@ function preloadTab(tabIndex) {
 
 function isSettingsReloadRequired() {
   const currentTimeMillis = new Date().getTime();
-  const millisSinceLastReload = currentTimeMillis - session.settingsLoadTime;
+  const millisSinceLastReload =
+    currentTimeMillis - dataLayer.getSettingsLoadTime();
 
   const reloadIntervalMillis =
     session.config.settingsReloadIntervalMinutes * 60 * 1000;
 
+  console.log('currentTimeMillis', currentTimeMillis);
+  console.log('millisSinceLastReload', millisSinceLastReload);
+  console.log('reloadIntervalMillis', reloadIntervalMillis);
+
   if (
-    millisSinceLastReload > reloadIntervalMillis &&
-    session.config.source === 'URL'
+    dataLayer.isRemoteLoadingEnabled() &&
+    millisSinceLastReload > reloadIntervalMillis
   ) {
     console.log('Reload settings from url: yes');
     return true;
