@@ -58,15 +58,16 @@ function pause() {
 
 async function beginCycle(isFirstCycle = false) {
   console.log('isFirstCycle', isFirstCycle);
+  let didSettingsChange = false;
   if (isFirstCycle || isSettingsReloadRequired()) {
     console.log('session', session);
-    const didSettingsChange = await dataLayer.reload();
+    didSettingsChange = await dataLayer.reload();
     session.config = dataLayer.getConfig();
     if (isFirstCycle || didSettingsChange) {
       await initTabs();
     }
   }
-  rotateTabAndScheduleNextRotation(isFirstCycle);
+  rotateTabAndScheduleNextRotation(isFirstCycle || didSettingsChange);
 }
 
 async function rotateTabAndScheduleNextRotation(isFirstCycle) {
