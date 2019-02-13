@@ -22,6 +22,10 @@ Open Chrome in fullscreen mode
 
 Begin rotating tabs automatically as soon as Chrome is opened
 
+### lazyLoadTabs - boolean
+
+Load the first two tabs on startup then load subsequent tabs "just in time"
+
 ### websites - list
 
 #### url - string
@@ -43,6 +47,7 @@ Set to `0` for no reload
   "settingsReloadIntervalMinutes": 60,
   "fullscreen": true,
   "autoStart": false,
+  "lazyLoadTabs": false,
   "websites": [
     {
       "url": "https://github.com/KevinSheedy/chrome-tab-rotate.git",
