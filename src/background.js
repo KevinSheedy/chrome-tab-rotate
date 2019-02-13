@@ -153,11 +153,12 @@ function insertTabs(tabIdsToClose) {
     for (let i = 0; i < session.config.websites.length; i++) {
       let url = 'about:blank';
       let reloadTime = 0;
+      const { lazyLoadTabs } = session.config;
 
       // Issue #27
       // Reduce cpu/memory usage on startup
       // Only load the first two web pages, then load subsequent pages one by one.
-      if (i < 2) {
+      if (!lazyLoadTabs || i < 2) {
         url = session.config.websites[i].url;
         reloadTime = new Date().getTime();
       }
