@@ -1,0 +1,60 @@
+{
+    "type": "object",
+    "properties": {
+        "source": {
+            "type": "string",
+            "title": "Config type.",
+            "description": "DIRECT (default) or URL. You can load a config from a URL or use the direct_config section for a direct config."
+        },
+        "url": {
+            "type": "string",
+            "title": "Config url.",
+            "description": "Specify a url to load the config from. You need to set config_type to URL."
+        },
+        "configFile": {
+            "type": "object",
+            "title": "Direct config.",
+            "description": "You can specify a direct config that is loaded by the plugin. You need to set ConfigType to DIRECT.",
+            "properties": {
+                "autoStart": {
+                    "title": "Autostart tab rotation.",
+                    "description": "If set to true the plugin will automatically start rotating the configured tabs when chrome starts.",
+                    "type": "boolean"
+                },
+                "lazyLoadTabs": {
+                    "title": "Lazy load tabs.",
+                    "description": "If set to true will only load two tabs and the rest async in the background.",
+                    "type": "boolean"
+                },
+                "fullscreen": {
+                    "title": "Fullscreen mode.",
+                    "description": "If set to true will enter fullscreen after starting.",
+                    "type": "boolean"
+                },
+                "settingsReloadIntervalSeconds": {
+                    "title": "Settings reload interval.",
+                    "description": "Time in minutes to periodically reload the settings, e.g. from a configured url.",
+                    "type": "integer"
+                },
+                "websites": {
+                    "type": "array",
+                    "id": "ListOfWebsites",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "url": {
+                                "type": "string"
+                            },
+                            "duration": {
+                                "type": "integer"
+                            },
+                            "tabReloadIntervalSeconds": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

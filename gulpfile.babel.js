@@ -42,7 +42,7 @@ gulp.task('src', function() {
 });
 
 gulp.task('project', function() {
-  return gulp.src(['manifest.json', 'README.md']).pipe(gulp.dest('build'));
+  return gulp.src(['manifest.json', 'README.md', 'schema.json']).pipe(gulp.dest('build'));
 });
 
 gulp.task('lib', function() {

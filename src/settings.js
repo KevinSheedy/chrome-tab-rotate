@@ -82,18 +82,31 @@ settingsApp.controller('SettingsCtrl', function($scope, $http) {
     };
 
     $scope.reloadSettingsFromDisc = () => {
-      chrome.storage.sync.get(null, allStorage => {
-        $scope.settings = jQuery.isEmptyObject(allStorage)
-          ? newStorageObject()
-          : allStorage;
 
-        if (jQuery.isEmptyObject(allStorage)) {
-          $scope.settings = newStorageObject();
-          chrome.storage.sync.set($scope.settings, () => {
-            console.log('Local storage is empty. Saving some default settings');
-          });
+      console.log('Read settings from managed storage api');
+      chrome.storage.managed.get(null, managedStorage => {
+        if (!jQuery.isEmptyObject(managedStorage)) {
+          $scope.settings = { ...managedStorage };
+          if ($scope.settings.source === 'DIRECT') {
+            $scope.settings.configFile = JSON.stringify(managedStorage.configFile, null, 2);
+          } else if ($scope.settings.source === 'URL') {
+            $scope.fetchRemoteSettings();
+          }
         } else {
-          $scope.settings = allStorage;
+          chrome.storage.sync.get(null, allStorage => {
+            $scope.settings = jQuery.isEmptyObject(allStorage)
+              ? newStorageObject()
+              : allStorage;
+
+            if (jQuery.isEmptyObject(allStorage)) {
+              $scope.settings = newStorageObject();
+              chrome.storage.sync.set($scope.settings, () => {
+                console.log('Local storage is empty. Saving some default settings');
+              });
+            } else {
+              $scope.settings = allStorage;
+            }
+          });
         }
 
         $scope.form.$setPristine();

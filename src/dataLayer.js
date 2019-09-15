@@ -66,15 +66,22 @@ async function loadConfigFileFromUrl(url) {
 
 function readSettingsFromDisc() {
   return new Promise(resolve => {
-    console.log('Read settings from disc');
-    chrome.storage.sync.get(null, allStorage => {
-      if (jQuery.isEmptyObject(allStorage)) {
-        // This is the first use of the plugin
-        analytics.install();
-        openSettingsPage();
-        resolve({ ...DEFAULT_STORAGE_OBJECT });
+    chrome.storage.managed.get(null, managedStorage => {
+      if (!jQuery.isEmptyObject(managedStorage)) {
+        console.log('Read settings from managed storage api');
+        resolve({ ...managedStorage });
       } else {
-        resolve({ ...allStorage });
+        console.log('Read settings from disc');
+        chrome.storage.sync.get(null, allStorage => {
+          if (jQuery.isEmptyObject(allStorage)) {
+            // This is the first use of the plugin
+            analytics.install();
+            openSettingsPage();
+            resolve({ ...DEFAULT_STORAGE_OBJECT });
+          } else {
+            resolve({ ...allStorage });
+          }
+        });
       }
     });
   });
