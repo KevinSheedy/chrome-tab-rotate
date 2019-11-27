@@ -56,8 +56,9 @@ async function loadConfigFileFromUrl(url) {
       success: res => {
         resolve(res);
       },
-      error: function() {
-        reject(new Error('request failed'));
+      error: function(e) {
+        console.error('failed to fetch url: ' + url, e);
+        resolve('');
       },
       complete: function() {},
     });
