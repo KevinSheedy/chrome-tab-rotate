@@ -7,7 +7,7 @@
     "@babel/runtime": "^7.3.1",
     "angular": "^1.7.9",
     "angular-ui-validate": "1.2.3",
-    "bootstrap": "^4.2.1",
+    "bootstrap": "^4.3.1",
     "jquery": "^3.4.0",
     "prismjs": "^1.15.0",
     "ramda": "^0.26.1"
