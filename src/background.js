@@ -86,9 +86,12 @@ async function rotateTabAndScheduleNextRotation(isFirstCycle) {
   chrome.tabs.update(currentTab.id, { active: true });
 
   // Determine the next tab index
-  if (++session.nextIndex >= session.tabs.length) {
-    session.nextIndex = 0;
-  }
+  do {
+    if (++session.nextIndex >= session.tabs.length) {
+      session.nextIndex = 0;
+    }
+  } while (!checkTime(session.nextIndex));
+
   preloadTab(session.nextIndex, isFirstCycle);
 
   console.log('sleep for: ' + sleepDuration);
@@ -186,6 +189,65 @@ function insertTab(url, indexOfTab, callback) {
       callback(indexOfTab, tab);
     },
   );
+}
+
+function getLocalTimezoneOffsetISO8601() {
+  var timezone_offset_min = new Date().getTimezoneOffset(),
+  offset_hrs = parseInt(Math.abs(timezone_offset_min/60)),
+  offset_min = Math.abs(timezone_offset_min%60),
+  timezone_standard;
+
+  if(offset_hrs < 10)
+    offset_hrs = '0' + offset_hrs;
+
+  if(offset_min < 10)
+    offset_min = '0' + offset_min;
+
+  // Add an opposite sign to the offset
+  // If offset is 0, it means timezone is UTC
+  if(timezone_offset_min < 0)
+    timezone_standard = '+' + offset_hrs + ':' + offset_min;
+  else if(timezone_offset_min > 0)
+    timezone_standard = '-' + offset_hrs + ':' + offset_min;
+  else if(timezone_offset_min == 0)
+    timezone_standard = 'Z';
+
+  // Timezone difference in hours and minutes
+  // String such as +5:30 or -6:00 or Z
+  return timezone_standard;
+}
+
+/*
+ * This function determines if the current time is between the ones entered
+ * in the config.json. If so it returns true, false otherwise. It also
+ * returns true if there are no times set.
+ */
+function checkTime(tabIndex) {
+  console.log("entering checkTime...");
+  try {
+    var fromTimeRaw = session.config.websites[tabIndex].showFromTime;
+    var toTimeRaw = session.config.websites[tabIndex].showToTime;
+  }
+  catch (e) {
+    console.log("entered catch and return true...");
+    return true;
+  }
+
+  if (fromTimeRaw == null || toTimeRaw == null) {
+    console.log("entered if and return true...");
+    return true;
+  }
+
+  var d = new Date();
+  var today = d.getFullYear() + "-" + d.getMonth()+1 + "-" + d.getDate();
+  var fromTime = new Date(today + "T" + fromTimeRaw + getLocalTimezoneOffsetISO8601());
+  var toTime = new Date(today + "T" + toTimeRaw + getLocalTimezoneOffsetISO8601());
+
+  if (d.getTime() > fromTime.getTime() && d.getTime() < toTime.getTime()) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 function preloadTab(tabIndex, isFirstCycle) {

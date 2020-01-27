@@ -27,7 +27,9 @@
     {
       "url": "https://ie.linkedin.com/in/kevinsheedy",
       "duration": 10,
-      "tabReloadIntervalSeconds": 15
+      "tabReloadIntervalSeconds": 15,
+      "showFromTime": "12:00:00",
+      "showToTime": "18:00:00"
     }
   ]
 }
