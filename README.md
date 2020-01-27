@@ -42,6 +42,18 @@ Set to `0` for no reload
 // Automatically reload the settings file from the url provided
 "enableAutoReload": false
 
+#### showFromTime - time
+
+Enter the time at which Tab Rotate should begin to show your tab. Enter in 24h format: "hour:minute:seconds"
+
+This is optional
+
+#### showToTime - time
+
+Enter the time at which Tab Rotate should stop to show your tab. Enter in 24h format: "hour:minute:seconds"
+
+This is optional
+
 ```json
 {
   "settingsReloadIntervalMinutes": 60,
@@ -52,7 +64,9 @@ Set to `0` for no reload
     {
       "url": "https://github.com/KevinSheedy/chrome-tab-rotate.git",
       "duration": 10,
-      "tabReloadIntervalSeconds": 120
+      "tabReloadIntervalSeconds": 120,
+      "showFromTime": "23:15:00",
+      "showToTime": "23:20:00"
     },
     {
       "url": "https://chrome.google.com/webstore/detail/tab-rotate/pjgjpabbgnnoohijnillgbckikfkbjed",
