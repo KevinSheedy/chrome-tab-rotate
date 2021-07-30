@@ -8,7 +8,6 @@
     "angular": "^1.7.9",
     "angular-ui-validate": "1.2.3",
     "bootstrap": "^4.3.1",
-    "jquery": "^3.4.0",
     "prismjs": "^1.15.0",
     "ramda": "^0.26.1"
   },
@@ -31,6 +30,7 @@
     "gulp": "^4.0.0",
     "gulp-babel": "^8.0.0",
     "gulp-better-rollup": "^3.4.0",
+    "gulp-cli": "^2.3.0",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-zip": "^4.2.0",
     "prettier": "^1.16.4",
@@ -40,6 +40,7 @@
     "rollup-plugin-node-resolve": "^4.0.0"
   },
   "scripts": {
+    "gulp": "gulp",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "./node_modules/.bin/eslint --fix"
   },
