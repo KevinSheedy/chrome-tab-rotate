@@ -48,27 +48,21 @@ function saveToDisc(storage) {
 }
 
 async function loadConfigFileFromUrl(url) {
-  return new Promise((resolve, reject) => {
-    jQuery.ajax({
-      url: url,
-      dataType: 'text',
-      cache: false,
-      success: res => {
-        resolve(res);
-      },
-      error: function() {
-        reject(new Error('request failed'));
-      },
-      complete: function() {},
-    });
-  });
+
+  const response = await fetch(url);
+  const text = await response.text();
+
+  return text;
 }
+
+const isEmptyObject = obj => !(obj && Object.keys(obj).length !== 0);
+
 
 function readSettingsFromDisc() {
   return new Promise(resolve => {
     console.log('Read settings from disc');
     chrome.storage.sync.get(null, allStorage => {
-      if (jQuery.isEmptyObject(allStorage)) {
+      if (isEmptyObject(allStorage)) {
         // This is the first use of the plugin
         analytics.install();
         openSettingsPage();
