@@ -13,7 +13,6 @@
 
   "background": {
     "scripts": [
-      "lib/jquery.min.js",
       "src/background.js",
       "src/import-analytics.js"
     ]
@@ -26,7 +25,7 @@
     "128": "src/img/Play-128.png"
   },
 
-  "content_security_policy": "script-src 'self' https://www.google-analytics.com; object-src 'self'",
+  "content_security_policy": "script-src 'self' https://www.google-analytics.com https://unpkg.com; object-src 'self'",
 
   "permissions": [
     "activeTab",
