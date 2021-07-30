@@ -2,7 +2,6 @@ import analytics from './analytics';
 import sampleConfig from './config.sample.json';
 
 const chrome = window.chrome || {};
-const jQuery = window.jQuery || {};
 
 let cache = null;
 let settingsLoadTime = 0;
