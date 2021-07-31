@@ -9,13 +9,10 @@
     "default_icon": "src/img/Play-38.png",
     "default_title": "Start Tab Rotate"
   },
-  "options_page": "src/settings.html",
+  "options_page": "index.html",
 
   "background": {
-    "scripts": [
-      "src/background.js",
-      "src/import-analytics.js"
-    ]
+    "scripts": ["background.bundle.js", "import-analytics.bundle.js"]
   },
 
   "icons": {
