@@ -18,6 +18,7 @@ module.exports = {
       patterns: [
         { from: 'manifest.json', to: '' },
         { from: 'README.md', to: '' },
+        { from: 'img', to: '' },
       ],
     }),
     new HtmlWebpackPlugin({
