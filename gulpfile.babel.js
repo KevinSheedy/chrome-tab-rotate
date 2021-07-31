@@ -45,19 +45,6 @@ gulp.task('project', function() {
   return gulp.src(['manifest.json', 'README.md']).pipe(gulp.dest('build'));
 });
 
-gulp.task('lib', function() {
-  return gulp
-    .src([
-      'node_modules/angular/angular.min.js',
-      'node_modules/bootstrap/dist/css/bootstrap.min.css',
-      'node_modules/angular-ui-validate/dist/validate.min.js',
-      'node_modules/prismjs/themes/prism.css',
-      'node_modules/prismjs/prism.js',
-      'node_modules/prismjs/components/prism-javascript.min.js',
-    ])
-    .pipe(gulp.dest('build/lib'));
-});
-
 gulp.task('clean', function() {
   return del(['build']);
 });
@@ -69,4 +56,4 @@ gulp.task('zip', function() {
     .pipe(gulp.dest('zip'));
 });
 
-gulp.task('default', gulp.series('clean', 'project', 'src', 'js', 'lib'));
+gulp.task('default', gulp.series('clean', 'project', 'src', 'js'));
