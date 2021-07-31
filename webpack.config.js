@@ -5,7 +5,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   target: 'web',
   mode: 'production',
-  devtool: 'cheap-module-source-map',
+  devtool: 'source-map',
+  watch: true,
   entry: {
     background: './src/background.js',
     settings: './src/settings.js',
