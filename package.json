@@ -15,6 +15,7 @@
     "@babel/register": "^7.0.0",
     "babel-preset-env": "^1.7.0",
     "del": "3.0.0",
+    "esbuild": "^0.12.17",
     "eslint": "^5.13.0",
     "eslint-config-prettier": "^4.0.0",
     "eslint-config-standard": "^12.0.0",
@@ -30,6 +31,7 @@
     "gulp-sourcemaps": "^2.6.4",
     "gulp-zip": "^4.2.0",
     "prettier": "^1.16.4",
+    "rimraf": "^2.6.3",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-json": "^3.1.0",
@@ -37,6 +39,7 @@
   },
   "scripts": {
     "gulp": "gulp",
+    "build": "rimraf dist && esbuild ./src/background.js --bundle --sourcemap --outfile=./dist/background.bundle.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "./node_modules/.bin/eslint --fix"
   },
