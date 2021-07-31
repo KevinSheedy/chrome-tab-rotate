@@ -22,8 +22,23 @@ const copyImages = async () => {
   console.log('copyImages');
   return fs.copy('src/img', 'dist/img', err => {
     if (err) return console.error(err);
-    console.log('success!');
+    // console.log(`copied ${dist}`);
   }); // copies directory, even if it has subdirectories or files
+};
+
+const copyStatics = async () => {
+  console.log('copyStatics');
+  [
+    ['manifest.json', 'dist/manifest.json'],
+    ['README.md', 'dist/README.md'],
+    ['src/index.html', 'dist/index.html'],
+    ['src/settings.css', 'dist/settings.css'],
+  ].forEach(([src, dist]) => {
+    fs.copy(src, dist, err => {
+      if (err) return console.error(err);
+      console.log(`copied ${dist}`);
+    });
+  });
 };
 
 const clean = async () => {
@@ -38,6 +53,7 @@ const buildAll = async () => {
   await buildJavascript();
   await sleep();
   await copyImages();
+  await copyStatics();
 };
 
 buildAll();
