@@ -10,7 +10,7 @@
       "tabReloadIntervalSeconds": 15
     },
     {
-      "url": "chrome-extension://pjgjpabbgnnoohijnillgbckikfkbjed/src/settings.html",
+      "url": "chrome-extension://pjgjpabbgnnoohijnillgbckikfkbjed/index.html",
       "duration": 10,
       "tabReloadIntervalSeconds": 15
     },
