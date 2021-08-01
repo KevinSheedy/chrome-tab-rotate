@@ -1,3 +1,5 @@
+console.log('hot-reload.js');
+
 const chrome = window.chrome || {};
 
 const filesInDirectory = dir =>
@@ -39,6 +41,7 @@ chrome.management.getSelf(self => {
       // NB: see https://github.com/xpl/crx-hotreload/issues/5
       if (tabs[0]) {
         chrome.tabs.reload(tabs[0].id);
+        chrome.runtime.openOptionsPage();
       }
     });
   }

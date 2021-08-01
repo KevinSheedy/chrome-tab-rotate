@@ -5,12 +5,9 @@ import cpy from 'cpy';
 
 const command = process.argv.slice(2);
 console.log('command: ', command);
-
 const commands = { build, watch, zip: () => {} };
 
 commands[command]?.();
-
-const dist = 'dist';
 
 const buildJavascript = async () => {
   console.log('buildJavascript');
