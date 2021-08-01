@@ -15,17 +15,17 @@ const dist = 'dist';
 const buildJavascript = async () => {
   console.log('buildJavascript');
   return esbuild({
+    sourcemap: 'inline',
+    logLevel: 'info',
+    // minify: true,
+    bundle: true,
+    outdir: 'dist',
     entryPoints: [
       'src/background.js',
       'src/settings.js',
       'src/import-analytics.js',
       'src/hot-reload.js',
     ],
-    sourcemap: 'inline',
-    logLevel: 'info',
-    // minify: true,
-    bundle: true,
-    outdir: 'dist',
   }).catch(() => {});
 };
 
@@ -55,9 +55,8 @@ async function build() {
   console.log('\nBuild Started -------------');
   console.time('\nBuild done: ');
   await clean();
-  await buildJavascript();
-  await copyImages();
-  await copyStatics();
+
+  await Promise.all([buildJavascript(), copyImages(), copyStatics()]);
   console.timeEnd('\nBuild done: ');
 }
 
