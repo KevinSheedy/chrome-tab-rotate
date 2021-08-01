@@ -15,6 +15,7 @@
     "@babel/preset-env": "^7.3.1",
     "@babel/register": "^7.0.0",
     "babel-preset-env": "^1.7.0",
+    "cpy": "^8.1.2",
     "del": "3.0.0",
     "esbuild": "^0.12.17",
     "eslint": "^5.13.0",
