@@ -3,23 +3,19 @@
   "version": "0.5.0",
   "description": "Loop through a set of tabs - ideal for a Dashboard or Advertisement Display",
   "dependencies": {
-    "chokidar": "^2.1.0",
     "ramda": "^0.26.1"
   },
   "devDependencies": {
+    "chokidar": "^2.1.0",
     "cpy": "^8.1.2",
     "esbuild": "^0.12.17",
-    "eslint": "^5.13.0",
-    "eslint-config-prettier": "^4.0.0",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.16.0",
-    "eslint-plugin-node": "^8.0.1",
-    "eslint-plugin-prettier": "^3.0.1",
-    "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-standard": "^4.0.0",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.4",
     "fs-extra": "^10.0.0",
     "nodemon": "^2.0.12",
-    "prettier": "^1.16.4",
+    "prettier": "^2.3.2",
     "zip-a-folder": "^1.1.0"
   },
   "scripts": {
