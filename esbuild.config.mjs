@@ -9,6 +9,8 @@ const commands = { build, watch, zip: () => {} };
 
 commands[command]?.();
 
+console.log('nodemon ftw ');
+
 const buildJavascript = async () => {
   console.log('buildJavascript');
   return esbuild({
@@ -23,7 +25,7 @@ const buildJavascript = async () => {
     // minify: true,
     bundle: true,
     outdir: 'dist',
-  }).catch(() => process.exit(1));
+  }).catch(() => {});
 };
 
 const copyImages = async () => {
@@ -41,10 +43,10 @@ const copyStatics = async () => {
     ['README.md', 'dist/README.md'],
     ['src/index.html', 'dist/index.html'],
     ['src/settings.css', 'dist/settings.css'],
-  ].forEach(([src, dist]) => {
+  ].forEach(async ([src, dist]) => {
     fs.copy(src, dist, err => {
       if (err) return console.error(err);
-      console.log(`  ${dist}`);
+      // console.log(`  ${dist}`);
     });
   });
 };
@@ -55,10 +57,13 @@ async function clean() {
 }
 
 async function build() {
+  console.log('\nBuild Started -------------');
+  console.time('\nBuild done: ');
   await clean();
   await buildJavascript();
   await copyImages();
   await copyStatics();
+  console.timeEnd('\nBuild done: ');
 }
 
 async function watch() {
@@ -68,6 +73,6 @@ async function watch() {
   chokidar.watch('src/*').on('change', async path => {
     console.log('\nFile changed:');
     console.log(` ${path}`);
-    build();
+    await build();
   });
 }

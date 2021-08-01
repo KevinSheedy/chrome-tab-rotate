@@ -32,6 +32,7 @@
     "gulp-cli": "^2.3.0",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-zip": "^4.2.0",
+    "nodemon": "^2.0.12",
     "prettier": "^1.16.4",
     "rimraf": "^2.6.3",
     "rollup-plugin-babel": "^4.3.2",
@@ -42,7 +43,7 @@
   "scripts": {
     "gulp": "gulp",
     "build": "node esbuild.config.mjs build",
-    "start": "node esbuild.config.mjs watch",
+    "start": "nodemon --exec 'node esbuild.config.mjs watch'",
     "build:exp": "rimraf dist && esbuild ./src/background.js --bundle --sourcemap --outfile=./dist/background.bundle.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "./node_modules/.bin/eslint --fix"
