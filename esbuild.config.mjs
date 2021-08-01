@@ -2,10 +2,11 @@ import { build as esbuild } from 'esbuild';
 import fs from 'fs-extra';
 import chokidar from 'chokidar';
 import cpy from 'cpy';
+import { zip as zipFolder } from 'zip-a-folder';
 
 const command = process.argv.slice(2);
 console.log('command: ', command);
-const commands = { build, watch, zip: () => {} };
+const commands = { build, watch, zip };
 
 commands[command]?.();
 
@@ -50,11 +51,21 @@ async function clean() {
 
 async function build() {
   console.log('\nBuild Started -------------');
-  console.time('\nBuild done: ');
+  console.time('\nBuild Done in');
   await clean();
 
   await Promise.all([buildJavascript(), copyImages(), copyStatics()]);
-  console.timeEnd('\nBuild done: ');
+  console.timeEnd('\nBuild Done in');
+
+  zip();
+}
+
+async function zip() {
+  // console.time('Zip created in');
+  const { version } = JSON.parse(fs.readFileSync('./manifest.json'));
+
+  await zipFolder('dist', `./zip/tab-rotate-${version}.zip`);
+  // console.timeEnd('Zip created in');
 }
 
 async function watch() {

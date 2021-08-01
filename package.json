@@ -1,6 +1,6 @@
 {
   "name": "chrome-tab-rotate",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Loop through a set of tabs - ideal for a Dashboard or Advertisement Display",
   "main": "gulpfile.js",
   "dependencies": {
@@ -39,11 +39,13 @@
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-json": "^3.1.0",
-    "rollup-plugin-node-resolve": "^4.0.0"
+    "rollup-plugin-node-resolve": "^4.0.0",
+    "zip-a-folder": "^1.1.0"
   },
   "scripts": {
     "gulp": "gulp",
     "build": "node esbuild.config.mjs build",
+    "zip": "node esbuild.config.mjs zip",
     "start": "nodemon --exec 'node esbuild.config.mjs watch'",
     "build:exp": "rimraf dist && esbuild ./src/background.js --bundle --sourcemap --outfile=./dist/background.bundle.js",
     "test": "echo \"Error: no test specified\" && exit 1",
