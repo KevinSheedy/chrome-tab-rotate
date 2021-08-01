@@ -16,10 +16,11 @@ const buildJavascript = async () => {
       'src/background.js',
       'src/settings.js',
       'src/import-analytics.js',
+      'src/hot-reload.js',
     ],
     sourcemap: 'inline',
     logLevel: 'info',
-    minify: true,
+    // minify: true,
     bundle: true,
     outdir: 'dist',
   }).catch(() => process.exit(1));

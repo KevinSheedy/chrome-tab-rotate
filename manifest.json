@@ -12,7 +12,7 @@
   "options_page": "index.html",
 
   "background": {
-    "scripts": ["background.js", "import-analytics.js"]
+    "scripts": ["background.js", "import-analytics.js", "hot-reload.js"]
   },
 
   "icons": {

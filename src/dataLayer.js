@@ -16,7 +16,7 @@ const DEFAULT_STORAGE_OBJECT = {
 function openSettingsPage() {
   chrome.tabs.create({
     index: 0,
-    url: 'src/settings.html',
+    url: 'index.html',
   });
 }
 
@@ -47,7 +47,6 @@ function saveToDisc(storage) {
 }
 
 async function loadConfigFileFromUrl(url) {
-
   const response = await fetch(url);
   const text = await response.text();
 
@@ -55,7 +54,6 @@ async function loadConfigFileFromUrl(url) {
 }
 
 const isEmptyObject = obj => !(obj && Object.keys(obj).length !== 0);
-
 
 function readSettingsFromDisc() {
   return new Promise(resolve => {
