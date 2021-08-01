@@ -1,6 +1,7 @@
 import analytics from './analytics';
 import sampleConfig from './config.sample.json';
 
+// Fooa
 const chrome = window.chrome || {};
 const angular = window.angular || {};
 const jQuery = window.jQuery || {};

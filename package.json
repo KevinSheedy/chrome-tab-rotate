@@ -41,8 +41,9 @@
   },
   "scripts": {
     "gulp": "gulp",
-    "build": "rimraf dist && esbuild ./src/background.js --bundle --sourcemap --outfile=./dist/background.bundle.js",
-    "build:config": "node esbuild.config.mjs",
+    "build": "node esbuild.config.mjs build",
+    "start": "node esbuild.config.mjs watch",
+    "build:exp": "rimraf dist && esbuild ./src/background.js --bundle --sourcemap --outfile=./dist/background.bundle.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "./node_modules/.bin/eslint --fix"
   },
