@@ -1,7 +1,7 @@
 import analytics from './analytics';
 import dataLayer from './dataLayer';
 
-const chrome = window.chrome || {};
+const chrome = globalThis.chrome || {};
 
 let session = newSessionObject();
 
@@ -82,7 +82,7 @@ async function rotateTabAndScheduleNextRotation(isFirstCycle) {
   const sleepDuration = session.config.websites[session.nextIndex].duration;
 
   // Show the current tab
-  console.log('Show tab: ' + session.nextIndex);
+  console.log(`Show tab: ${session.nextIndex}`);
   chrome.tabs.update(currentTab.id, { active: true });
 
   // Determine the next tab index
@@ -91,7 +91,7 @@ async function rotateTabAndScheduleNextRotation(isFirstCycle) {
   }
   preloadTab(session.nextIndex, isFirstCycle);
 
-  console.log('sleep for: ' + sleepDuration);
+  console.log(`sleep for: ${sleepDuration}`);
 
   session.timerId = setTimeout(
     session.nextIndex === 0
@@ -116,7 +116,7 @@ async function getTabsToClose() {
 
     const tabIds = [];
 
-    chrome.tabs.query(queryInactiveTabs, tabs => {
+    chrome.tabs.query(queryInactiveTabs, (tabs) => {
       for (let i = 0; i < tabs.length; i++) {
         // const tab = tabs[i];
 
@@ -132,10 +132,10 @@ async function getTabsToClose() {
 
 function closeTabs(tabIds) {
   return new Promise((resolve, reject) => {
-    console.log('Fullscreen: ' + session.config.fullscreen);
+    console.log(`Fullscreen: ${session.config.fullscreen}`);
 
     if (session.config.fullscreen) {
-      chrome.windows.getCurrent({}, window => {
+      chrome.windows.getCurrent({}, (window) => {
         chrome.windows.update(window.id, { state: 'fullscreen' });
       });
     }
@@ -178,10 +178,10 @@ function insertTab(url, indexOfTab, callback) {
   chrome.tabs.create(
     {
       index: indexOfTab,
-      url: url,
+      url,
     },
-    tab => {
-      console.log('Inserted tabId: ' + tab.id);
+    (tab) => {
+      console.log(`Inserted tabId: ${tab.id}`);
 
       callback(indexOfTab, tab);
     },
@@ -190,14 +190,14 @@ function insertTab(url, indexOfTab, callback) {
 
 function preloadTab(tabIndex, isFirstCycle) {
   if (!isTabReloadRequired(tabIndex) && !isFirstCycle) {
-    console.log('Do not Preload tab: ' + tabIndex);
+    console.log(`Do not Preload tab: ${tabIndex}`);
     return;
   }
 
   const { url } = session.config.websites[tabIndex];
   const { id } = session.tabs[tabIndex];
 
-  console.log('Preload tab: ' + tabIndex);
+  console.log(`Preload tab: ${tabIndex}`);
 
   chrome.tabs.update(
     id,
@@ -227,10 +227,9 @@ function isSettingsReloadRequired() {
   ) {
     console.log('Reload settings from url: yes');
     return true;
-  } else {
-    console.log('Reload settings from url: no');
-    return false;
   }
+  console.log('Reload settings from url: no');
+  return false;
 }
 
 function isTabReloadRequired(tabIndex) {
@@ -243,9 +242,9 @@ function isTabReloadRequired(tabIndex) {
 
   if (reloadIntervalMillis <= 0) {
     return false;
-  } else if (millisSinceLastReload > reloadIntervalMillis) {
-    return true;
-  } else {
-    return false;
   }
+  if (millisSinceLastReload > reloadIntervalMillis) {
+    return true;
+  }
+  return false;
 }

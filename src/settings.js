@@ -8,15 +8,14 @@ const jQuery = window.jQuery || {};
 function loadSampleConfig() {
   return {
     source: 'DIRECT',
-    url:
-      'https://raw.githubusercontent.com/KevinSheedy/chrome-tab-rotate/master/src/config.sample.json',
+    url: 'https://raw.githubusercontent.com/KevinSheedy/chrome-tab-rotate/master/src/config.sample.json',
     configFile: JSON.stringify(sampleConfig, null, 2),
   };
 }
 
-var settingsApp = angular.module('settingsApp', []);
+const settingsApp = angular.module('settingsApp', []);
 
-settingsApp.controller('SettingsCtrl', function($scope, $http) {
+settingsApp.controller('SettingsCtrl', ($scope, $http) => {
   analytics.optionsPageview();
 
   initScope(loadSampleConfig);
@@ -38,7 +37,7 @@ settingsApp.controller('SettingsCtrl', function($scope, $http) {
           $scope.$apply();
           window.Prism.highlightAll();
         },
-        error: res => {
+        error: (res) => {
           $scope.fetchSucceeded = false;
           $scope.$apply();
         },
@@ -58,7 +57,7 @@ settingsApp.controller('SettingsCtrl', function($scope, $http) {
       return true;
     };
 
-    $scope.isValidConfigFile = jsonText => {
+    $scope.isValidConfigFile = (jsonText) => {
       try {
         JSON.parse(jsonText);
       } catch (e) {
@@ -82,7 +81,7 @@ settingsApp.controller('SettingsCtrl', function($scope, $http) {
     };
 
     $scope.reloadSettingsFromDisc = () => {
-      chrome.storage.sync.get(null, allStorage => {
+      chrome.storage.sync.get(null, (allStorage) => {
         $scope.settings = jQuery.isEmptyObject(allStorage)
           ? newStorageObject()
           : allStorage;
@@ -119,7 +118,7 @@ settingsApp.controller('SettingsCtrl', function($scope, $http) {
     // HACK: Prism seems to break angular bindings
     $scope.$watch(
       'settings.configFile',
-      val => {
+      (val) => {
         jQuery('.config-code-block').text(val);
         window.Prism.highlightAll();
       },
@@ -140,33 +139,26 @@ settingsApp.controller('SettingsCtrl', function($scope, $http) {
 
     $scope.formMessage = () => {
       if ($scope.formStatus === 'MODIFIED') return 'modified';
-      else if ($scope.formStatus === 'SAVED') return 'Saved';
-      else return '';
+      if ($scope.formStatus === 'SAVED') return 'Saved';
+      return '';
     };
 
-    $scope.alwaysTrue = () => {
-      return true;
-    };
+    $scope.alwaysTrue = () => true;
 
-    $scope.alwaysFalse = () => {
-      return false;
-    };
+    $scope.alwaysFalse = () => false;
 
-    $scope.isValidUrl = () => {
-      return $scope.form.url.$pristine || $scope.fetchSucceeded;
-    };
+    $scope.isValidUrl = () =>
+      $scope.form.url.$pristine || $scope.fetchSucceeded;
   }
 });
 
 angular.module('Prism', []).directive('prism', [
-  () => {
-    return {
-      restrict: 'A',
-      link: ($scope, element, attrs) => {
-        element.ready(() => {
-          window.Prism.highlightElement(element[0]);
-        });
-      },
-    };
-  },
+  () => ({
+    restrict: 'A',
+    link: ($scope, element, attrs) => {
+      element.ready(() => {
+        window.Prism.highlightElement(element[0]);
+      });
+    },
+  }),
 ]);

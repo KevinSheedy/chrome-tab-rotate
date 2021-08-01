@@ -53,12 +53,12 @@ async function loadConfigFileFromUrl(url) {
   return text;
 }
 
-const isEmptyObject = obj => !(obj && Object.keys(obj).length !== 0);
+const isEmptyObject = (obj) => !(obj && Object.keys(obj).length !== 0);
 
 function readSettingsFromDisc() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     console.log('Read settings from disc');
-    chrome.storage.sync.get(null, allStorage => {
+    chrome.storage.sync.get(null, (allStorage) => {
       if (isEmptyObject(allStorage)) {
         // This is the first use of the plugin
         analytics.install();
