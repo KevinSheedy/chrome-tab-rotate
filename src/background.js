@@ -1,7 +1,7 @@
 import analytics from './analytics';
 import dataLayer from './dataLayer';
 
-const chrome = globalThis.chrome || {};
+const { chrome } = globalThis;
 
 let session = newSessionObject();
 

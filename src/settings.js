@@ -1,9 +1,7 @@
 import analytics from './analytics';
 import sampleConfig from './config.sample.json';
 
-const chrome = window.chrome || {};
-const angular = window.angular || {};
-const jQuery = window.jQuery || {};
+const { chrome, angular, jQuery, Prism, document } = globalThis;
 
 function loadSampleConfig() {
   return {
@@ -35,7 +33,7 @@ settingsApp.controller('SettingsCtrl', ($scope, $http) => {
           $scope.settings.configFile = res;
           $scope.fetchSucceeded = true;
           $scope.$apply();
-          window.Prism.highlightAll();
+          Prism.highlightAll();
         },
         error: (res) => {
           $scope.fetchSucceeded = false;
@@ -120,7 +118,7 @@ settingsApp.controller('SettingsCtrl', ($scope, $http) => {
       'settings.configFile',
       (val) => {
         jQuery('.config-code-block').text(val);
-        window.Prism.highlightAll();
+        Prism.highlightAll();
       },
       true,
     );
@@ -157,7 +155,7 @@ angular.module('Prism', []).directive('prism', [
     restrict: 'A',
     link: ($scope, element, attrs) => {
       element.ready(() => {
-        window.Prism.highlightElement(element[0]);
+        Prism.highlightElement(element[0]);
       });
     },
   }),

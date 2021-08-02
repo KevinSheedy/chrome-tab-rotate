@@ -1,7 +1,7 @@
 import analytics from './analytics';
 import sampleConfig from './config.sample.json';
 
-const chrome = window.chrome || {};
+const { chrome } = globalThis;
 
 let cache = null;
 let settingsLoadTime = 0;
