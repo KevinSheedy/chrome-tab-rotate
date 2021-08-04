@@ -25,7 +25,6 @@
   "content_security_policy": "script-src 'self' https://www.google-analytics.com https://unpkg.com; object-src 'self'",
 
   "permissions": [
-    "activeTab",
     "storage",
     "https://ajax.googleapis.com/",
     "file://*/",
