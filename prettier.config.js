@@ -2,15 +2,15 @@ module.exports = {
   bracketSpacing: true,
   singleQuote: true,
   jsxBracketSameLine: true,
-  trailingComma: "es5",
+  trailingComma: 'es5',
   printWidth: 80,
 
   overrides: [
     {
-      files: "*",
+      files: '*',
       options: {
-        trailingComma: "all"
-      }
-    }
-  ]
+        trailingComma: 'all',
+      },
+    },
+  ],
 };

@@ -1,0 +1,3 @@
+{
+  "watch": ["*.js|*.json|*.mjs|*.md"]
+}

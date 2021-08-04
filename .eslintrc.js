@@ -1,18 +1,27 @@
 module.exports = {
-  plugins: ['prettier', 'standard'],
   env: {
     browser: true,
-    es6: true,
+    es2021: true,
+    node: true,
   },
+  extends: ['airbnb-base', 'prettier'],
   parserOptions: {
+    ecmaVersion: 12,
     sourceType: 'module',
   },
-  extends: ['standard', 'prettier'],
   rules: {
-    indent: ['error', 2],
-    'linebreak-style': ['error', 'unix'],
-    quotes: ['error', 'single'],
-    semi: ['error', 'always'],
-    'no-console': 0,
+    'no-console': 'off',
+    'no-use-before-define': 'off',
   },
+  overrides: [
+    {
+      files: ['./*.mjs'],
+      rules: {
+        'import/no-extraneous-dependencies': [
+          'error',
+          { devDependencies: true },
+        ],
+      },
+    },
+  ],
 };

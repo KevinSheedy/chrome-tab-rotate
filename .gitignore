@@ -6,3 +6,4 @@ dest
 build
 zip
 tab-rotate*.zip
+package-lock.json

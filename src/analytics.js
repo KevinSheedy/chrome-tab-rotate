@@ -1,4 +1,5 @@
 import manifest from '../manifest.json';
+
 const { version } = manifest;
 console.log('started daemon: background.js');
 
@@ -36,7 +37,7 @@ const analytics = {
       eventAction: 'pause',
       eventLabel: version,
     }),
-  heartbeat: action => {
+  heartbeat: (action) => {
     console.log('analytics.heartbeat', action);
     _ga('send', {
       hitType: 'event',
