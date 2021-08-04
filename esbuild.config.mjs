@@ -51,6 +51,9 @@ async function build() {
   await Promise.all([buildJavascript(), copyImages(), copyStatics()]);
   console.timeEnd('\nBuild Done in');
 
+  const date = new Date().toISOString().substring(11, 19);
+  console.log(`\nFinished at ${date}`);
+
   zip();
 }
 
