@@ -41,7 +41,8 @@ chrome.management.getSelf((self) => {
       // NB: see https://github.com/xpl/crx-hotreload/issues/5
       if (tabs[0]) {
         chrome.tabs.reload(tabs[0].id);
-        chrome.runtime.openOptionsPage();
+        // A bit annoying as it makes the browser jump to the foreground
+        // chrome.runtime.openOptionsPage();
       }
     });
   }
