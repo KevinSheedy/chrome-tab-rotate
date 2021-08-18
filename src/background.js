@@ -1,5 +1,18 @@
+import * as Sentry from '@sentry/browser';
+import { Integrations } from '@sentry/tracing';
+
 import analytics from './analytics';
 import dataLayer from './dataLayer';
+
+Sentry.init({
+  dsn: 'https://1ec6a7505c60433eb01d210c4da5202a@o947894.ingest.sentry.io/5897155',
+  integrations: [new Integrations.BrowserTracing()],
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+});
 
 const { chrome } = globalThis;
 
@@ -37,6 +50,8 @@ function iconClicked() {
 }
 
 async function play() {
+  // intentialError();
+
   analytics.play();
 
   chrome.browserAction.setIcon({ path: 'img/Pause-38.png' });
