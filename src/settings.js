@@ -3,6 +3,14 @@ import sampleConfig from './config.sample.json';
 
 const { chrome, angular, jQuery, Prism, document } = globalThis;
 
+chrome.management.getSelf((self) => {
+  console.log({ self });
+  // Don't want dev errors appearing in Sentry logs
+  if (self.installType !== 'development') {
+    // initSentry();
+  }
+});
+
 function loadSampleConfig() {
   return {
     source: 'DIRECT',

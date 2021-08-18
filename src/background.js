@@ -4,17 +4,28 @@ import { Integrations } from '@sentry/tracing';
 import analytics from './analytics';
 import dataLayer from './dataLayer';
 
-Sentry.init({
-  dsn: 'https://1ec6a7505c60433eb01d210c4da5202a@o947894.ingest.sentry.io/5897155',
-  integrations: [new Integrations.BrowserTracing()],
+const initSentry = () => {
+  console.log('init sentry');
+  Sentry.init({
+    dsn: 'https://1ec6a7505c60433eb01d210c4da5202a@o947894.ingest.sentry.io/5897155',
+    integrations: [new Integrations.BrowserTracing()],
 
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  // We recommend adjusting this value in production
-  tracesSampleRate: 1.0,
-});
+    // Set tracesSampleRate to 1.0 to capture 100%
+    // of transactions for performance monitoring.
+    // We recommend adjusting this value in production
+    tracesSampleRate: 1.0,
+  });
+};
 
 const { chrome } = globalThis;
+
+// TODO: Manifest V3 supports promises
+chrome.management.getSelf((self) => {
+  // Don't want dev errors appearing in Sentry logs
+  if (self.installType !== 'development') {
+    initSentry();
+  }
+});
 
 let session = newSessionObject();
 
@@ -50,7 +61,7 @@ function iconClicked() {
 }
 
 async function play() {
-  // intentialError();
+  // intentialError2();
 
   analytics.play();
 
