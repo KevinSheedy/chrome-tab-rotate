@@ -4,6 +4,10 @@ import { Integrations } from '@sentry/tracing';
 import analytics from './analytics';
 import dataLayer from './dataLayer';
 
+const { chrome } = globalThis;
+
+let session = newSessionObject();
+
 const initSentry = () => {
   console.log('init sentry');
   Sentry.init({
@@ -17,8 +21,6 @@ const initSentry = () => {
   });
 };
 
-const { chrome } = globalThis;
-
 // TODO: Manifest V3 supports promises
 chrome.management.getSelf((self) => {
   // Don't want dev errors appearing in Sentry logs
@@ -26,8 +28,6 @@ chrome.management.getSelf((self) => {
     initSentry();
   }
 });
-
-let session = newSessionObject();
 
 async function init() {
   await dataLayer.reload();
@@ -61,8 +61,6 @@ function iconClicked() {
 }
 
 async function play() {
-  // intentialError2();
-
   analytics.play();
 
   chrome.browserAction.setIcon({ path: 'img/Pause-38.png' });
