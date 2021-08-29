@@ -38,6 +38,13 @@ const copyStatics = async () => {
   return cpy(statics, 'dist');
 };
 
+const copyNodeModules = async () => {
+  console.log('copyNodeModules');
+  const statics = ['node_modules/bootstrap/dist'];
+  statics.forEach((file) => console.log(`  ${file}`));
+  return cpy(statics, 'dist/', { parents: true });
+};
+
 async function clean() {
   console.log('clean dist');
   return fs.removeSync('dist');
@@ -48,7 +55,12 @@ async function build() {
   console.time('\nBuild Done in');
   await clean();
 
-  await Promise.all([buildJavascript(), copyImages(), copyStatics()]);
+  await Promise.all([
+    buildJavascript(),
+    copyImages(),
+    copyStatics(),
+    copyNodeModules(),
+  ]);
   console.timeEnd('\nBuild Done in');
 
   const date = new Date().toISOString().substring(11, 19);
