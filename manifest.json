@@ -5,14 +5,14 @@
   "description": "Loop through a set of tabs - ideal for a Dashboard or Advertisement Display",
   "version": "1.0.0",
 
-  "browser_action": {
+  "action": {
     "default_icon": "img/Play-38.png",
     "default_title": "Start Tab Rotate"
   },
   "options_page": "index.html",
 
   "background": {
-    "scripts": ["background.js", "import-analytics.js", "hot-reload.js"]
+    "service_worker": "background.js"
   },
 
   "icons": {
@@ -23,7 +23,7 @@
   },
 
   "content_security_policy": {
-    "extension_pages": "script-src 'self' https://www.google-analytics.com https://unpkg.com; object-src 'self'"
+    "extension_pages": "script-src 'self'; object-src 'self'"
   },
 
   "permissions": ["storage"],

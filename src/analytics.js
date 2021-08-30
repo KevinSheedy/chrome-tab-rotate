@@ -1,6 +1,7 @@
 import manifest from '../manifest.json';
 
 const { version } = manifest;
+const { window } = globalThis;
 console.log('started daemon: background.js');
 
 const _ga = (...args) => {

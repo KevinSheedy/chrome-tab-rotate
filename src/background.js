@@ -29,7 +29,7 @@ function newSessionObject() {
 }
 
 function initEventListeners() {
-  chrome.browserAction.onClicked.addListener(iconClicked);
+  chrome.action.onClicked.addListener(iconClicked);
 }
 
 function iconClicked() {
@@ -39,8 +39,8 @@ function iconClicked() {
 async function play() {
   analytics.play();
 
-  chrome.browserAction.setIcon({ path: 'img/Pause-38.png' });
-  chrome.browserAction.setTitle({ title: 'Pause Tab Rotate' });
+  chrome.action.setIcon({ path: 'img/Pause-38.png' });
+  chrome.action.setTitle({ title: 'Pause Tab Rotate' });
   session = newSessionObject();
   session.isRotateEnabled = true;
   session.playStartTime = new Date().getTime();
@@ -50,8 +50,8 @@ async function play() {
 function pause() {
   analytics.pause();
 
-  chrome.browserAction.setIcon({ path: 'img/Play-38.png' });
-  chrome.browserAction.setTitle({ title: 'Start Tab Rotate' });
+  chrome.action.setIcon({ path: 'img/Play-38.png' });
+  chrome.action.setTitle({ title: 'Start Tab Rotate' });
   clearTimeout(session.timerId);
   session.isRotateEnabled = false;
 }
