@@ -12,7 +12,7 @@ async function init() {
 
   initEventListeners();
 
-  session.config.autoStart && play();
+  if (session.config.autoStart) play();
 }
 init();
 
@@ -33,7 +33,11 @@ function initEventListeners() {
 }
 
 function iconClicked() {
-  session.isRotateEnabled ? pause() : play();
+  if (session.isRotateEnabled) {
+    pause();
+  } else {
+    play();
+  }
 }
 
 async function play() {
@@ -86,7 +90,8 @@ async function rotateTabAndScheduleNextRotation(isFirstCycle) {
   chrome.tabs.update(currentTab.id, { active: true });
 
   // Determine the next tab index
-  if (++session.nextIndex >= session.tabs.length) {
+  session.nextIndex += 1;
+  if (session.nextIndex >= session.tabs.length) {
     session.nextIndex = 0;
   }
   preloadTab(session.nextIndex, isFirstCycle);
@@ -109,7 +114,7 @@ async function initTabs() {
 }
 
 async function getTabsToClose() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const queryInactiveTabs = {
       currentWindow: true,
     };
@@ -117,7 +122,7 @@ async function getTabsToClose() {
     const tabIds = [];
 
     chrome.tabs.query(queryInactiveTabs, (tabs) => {
-      for (let i = 0; i < tabs.length; i++) {
+      for (let i = 0; i < tabs.length; i += 1) {
         // const tab = tabs[i];
 
         // if(!tab.url.startsWith("chrome:")) {
@@ -131,7 +136,7 @@ async function getTabsToClose() {
 }
 
 function closeTabs(tabIds) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     console.log(`Fullscreen: ${session.config.fullscreen}`);
 
     if (session.config.fullscreen) {
@@ -147,10 +152,10 @@ function closeTabs(tabIds) {
 }
 
 function insertTabs(tabIdsToClose) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     let counter = 0;
     session.tabs = [];
-    for (let i = 0; i < session.config.websites.length; i++) {
+    for (let i = 0; i < session.config.websites.length; i += 1) {
       let url = 'about:blank';
       let reloadTime = 0;
       const { lazyLoadTabs } = session.config;
