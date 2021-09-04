@@ -1,6 +1,6 @@
 {
   "name": "chrome-tab-rotate",
-  "version": "0.5.1",
+  "version": "0.6.1",
   "description": "Loop through a set of tabs - ideal for a Dashboard or Advertisement Display",
   "dependencies": {
     "ramda": "^0.26.1"
@@ -22,7 +22,7 @@
     "build": "node esbuild.config.mjs build",
     "zip": "node esbuild.config.mjs zip",
     "start": "nodemon --exec 'node esbuild.config.mjs watch'",
-    "lint": "./node_modules/.bin/eslint --fix"
+    "lint": "./node_modules/.bin/eslint --fix ./src"
   },
   "repository": {
     "type": "git",

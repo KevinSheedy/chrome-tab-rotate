@@ -11,7 +11,7 @@ const filesInDirectory = (dir) =>
           .map((e) =>
             e.isDirectory
               ? filesInDirectory(e)
-              : new Promise((resolve) => e.file(resolve)),
+              : new Promise((res) => e.file(res)),
           ),
       )
         .then((files) => [].concat(...files))
