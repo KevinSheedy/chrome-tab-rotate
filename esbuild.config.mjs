@@ -59,8 +59,6 @@ async function build() {
 
   const date = new Date().toISOString().substring(11, 19);
   console.log(`\nFinished at ${date}`);
-
-  zip();
 }
 
 async function runLint() {
