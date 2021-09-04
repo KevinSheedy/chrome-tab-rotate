@@ -13,7 +13,7 @@ function loadSampleConfig() {
 
 const settingsApp = angular.module('settingsApp', []);
 
-settingsApp.controller('SettingsCtrl', ($scope, $http) => {
+settingsApp.controller('SettingsCtrl', ($scope) => {
   console.log('init');
   const { jQuery } = globalThis;
   analytics.optionsPageview();
@@ -31,17 +31,17 @@ settingsApp.controller('SettingsCtrl', ($scope, $http) => {
       jQuery.ajax({
         url: $scope.settings.url,
         dataType: 'text',
-        success: (res, textStatus, jqXHR) => {
+        success: (res) => {
           $scope.settings.configFile = res;
           $scope.fetchSucceeded = true;
           $scope.$apply();
           globalThis.Prism.highlightAll();
         },
-        error: (res) => {
+        error: () => {
           $scope.fetchSucceeded = false;
           $scope.$apply();
         },
-        complete: (jqXHR, textStatus) => {
+        complete: () => {
           $scope.isFetchInProgress = false;
           $scope.$apply();
         },
@@ -155,7 +155,7 @@ settingsApp.controller('SettingsCtrl', ($scope, $http) => {
 angular.module('Prism', []).directive('prism', [
   () => ({
     restrict: 'A',
-    link: ($scope, element, attrs) => {
+    link: ($scope, element) => {
       element.ready(() => {
         globalThis?.Prism?.highlightElement(element[0]);
       });

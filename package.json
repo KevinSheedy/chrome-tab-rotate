@@ -22,7 +22,7 @@
     "build": "node esbuild.config.mjs build",
     "zip": "node esbuild.config.mjs zip",
     "start": "nodemon --exec 'node esbuild.config.mjs watch'",
-    "lint": "./node_modules/.bin/eslint --fix"
+    "lint": "./node_modules/.bin/eslint --fix ./src"
   },
   "repository": {
     "type": "git",

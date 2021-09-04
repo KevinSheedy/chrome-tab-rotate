@@ -3,6 +3,7 @@ import fs from 'fs-extra';
 import chokidar from 'chokidar';
 import cpy from 'cpy';
 import { zip as zipFolder } from 'zip-a-folder';
+import { ESLint } from 'eslint';
 
 const buildJavascript = async () => {
   console.log('buildJavascript');
@@ -48,13 +49,33 @@ async function build() {
   console.time('\nBuild Done in');
   await clean();
 
-  await Promise.all([buildJavascript(), copyImages(), copyStatics()]);
+  await Promise.all([
+    runLint(),
+    buildJavascript(),
+    copyImages(),
+    copyStatics(),
+  ]);
   console.timeEnd('\nBuild Done in');
 
   const date = new Date().toISOString().substring(11, 19);
   console.log(`\nFinished at ${date}`);
 
   zip();
+}
+
+async function runLint() {
+  // 1. Create an instance.
+  const eslint = new ESLint();
+
+  // 2. Lint files.
+  const results = await eslint.lintFiles(['src/**/*.js']);
+
+  // 3. Format the results.
+  const formatter = await eslint.loadFormatter('stylish');
+  const resultText = formatter.format(results);
+
+  // 4. Output it.
+  console.log(resultText);
 }
 
 async function zip() {
