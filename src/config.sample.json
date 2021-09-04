@@ -5,7 +5,7 @@
   "lazyLoadTabs": false,
   "websites": [
     {
-      "url": "https://irishtimes.com",
+      "url": "chrome-extension://pjgjpabbgnnoohijnillgbckikfkbjed/index.html",
       "duration": 10,
       "tabReloadIntervalSeconds": 15
     },

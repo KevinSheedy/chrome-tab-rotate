@@ -3,9 +3,9 @@ import manifest from '../manifest.json';
 const { version } = manifest;
 console.log('started daemon: background.js');
 
-const _ga = (...args) => {
-  if (window.ga) {
-    ga(...args);
+const ga = (...args) => {
+  if (globalThis?.ga) {
+    globalThis?.ga(...args);
   } else {
     console.log('ga not available');
   }
@@ -17,21 +17,21 @@ const state = {
 
 const analytics = {
   startup: () =>
-    _ga('send', {
+    ga('send', {
       hitType: 'event',
       eventCategory: 'version',
       eventAction: 'manifest',
       eventLabel: version,
     }),
   play: () =>
-    _ga('send', {
+    ga('send', {
       hitType: 'event',
       eventCategory: 'user-action',
       eventAction: 'play',
       eventLabel: version,
     }),
   pause: () =>
-    _ga('send', {
+    ga('send', {
       hitType: 'event',
       eventCategory: 'user-action',
       eventAction: 'pause',
@@ -39,7 +39,7 @@ const analytics = {
     }),
   heartbeat: (action) => {
     console.log('analytics.heartbeat', action);
-    _ga('send', {
+    ga('send', {
       hitType: 'event',
       eventCategory: 'heartbeat',
       eventAction: action,
@@ -48,15 +48,15 @@ const analytics = {
   },
   install: () => {
     console.log('analytics: install');
-    _ga('send', {
+    ga('send', {
       hitType: 'event',
       eventCategory: 'user-action',
       eventAction: 'install',
       eventLabel: version,
     });
   },
-  backgroundPageview: () => _ga('send', 'pageview', '/background.js'),
-  optionsPageview: () => _ga('send', 'pageview', '/options.js'),
+  backgroundPageview: () => ga('send', 'pageview', '/background.js'),
+  optionsPageview: () => ga('send', 'pageview', '/options.js'),
   analyticsHeartbeat(playStartTime) {
     console.log('analyticsHeartbeat');
     // All units in millis
