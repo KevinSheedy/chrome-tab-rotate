@@ -77,41 +77,44 @@ const analytics = {
     const fiftyMinuteMark = playStartTime + 50 * MINUTE;
     const sixtyMinuteMark = playStartTime + 60 * MINUTE;
 
-    previous < tenMinuteMark && tenMinuteMark < now && this.heartbeat('10mins');
-    previous < twentyMinuteMark &&
-      twentyMinuteMark < now &&
+    if (previous < tenMinuteMark && tenMinuteMark < now)
+      this.heartbeat('10mins');
+
+    if (previous < twentyMinuteMark && twentyMinuteMark < now)
       this.heartbeat('20mins');
-    previous < thirtyMinuteMark &&
-      thirtyMinuteMark < now &&
+
+    if (previous < thirtyMinuteMark && thirtyMinuteMark < now)
       this.heartbeat('30mins');
-    previous < fortyMinuteMark &&
-      fortyMinuteMark < now &&
+
+    if (previous < fortyMinuteMark && fortyMinuteMark < now)
       this.heartbeat('40mins');
-    previous < fiftyMinuteMark &&
-      fiftyMinuteMark < now &&
+
+    if (previous < fiftyMinuteMark && fiftyMinuteMark < now)
       this.heartbeat('50mins');
-    previous < sixtyMinuteMark &&
-      sixtyMinuteMark < now &&
+
+    if (previous < sixtyMinuteMark && sixtyMinuteMark < now)
       this.heartbeat('60mins');
 
     const REALTIME_PULSE_INTERVAL = 3 * MINUTE;
     const lastPulseMark = now - (uptime % REALTIME_PULSE_INTERVAL);
-    previous < lastPulseMark && lastPulseMark < now && this.heartbeat('pulse');
+    if (previous < lastPulseMark && lastPulseMark < now)
+      this.heartbeat('pulse');
 
     const lastHourMark = now - (uptime % HOUR);
-    previous < lastHourMark && lastHourMark < now && this.heartbeat('hour');
+    if (previous < lastHourMark && lastHourMark < now) this.heartbeat('hour');
 
     const lastDayMark = now - (uptime % DAY);
-    previous < lastDayMark && lastDayMark < now && this.heartbeat('day');
+    if (previous < lastDayMark && lastDayMark < now) this.heartbeat('day');
 
     const lastWeekMark = now - (uptime % WEEK);
-    previous < lastWeekMark && lastWeekMark < now && this.heartbeat('week');
+    if (previous < lastWeekMark && lastWeekMark < now) this.heartbeat('week');
 
     const lastMonthMark = now - (uptime % MONTH);
-    previous < lastMonthMark && lastMonthMark < now && this.heartbeat('month');
+    if (previous < lastMonthMark && lastMonthMark < now)
+      this.heartbeat('month');
 
     const lastYearMark = now - (uptime % YEAR);
-    previous < lastYearMark && lastYearMark < now && this.heartbeat('year');
+    if (previous < lastYearMark && lastYearMark < now) this.heartbeat('year');
 
     state.lastHeartbeatTime = now;
   },
