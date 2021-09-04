@@ -167,6 +167,8 @@ function insertTabs(tabIdsToClose) {
         url = session.config.websites[i].url;
         reloadTime = new Date().getTime();
       }
+
+      /* eslint-disable */
       insertTab(url, i, (index, tab) => {
         session.tabs[index] = tab;
         session.tabReloadTime[index] = reloadTime;
@@ -175,6 +177,7 @@ function insertTabs(tabIdsToClose) {
           resolve(tabIdsToClose);
         }
       });
+      /* eslint-enable */
     }
   });
 }
