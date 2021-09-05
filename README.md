@@ -8,70 +8,55 @@ Allows Chrome to automatically cycle through a set of tabs. Ideal for a Dashboar
 
 [Tab Rotate on the Chrome Web Store](https://chrome.google.com/webstore/detail/tab-rotate/pjgjpabbgnnoohijnillgbckikfkbjed)
 
-## Settings
-
-### settingsReloadIntervalMinutes - integer
-
-Interval at which the settings file is reloaded.
-
-### fullscreen - boolean
-
-Open Chrome in fullscreen mode
-
-### autoStart - boolean
-
-Begin rotating tabs automatically as soon as Chrome is opened
-
-### lazyLoadTabs - boolean
-
-Load the first two tabs on startup then load subsequent tabs "just in time"
-
-### closeExistingTabs - boolean
-
-Close existing tabs before opening the configured list of tabs.
-
-### websites - list
-
-#### url - string
-
-#### duration - integer
-
-Number of seconds the tab will be displayed
-
-#### tabReloadIntervalSeconds - integer
-
-Interval in seconds at which the tab will be reloaded
-Set to `0` for no reload
-
-// Automatically reload the settings file from the url provided
-"enableAutoReload": false
+## Sample Config
 
 ```json
 {
-  "settingsReloadIntervalMinutes": 60,
-  "fullscreen": true,
+  "settingsReloadIntervalMinutes": 1,
+  "fullscreen": false,
   "autoStart": false,
   "lazyLoadTabs": false,
   "closeExistingTabs": false,
   "websites": [
     {
-      "url": "https://github.com/KevinSheedy/chrome-tab-rotate.git",
-      "duration": 10,
-      "tabReloadIntervalSeconds": 120
+      "url": "chrome-extension://pjgjpabbgnnoohijnillgbckikfkbjed/index.html",
+      "duration": 8,
+      "tabReloadIntervalSeconds": 15
+    },
+    {
+      "url": "https://www.patreon.com/kevdev",
+      "duration": 8,
+      "tabReloadIntervalSeconds": 15
     },
     {
       "url": "https://chrome.google.com/webstore/detail/tab-rotate/pjgjpabbgnnoohijnillgbckikfkbjed",
-      "duration": 10,
-      "tabReloadIntervalSeconds": 180
-    },
-    {
-      "url": "https://ie.linkedin.com/in/kevinsheedy",
-      "duration": 10,
-      "tabReloadIntervalSeconds": 240
+      "duration": 8,
+      "tabReloadIntervalSeconds": 15
     }
   ]
 }
 ```
+
+## General Options
+
+| Option | Description | Default |
+| --- | --- | --- |
+| settingsReloadIntervalMinutes | Interval at which the settings file is reloaded | `1` |
+| fullscreen | Open Chrome in fullscreen mode | `false` |
+| autoStart | Begin rotating tabs automatically as soon as Chrome is opened | `false` |
+| lazyLoadTabs | Load the first two tabs on startup then load subsequent tabs "just in time" | `false` |
+| closeExistingTabs | Close existing tabs before opening the configured list of tabs | `false` |
+| websites | List of websites and config for each | `[]` |
+
+
+## Website Options
+
+| Option | Description | Type |
+| --- | --- | --- |
+| url | Url of website to open | String |
+| duration | Number of seconds the tab will be displayed | Number |
+| tabReloadIntervalSeconds | Interval in seconds at which the tab will be reloaded. Set to `0` for no reload. | Number |
+
 
 ## Crowdfunding
 
