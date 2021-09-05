@@ -26,6 +26,10 @@ Begin rotating tabs automatically as soon as Chrome is opened
 
 Load the first two tabs on startup then load subsequent tabs "just in time"
 
+### closeExistingTabs - boolean
+
+Close existing tabs before opening the configured list of tabs.
+
 ### websites - list
 
 #### url - string
@@ -48,6 +52,7 @@ Set to `0` for no reload
   "fullscreen": true,
   "autoStart": false,
   "lazyLoadTabs": false,
+  "closeExistingTabs": false,
   "websites": [
     {
       "url": "https://github.com/KevinSheedy/chrome-tab-rotate.git",
