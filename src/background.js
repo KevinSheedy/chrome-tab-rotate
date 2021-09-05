@@ -110,7 +110,14 @@ async function initTabs() {
   const tabIdsToClose = await getTabsToClose();
   console.log('tabIdsToClose', tabIdsToClose);
   await insertTabs();
-  await closeTabs(tabIdsToClose);
+  const { closeExistingTabs } = session?.config;
+
+  // New config option: closeExistingTabs
+  // Default is false
+  // But don't change behaviour for existing users how haven't set this option yet
+  if (closeExistingTabs === undefined || closeExistingTabs === true) {
+    await closeTabs(tabIdsToClose);
+  }
 }
 
 async function getTabsToClose() {

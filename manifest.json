@@ -3,7 +3,7 @@
 
   "name": "Tab Rotate",
   "description": "Loop through a set of tabs - ideal for a Dashboard or Advertisement Display",
-  "version": "0.6.1",
+  "version": "0.6.2",
 
   "browser_action": {
     "default_icon": "img/Play-38.png",
